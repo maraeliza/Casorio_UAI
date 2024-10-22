@@ -38,11 +38,11 @@ public class Menu_UPDATE {
         this.texto = "";
         this.cleanVetor();
         this.texto = this.dao.getTexto(this.idClasse);
-        Class<?> classe = this.dao.getClasseByID(this.idClasse);    
-        try{
+        Class<?> classe = this.dao.getClasseByID(this.idClasse);
+        try {
             java.lang.reflect.Method metodo = classe.getMethod("getCampos");
             this.vetor = (String[]) metodo.invoke(null);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         montarPainel(texto);
@@ -61,38 +61,36 @@ public class Menu_UPDATE {
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
-            this.valores[0] = result;
-            try {
-                
-                boolean existe = this.dao.find(this.idClasse, idInserido);
-                
-
-                if (existe) {
-                    this.nColetados = 0;
-                    for (int i = 1; i < this.vetor.length; i++) {
-                        if (this.vetor[i] != null && result != null) {
-                            conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
-                            conteudo += "\n\nINSIRA " + this.vetor[i].toUpperCase();
-                            result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-                            this.nColetados++;
-                            this.valores[this.nColetados] = result;
-
+            if (idInserido != 0) {
+                this.valores[0] = result;
+                try {
+                    boolean existe = this.dao.find(this.idClasse, idInserido);
+                    if (existe) {
+                        this.nColetados = 0;
+                        for (int i = 1; i < this.vetor.length; i++) {
+                            if (this.vetor[i] != null && result != null) {
+                                conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
+                                conteudo += "\n\nINSIRA " + this.vetor[i].toUpperCase();
+                                result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
+                                this.nColetados++;
+                                this.valores[this.nColetados] = result;
+                            }
                         }
+                        this.dao.atualizar(this.idClasse, this.valores);
+                        this.exibir(this.dao, this.idClasse);
+                    } else {
+                        Util.mostrarErro("Elemento de id " + result + " não encontrado!");
                     }
-                    this.dao.atualizar(this.idClasse, this.valores);
-                    this.exibir(this.dao, this.idClasse);
-                } else {
-                    Util.mostrarErro("Elemento de id " + result + " não encontrado!");
+                } catch (Exception e) {
+                    Util.mostrarErro("Digite um ID válido!");
                 }
-            }catch (Exception e) {
-                Util.mostrarErro("Digite um ID válido!");
             }
+
         } else {
-            Util.mostrarErro("Digite um ID válido!");
+            Util.mostrarErro("Atualização cancelada!");
         }
 
     }
-
 
     public boolean add(String atributo) {
         for (int i = 0; i < this.vetor.length; i++) {
