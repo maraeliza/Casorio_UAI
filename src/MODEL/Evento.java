@@ -13,18 +13,18 @@ import java.time.LocalDate;
 public class Evento {
 
     // Atributos da classe
-    public int id;
+    private int id;
     private Cerimonial cerimonial;
     private Igreja igreja;
     private Cartorio cartorio;
     private Pessoa noiva;
     private Pessoa noivo;
     private LocalDate data;
-    
+
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
 
-    public static int totalEventos;
+    public static int total;
 
     // Getters e Setters
     public int getId() {
@@ -35,12 +35,12 @@ public class Evento {
         this.id = id;
     }
 
-    public static int getTotalEventos() {
-        return totalEventos;
+    public static int getTotal() {
+        return total;
     }
 
-    public static void setTotalEventos(int total) {
-        totalEventos = total;
+    public static void setTotal(int total) {
+        Evento.total = total;
     }
 
     public Cerimonial getCerimonial() {
@@ -105,12 +105,22 @@ public class Evento {
         return this.dataModificacao;
     }
 
+    public static String[] getCampos() {
+        String[] campos = new String[11]; // Aumentando o tamanho do array para 11
+        campos[0] = "ID: ";
+        campos[1] = "Data: ";
+        campos[2] = "ID da Igreja: ";
+        campos[3] = "ID do Cartório: ";
+        campos[4] = "ID do Cerimonial: ";
+        return campos;
+    }
+
     // Método para criar um novo evento
     public void criar(Cerimonial cerimonial, Igreja igreja, Cartorio cartorio, Pessoa noiva, Pessoa noivo, LocalDate data) {
-        this.id = ++totalEventos;
+        this.id = ++total;
         this.cerimonial = cerimonial;
         this.igreja = igreja;
-        this.cartorio = cartorio;
+        this.cartorio = cartorio; 
         this.noiva = noiva;
         this.noivo = noivo;
         this.data = data;
@@ -164,7 +174,7 @@ public class Evento {
 
     // Método para deletar um evento
     private void deletar() {
-        --totalEventos;
+        --total;
     }
 
     // Método para ler os dados do evento
@@ -178,7 +188,7 @@ public class Evento {
         dados += "\n Data do Evento: " + (this.data != null ? this.data.toString() : "N/A");
         dados += "\n Data de criação: " + this.dataCriacao;
         dados += "\n Data de modificação: " + (this.dataModificacao != null ? this.dataModificacao.toString() : "N/A");
-        
+
         return dados;
     }
 }

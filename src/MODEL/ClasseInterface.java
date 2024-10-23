@@ -17,7 +17,7 @@ public interface ClasseInterface {
     void setId(int id);
 
     String ler();
-
+    String getNome();
     void deletar();
 
     boolean criar(Object vetor[]);

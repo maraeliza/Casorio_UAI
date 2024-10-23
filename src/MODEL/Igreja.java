@@ -8,18 +8,20 @@ package MODEL;
  *
  * @author Jussie
  */
+
+import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 
-public class Igreja {
+public class Igreja implements ClasseInterface {
 
     public int id;
     private String nome;
     private String endereco;
-    
+
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
 
-    public static int totalIgrejas;
+    public static int total;
 
     // Getters e Setters
     public int getId() {
@@ -30,12 +32,12 @@ public class Igreja {
         this.id = id;
     }
 
-    public static int getTotalIgrejas() {
-        return totalIgrejas;
+    public static int getTotal() {
+        return Igreja.total;
     }
 
-    public static void setTotalIgrejas(int total) {
-        totalIgrejas = total;
+    public static void setTotal(int total) {
+        Igreja.total = total;
     }
 
     public String getNome() {
@@ -64,9 +66,77 @@ public class Igreja {
         return this.dataModificacao;
     }
 
+    public boolean criar(Usuario user, Object vetor[]) {
+        boolean alterado = false;
+
+        if (vetor[0] != null) {
+            this.nome = (String) vetor[0];
+            alterado = true;
+        }
+
+        if (vetor[1] != null) {
+            this.endereco = (String) vetor[1];
+            alterado = true;
+        }
+
+        if (alterado) {
+            this.dataCriacao = LocalDate.now();
+            this.dataModificacao = null;
+            this.id = ++total; // Supondo que 'total' é um contador de IDs
+        }
+
+        return alterado;
+    }
+
+    public boolean criar(Object vetor[]) {
+        boolean alterado = false;
+
+        if (vetor[0] != null) {
+            this.nome = (String) vetor[0];
+            alterado = true;
+        }
+
+        if (vetor[1] != null) {
+            this.endereco = (String) vetor[1];
+            alterado = true;
+        }
+
+        if (alterado) {
+            this.dataCriacao = LocalDate.now();
+            this.dataModificacao = null;
+            this.id = ++total; // Supondo que 'total' é um contador de IDs
+        }
+
+        return alterado;
+    }
+
+    public void update(Object vetor[]) {
+        boolean alterou = false;
+
+        if (vetor[0] != null) {
+            String novoNome = (String) vetor[0];
+            if (novoNome.length() > 0) {
+                this.nome = novoNome;
+                alterou = true;
+            }
+        }
+
+        if (vetor[1] != null) {
+            String novoEndereco = (String) vetor[1];
+            if (novoEndereco.length() > 0) {
+                this.endereco = novoEndereco;
+                alterou = true;
+            }
+        }
+
+        if (alterou) {
+            this.atualizarDataModificacao();
+        }
+    }
+
     // Método para criar uma nova igreja
     public void criar(String nome, String endereco) {
-        this.id = ++totalIgrejas;
+        this.id = ++total;
         this.nome = nome;
         this.endereco = endereco;
         this.dataCriacao = LocalDate.now();
@@ -93,23 +163,36 @@ public class Igreja {
     }
 
     // Método para atualizar a data de modificação
-    private void atualizarDataModificacao() {
+    public void atualizarDataModificacao() {
         this.dataModificacao = LocalDate.now();
     }
 
     // Método para deletar igreja
-    private void deletar() {
-        --totalIgrejas;
+    public void deletar() {
+        --total;
     }
 
     // Método para ler os dados da igreja
     public String ler() {
-        String dados = "\n\nID: " + this.id;
-        dados += "\n Nome: " + this.nome;
-        dados += "\n Endereço: " + this.endereco;
-        dados += "\n Data de criação: " + this.dataCriacao;
-        dados += "\n Data de modificação: " + (this.dataModificacao != null ? this.dataModificacao.toString() : "N/A");
-        
-        return dados;
+        StringBuilder resultado = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Adiciona informações da igreja
+        resultado.append("Igreja ").append(this.id);
+        resultado.append("\nNome: ").append(this.nome);
+        resultado.append("\nEndereço: ").append(this.endereco);
+
+        // Verifica e formata a data de criação
+        if (this.dataCriacao != null) {
+            resultado.append("\nData de Criação: ").append(this.dataCriacao.format(formatter));
+        }
+
+        // Verifica e formata a data de modificação
+        if (this.dataModificacao != null) {
+            resultado.append("\nData da Última Modificação: ").append(this.dataModificacao.format(formatter));
+        }
+
+        resultado.append("\n\n");
+        return resultado.toString();
     }
 }

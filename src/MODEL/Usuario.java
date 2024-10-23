@@ -24,6 +24,23 @@ public class Usuario implements ClasseInterface {
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
     private DAO dao;
+    public static int total;
+
+    public int getIdPessoa() {
+        return idPessoa;
+    }
+
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
+    }
+
+    public LocalDate getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDate dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
 
     public static int getTotal() {
         return total;
@@ -57,9 +74,48 @@ public class Usuario implements ClasseInterface {
         this.dataModificacao = dataModificacao;
     }
 
-    public static int total;
-
     public void update(Object vetor[]) {
+        System.out.println("CHAMOU A FUNCAO UPDATE");
+        boolean alterou = false;
+        if (vetor[1] != null && !((String) vetor[1]).equals("") && ((String) vetor[1]).length() > 0) {
+            int idPessoa = Util.stringToInt((String) vetor[1]);
+            System.out.println("ATUALIZANDO ITEM DE ID " + idPessoa);
+            if (idPessoa != 0 && this.getId() != idPessoa) {
+                this.idPessoa = idPessoa;
+                alterou = true;
+
+            }
+        }
+
+        System.out.println(vetor[2] + " " + vetor[3] + " " + vetor[4]);
+
+        if (vetor[2] != null && !((String) vetor[2]).equals("") && ((String) vetor[2]).length() > 0) {
+            String login = (String) vetor[2];
+            if (login.length() > 0) {
+                this.login = login;
+                alterou = true;
+
+            }
+        }
+        if (vetor[3] != null && !((String) vetor[3]).equals("") && ((String) vetor[3]).length() > 0) {
+            String senha = (String) vetor[3];
+            if (senha.length() > 0) {
+                this.senha = senha;
+                alterou = true;
+
+            }
+        }
+        if (vetor[4] != null && !((String) vetor[4]).equals("") && ((String) vetor[4]).length() > 0) {
+            int tipo = Util.stringToInt((String) vetor[4]);
+            if (tipo != 0) {
+                this.tipo = tipo;
+                alterou = true;
+
+            }
+        }
+        if (alterou) {
+            this.atualizarDataModificacao();
+        }
 
     }
 
@@ -67,7 +123,7 @@ public class Usuario implements ClasseInterface {
 
     }
 
-    public void update(DAO dao, Usuario user, Object vetor[]) {
+    public void update(DAO dao, Object vetor[]) {
         boolean alterou = false;
         int idPessoa = Util.stringToInt((String) vetor[0]);
         if (idPessoa != 0) {
@@ -109,33 +165,21 @@ public class Usuario implements ClasseInterface {
 
     }
 
-    public int getIdPessoa() {
-        return idPessoa;
-    }
-
-    public void setIdPessoa(int idPessoa) {
-        this.idPessoa = idPessoa;
-    }
-
     public boolean criar(Object vetor[]) {
-        System.out.println("CRIANDO O USUARIO de ID " + vetor[0]);
         boolean criou = false;
 
         int idPessoa = (int) vetor[0];
-        System.out.println("id convertido para inteiro com sucesso");
         //Pessoa pessoa, String login, String senha, int tipo
         if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null) {
-            System.out.println("Nenhum campo nulo!");
+
             if (idPessoa != 0) {
-                System.out.println("ID DIFERENTE DE ZERO!");
-                System.out.println("Procurando pessoa de id " + vetor[0]);
+
                 Pessoa pessoa = (Pessoa) vetor[4];
                 if (pessoa != null) {
                     if (!pessoa.isUserVinculado()) {
                         if (pessoa != null
                                 && idPessoa == pessoa.getId()
                                 && !pessoa.isUserVinculado()) {
-                            System.out.println("Pessoa encontrada " + pessoa.getNome());
 
                             String login = (String) vetor[1];
                             String senha = (String) vetor[2];
@@ -154,11 +198,11 @@ public class Usuario implements ClasseInterface {
                                 criou = true;
 
                             }
-                        } 
-                    } 
+                        }
+                    }
 
                 } else {
-                    System.out.println("Não foi possivel criar o objeto");
+
                     Util.mostrarErro("Pessoa de id " + vetor[0] + " não encontrada");
                 }
 
@@ -171,18 +215,15 @@ public class Usuario implements ClasseInterface {
     public boolean criar(Usuario user, Object vetor[]) {
         boolean criou = false;
         int idPessoa = Util.stringToInt((String) vetor[0]);
-        System.out.println("id convertido para inteiro com sucesso");
+
         //Pessoa pessoa, String login, String senha, int tipo
         if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null) {
-            System.out.println("Nenhum campo nulo!");
+
             if (idPessoa != 0) {
-                System.out.println("ID DIFERENTE DE ZERO!");
-                System.out.println("Procurando pessoa de id " + vetor[0]);
                 Pessoa pessoa = (Pessoa) vetor[4];
                 if (pessoa != null
                         && idPessoa == pessoa.getId()
                         && !pessoa.isUserVinculado()) {
-                    System.out.println("Pessoa encontrada " + pessoa.getNome());
 
                     String login = (String) vetor[1];
                     String senha = (String) vetor[2];
@@ -284,14 +325,6 @@ public class Usuario implements ClasseInterface {
         this.dataModificacao = LocalDate.now();
     }
 
-    public LocalDate getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDate dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
     public LocalDate getDataModificacao() {
         return dataModificacao;
     }
@@ -304,4 +337,9 @@ public class Usuario implements ClasseInterface {
         Usuario.total = totalUsuario;
     }
 
+    public void trocarPessoa(Pessoa p) {
+        this.getPessoa().setUserVinculado(false);
+        this.setPessoa(p);
+        this.getPessoa().setUserVinculado(true);
+    }
 }

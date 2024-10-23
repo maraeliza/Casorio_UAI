@@ -9,7 +9,7 @@ public class TrabalhoPOO {
         DAO dao = new DAO();
         TelaInicial menu = new TelaInicial();
         menu.exibir(dao);
-       
+
     }
 
 }

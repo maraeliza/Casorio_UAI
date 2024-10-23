@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package VIEW;
-import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.swing.*;
 /**
  *
  * @author Mara
@@ -21,16 +21,38 @@ public class Util {
     public static void mostrarMSG(String MSG){
         JOptionPane.showMessageDialog(null, MSG, "MENSAGEM", JOptionPane.INFORMATION_MESSAGE);
     }
+    public static Double stringToDouble(String str){
+        try{
+             if (
+                 str != null 
+                 && str.length() > 0  
+                 
+             ){ 
+                Double n = Double.parseDouble(str);
+                 return n;
+             }
+             
+         }catch(NumberFormatException e){
+             return 0.0;
+         }
+         return 0.0;
+     }
     
     public static int stringToInt(String str){
        try{
-            int n = Integer.parseInt(str);
-            return n;
+            if (
+                str != null 
+                && str.length() > 0  
+                
+            ){ 
+                int n = Integer.parseInt(str);
+                return n;
+            }
+            
         }catch(NumberFormatException e){
-            mostrarErro("Valor invalido!");
             return 0;
         }
-        
+        return 0;
     }
     public static String intToString(int n){
        try{

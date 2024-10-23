@@ -18,11 +18,19 @@ public class Recado implements ClasseInterface {
     private int id;
     private Pessoa pessoa;
     private String comentario;
-
+    private String nome;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
 
     public static int total;
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
     public static String[] getCampos() {
         String[] campos = new String[2];

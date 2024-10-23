@@ -65,8 +65,10 @@ public class Menu_CREATE {
             if (this.vetor[i] != null && result != null) {
                 conteudo = "\nCADASTRAR " + this.nomeClasse.toUpperCase();
                 if (this.nomeClasse.toUpperCase().equals("USUÁRIOS") && i == 1) {
-                    conteudo += "\nNOMES DE PESSOAS SEM USUÁRIOS VINCULADOS:";
-                    conteudo += this.dao.getNomesPessoasSemUsers();
+                    conteudo += this.montarPainelUsuarios();
+                }
+                if (this.nomeClasse.toUpperCase().equals("EVENTO")) {
+                    conteudo += this.montarPainelEvento(i);
                 }
                 conteudo += "\n\nINSIRA " + this.vetor[i].toUpperCase();
                 do {
@@ -83,6 +85,52 @@ public class Menu_CREATE {
             }
         }
         this.dao.cadastrar(this.idClasse, this.valores, this.userLogado);
+
+    }
+
+    public String montarPainelUsuarios() {
+        String conteudo = "";
+        conteudo += "\nNOMES DE PESSOAS SEM USUÁRIOS VINCULADOS:";
+        conteudo += this.dao.getNomesPessoasSemUsers();
+        return conteudo;
+    }
+
+    public String montarPainelEvento(int i) {
+
+        String conteudo = "";
+
+        switch (i) {
+            case 2 -> {
+                if (this.dao.getTotalClasse(7) > 1) {
+                    conteudo += "\nID E NOME DAS IGREJAS:";
+                } else {
+                    conteudo += "\nID E NOME DA IGREJA:";
+                }
+                conteudo += this.dao.getNomes(7);
+            }
+            case 3 -> {
+                if (this.dao.getTotalClasse(8) > 1) {
+                    conteudo += "\nID E NOME DOS CARTÓRIOS:";
+                } else {
+                    conteudo += "\nID E NOME DO CARTÓRIO:";
+                }
+
+                conteudo += this.dao.getNomes(8);
+            }
+            case 4 -> {
+                if (this.dao.getTotalClasse(6) > 1) {
+                    conteudo += "\nID E NOME DOS CERIMONIAIS:";
+                } else {
+                    conteudo += "\nID E NOME DO CERIMONIAL:";
+                }
+                conteudo += this.dao.getNomes(6);
+            }
+            default -> {
+                break;
+            }
+        }
+
+        return conteudo;
 
     }
 

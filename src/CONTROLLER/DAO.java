@@ -4,20 +4,20 @@
  */
 package CONTROLLER;
 
+import MODEL.Cartorio;
+import MODEL.Cerimonial;
+import MODEL.ClasseInterface;
+import MODEL.ConvidadoFamilia;
+import MODEL.ConvidadoIndividual;
 import MODEL.Evento;
+import MODEL.Fornecedor;
+import MODEL.Igreja;
+import MODEL.Pagamento;
+import MODEL.Pessoa;
+import MODEL.Presente;
 import MODEL.Recado;
 import MODEL.Relatorio;
-import MODEL.ConvidadoFamilia;
 import MODEL.Usuario;
-import MODEL.Pessoa;
-import MODEL.Pagamento;
-import MODEL.Presente;
-import MODEL.ConvidadoIndividual;
-import MODEL.Fornecedor;
-import MODEL.ClasseInterface;
-import MODEL.Igreja;
-import MODEL.Cerimonial;
-import MODEL.Cartorio;
 import VIEW.Util;
 
 /**
@@ -63,19 +63,19 @@ public class DAO {
         this.listaNomesClasses[12] = "RELATÓRIOS";
 
         this.listaClasses = new Class<?>[]{
-            Recado.class, // RECADOS
-            Presente.class, // PRESENTES
-            Pessoa.class, // PESSOA
-            Usuario.class, // USUÁRIOS
-            Fornecedor.class, // FORNECEDOR
-            Evento.class, // EVENTO
-            Cerimonial.class, // CERIMONIAL
-            Igreja.class, // IGREJA
-            Cartorio.class, // CARTÓRIO
-            ConvidadoIndividual.class, // CONVIDADO INDIVIDUAL
-            ConvidadoFamilia.class, // CONVIDADO FAMÍLIA
-            Pagamento.class, // PAGAMENTO
-            Relatorio.class // RELATÓRIOS
+            Recado.class, // RECADOS        0
+            Presente.class, // PRESENTES    1
+            Pessoa.class, // PESSOA         2
+            Usuario.class, // USUÁRIOS      3
+            Fornecedor.class, // FORNECEDOR 4
+            Evento.class, // EVENTO         5
+            Cerimonial.class, // CERIMONIAL 6
+            Igreja.class, // IGREJA         7
+            Cartorio.class, // CARTÓRIO     8
+            ConvidadoIndividual.class, // CONVIDADO INDIVIDUAL 9
+            ConvidadoFamilia.class, // CONVIDADO FAMÍLIA 10
+            Pagamento.class, // PAGAMENTO 11
+            Relatorio.class // RELATÓRIOS 12
         };
 
         recados = new Recado[10];            // Por exemplo, vetor com 10 elementos
@@ -120,7 +120,7 @@ public class DAO {
         pessoa2.criar(pessoa2Dados);
         this.addVetor(2, pessoa2);
 
-        Object[] pessoa3Dados = {"Maria", "3431 1335", "NOIVO", "01/01/2001"};
+        Object[] pessoa3Dados = {"Maria", "3431 1335", "NOIVA", "01/01/2001"};
         Pessoa pessoa3 = new Pessoa();
         pessoa3.criar(pessoa3Dados);
         this.addVetor(2, pessoa3);
@@ -258,7 +258,6 @@ public class DAO {
     }
 
     public Object[] getVetorById(int id) {
-        System.out.println("pegando o vetor de id " + id);
         return this.todosOsVetores[id];
     }
 
@@ -366,22 +365,34 @@ public class DAO {
         }
     }
 
-    public void atualizar(int idClasse, String infos[]) {
-        int id = Util.stringToInt(infos[0]);
-        System.out.println("ENCONTRANDO ....");
-        if (this.find(idClasse, id)) {
-            System.out.println("ITEM ENCONTRADO!");
-            ClasseInterface item = this.getItemByID(idClasse, id);
-            if (item != null) {
-                item.update(infos);
-
-                System.out.println("ATUALIZADO COM SUCESSO!");
-                Util.mostrarMSG("ATUALIZADO COM SUCESSO!");
+    public void atualizar(int idClasse, Object infos[]) {
+        int id = Util.stringToInt((String) infos[0]);
+        if (id != 0) {
+            if (this.find(idClasse, id)) {
+                ClasseInterface objeto = this.getItemByID(idClasse, id);
+                //------------------USUARIOS------------------
+                if (this.getNameClasseById(idClasse).equals("USUÁRIOS")) {
+                    Usuario user = (Usuario) objeto;
+                    Pessoa pessoa = (Pessoa) this.getItemByID(2, Util.stringToInt((String) infos[1]));
+                    if (pessoa != null) {
+                        //checa se a pessoa já não está vinculada a outro usuário
+                        if (!pessoa.isUserVinculado() || user.getIdPessoa() == pessoa.getId()) {
+                            user.trocarPessoa(pessoa);
+                            user.update(infos);
+                        } else {
+                            Util.mostrarErro("Pessoa " + pessoa.getNome() + " já está vinculada a conta de usuário!");
+                        }
+                    } else {
+                        System.out.println("ATUALIZANDO ITEM");
+                        user.update(infos);
+                    }
+                } //------------------OUTRAS CLASSES------------------
+                else {
+                    objeto.update(infos);
+                }
             } else {
-                Util.mostrarErro("ITEM NÃO ENCONTRADO");
+                Util.mostrarErro("NÃO ENCONTRADO");
             }
-        } else {
-            Util.mostrarErro("NÃO ENCONTRADO");
         }
 
     }
@@ -462,17 +473,24 @@ public class DAO {
         return false;
     }
 
-    public Pessoa[] getNoivos() {
-        Pessoa noivos[] = new Pessoa[2];
+    public String getNoivo(int noiva) {
+        String texto = "";
         int n = 0;
         Pessoa vPessoas[] = (Pessoa[]) this.todosOsVetores[2];
         for (int i = 0; i < vPessoas.length; i++) {
-            if (vPessoas[i] != null && vPessoas[i].getTipo().equals("NOIVO")) {
-                noivos[n] = vPessoas[i];
-                n++;
+            if (vPessoas[i] != null) {
+                if ((noiva == 1 && vPessoas[i].getTipo().equals("NOIVA"))
+                        || (noiva == 0 && vPessoas[i].getTipo().equals("NOIVO"))) {
+                    texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome();
+                    texto += "\n";
+                    n++;
+                }
             }
         }
-        return noivos;
+        if (n == 0) {
+            texto = "\nNenhum(a) noivo(a) encontrado!";
+        }
+        return texto;
     }
 
     public String getTextoNoivos() {
@@ -487,6 +505,25 @@ public class DAO {
                 }
                 n++;
             }
+        }
+        return texto;
+    }
+
+    public String getNomes(int idClasse) {
+        String texto = "\n                    ";
+
+        ClasseInterface[] vObj = (ClasseInterface[]) this.todosOsVetores[idClasse];
+        int c = 0;
+        for (int i = 0; i < vObj.length; i++) {
+            if (vObj[i] != null) {
+                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
+                texto += "\n";
+                c++;
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNenhum cadastrado encontrado!\n\n";
         }
         return texto;
     }

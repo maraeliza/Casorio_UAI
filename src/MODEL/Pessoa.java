@@ -21,7 +21,7 @@ public class Pessoa implements ClasseInterface {
     private LocalDate dataModificacao;
     private LocalDate nascimento;
     private boolean userVinculado;
-
+    private String tipo;
     public static int total;
 
     public boolean isUserVinculado() {
@@ -89,7 +89,7 @@ public class Pessoa implements ClasseInterface {
     public static void setTotal(int total) {
         Pessoa.total = total;
     }
-    private String tipo;
+
 
     public void update(Object vetor[]) {
         boolean alterou = false;

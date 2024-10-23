@@ -4,14 +4,9 @@
  */
 package MODEL;
 
+import VIEW.Util;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
-
-/**
- *
- * @author CAUPT - ALUNOS
- */
-import java.time.LocalDate;
 
 public class Fornecedor implements ClasseInterface {
 
@@ -77,7 +72,10 @@ public class Fornecedor implements ClasseInterface {
     }
 
     public void setParcelas(int parcelas) {
-        this.parcelas = parcelas;
+        if (parcelas != this.parcelas) {
+            this.parcelas = parcelas;
+        }
+
         atualizarDataModificacao();
     }
 
@@ -158,40 +156,62 @@ public class Fornecedor implements ClasseInterface {
         return campos;
     }
 
-    @Override
     public void update(Object vetor[]) {
+        System.out.println("CHAMOU A FUNCAO UPDATE");
         boolean alterado = false;
+
         if (vetor.length < 6) {
+            System.out.println("INFORMAÇÕES INSUFICIENTES");
             return; // Verifica se há informações suficientes
         }
-        if (vetor[0] != null) {
-            this.nome = (String) vetor[0];
+
+        // Verifica e atualiza o nome
+        if (vetor[1] != null && !((String) vetor[1]).trim().isEmpty()) {
+            this.nome = (String) vetor[1];
             alterado = true;
         }
-        if (vetor[1] != null) {
-            this.cnpj = (String) vetor[1];
+
+        // Verifica e atualiza o CNPJ
+        if (vetor[2] != null && !((String) vetor[2]).trim().isEmpty()) {
+            this.cnpj = (String) vetor[2];
             alterado = true;
         }
-        if (vetor[2] != null) {
-            this.telefone = (String) vetor[2];
+
+        // Verifica e atualiza o telefone
+        if (vetor[3] != null && !((String) vetor[3]).trim().isEmpty()) {
+            this.telefone = (String) vetor[3];
             alterado = true;
         }
-        if (vetor[3] != null) {
-            this.valorAPagar = (Double) vetor[3];
-            alterado = true;
-        }
+
+        // Verifica e atualiza o valor a pagar
         if (vetor[4] != null) {
-            this.parcelas = (Integer) vetor[4];
-            alterado = true;
+            try {
+                this.valorAPagar = Util.stringToDouble((String) vetor[4]); // Conversão usando stringToDouble
+                alterado = true;
+            } catch (NumberFormatException e) {
+                System.out.println("VALOR A PAGAR INVÁLIDO");
+            }
         }
+
+        // Verifica e atualiza o número de parcelas
         if (vetor[5] != null) {
-            this.estado = (int) vetor[5];
+            this.setParcelas(
+                    Util.stringToInt((String) vetor[5])
+            );
             alterado = true;
         }
+
+        // Verifica e atualiza o estado
+        String estadoTemp = ((String) vetor[6]).toUpperCase();
+        if ("PAGO".equals(estadoTemp)) {
+            this.estado = 1; // Estado pago
+        } else {
+            this.estado = 0; // Estado em pagamento ou outro
+        }
+
         if (alterado) {
             this.atualizarDataModificacao(); // Atualiza a data de modificação
         }
-
     }
 
     @Override
@@ -203,7 +223,7 @@ public class Fornecedor implements ClasseInterface {
         StringBuilder resultado = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-        resultado.append("ID: ").append(this.id).append("\n");
+        resultado.append("\nID: ").append(this.id).append("\n");
 
         if (this.nome != null && !this.nome.isEmpty()) {
             resultado.append("Nome: ").append(this.nome).append("\n");

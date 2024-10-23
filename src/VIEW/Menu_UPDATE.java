@@ -18,7 +18,7 @@ public class Menu_UPDATE {
     private String vetor[];
     private String valores[];
     private Class classe;
-    private int nColetados;
+    private int nColetados; 
     private DAO dao;
     private int idClasse;
 
@@ -57,7 +57,7 @@ public class Menu_UPDATE {
         this.valores = new String[10];
         conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
         conteudo += "\n" + objetos + "\n\n";
-        conteudo += "\n\nINSIRA " + this.vetor[0].toUpperCase();
+        conteudo += "\n\nINSIRA 0 PARA VOLTAR OU O " + this.vetor[0].toUpperCase().replace(":","") + " DO ITEM QUE DESEJA ALTERAR:";
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
@@ -74,6 +74,7 @@ public class Menu_UPDATE {
                                 result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
                                 this.nColetados++;
                                 this.valores[this.nColetados] = result;
+                                System.out.println("Valor coletado: "+this.valores[this.nColetados]);
                             }
                         }
                         this.dao.atualizar(this.idClasse, this.valores);
@@ -82,7 +83,7 @@ public class Menu_UPDATE {
                         Util.mostrarErro("Elemento de id " + result + " não encontrado!");
                     }
                 } catch (Exception e) {
-                    Util.mostrarErro("Digite um ID válido!");
+                    e.printStackTrace();
                 }
             }
 

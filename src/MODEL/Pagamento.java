@@ -14,12 +14,29 @@ public class Pagamento implements ClasseInterface {
     private LocalDate data;
     private Pessoa pessoa; // Supondo que a classe Pessoa já exista
     private String descricao;
+    private String nome;
     private Fornecedor fornecedor; // Supondo que a classe Fornecedor já exista
     private double valor;
     private int parcela; // Para pagamento parcelado
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
     private static int total;
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public static int getTotal() {
+        return total;
+    }
+
+    public static void setTotal(int total) {
+        Pagamento.total = total;
+    }
 
     public static String[] getCampos() {
         String[] campos = new String[10];
