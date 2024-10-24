@@ -289,7 +289,7 @@ public class DAO {
             texto += "\nTotal: " + this.getTotalClasse(idClasse) + " item\n\n";
         }
 
-        if (this.getTotalClasse(idClasse) > 0) {
+        if (this.getTotalClasse(idClasse) > 0 && this.getTotalClasse(idClasse) <= 5) {
             Object[] vetor = this.getVetorById(idClasse);
             for (int i = 0; i < vetor.length; i++) {
                 if (vetor[i] != null) {
@@ -304,7 +304,11 @@ public class DAO {
 
                 }
             }
-        } else {
+        } else if (this.getTotalClasse(idClasse) > 5 ) {
+            texto += this.getNomes(idClasse);
+        } else
+        
+        {
             texto += "\n\nNENHUM ITEM ENCONTRADO!\n";
         }
 
@@ -333,11 +337,17 @@ public class DAO {
                 System.out.println("usuario detectado");
 
                 int idPessoa = Util.stringToInt((String) infos[0]);
+                System.out.println("ID DA PESSOA "+idPessoa);
                 Pessoa pessoa = (Pessoa) this.getItemByID(2, idPessoa);
+                System.out.println("NOME: "+pessoa.getNome());
                 if (pessoa != null) {
+                    
                     if (!pessoa.isUserVinculado()) {
+                        System.out.println("Pessoa não tem usuario vinculado");
                         Usuario user = (Usuario) objeto;
+                        System.out.println("Trocando pessoa do usuario");
                         user.trocarPessoa(idPessoa, pessoa);
+                        System.out.println("criando usuario");
                         criado = user.criar(userLogado, infos);
                     } else {
                         Util.mostrarErro("A conta de usuário de " + pessoa.getNome() + " já existe!");

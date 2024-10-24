@@ -230,13 +230,13 @@ public class Pessoa implements ClasseInterface {
         }
         // Verifica e adiciona o tipo
         if (this.tipo != null && !this.tipo.isEmpty()) {
-            resultado.append("\nTipo: ").append(this.tipo.toUpperCase() );
+            resultado.append("\nTipo: ").append(this.tipo.toUpperCase());
         }
         resultado.append("\nUsuário Cadastrado: ");
-         // Verifica e adiciona o usuario
+        // Verifica e adiciona o usuario
         if (this.isUserVinculado()) {
             resultado.append("SIM");
-        }else{
+        } else {
             resultado.append("NÃO");
         }
         // Verifica e formata a data de criação
@@ -248,8 +248,8 @@ public class Pessoa implements ClasseInterface {
         if (this.dataModificacao != null) {
             resultado.append("\nData da Última Modificação: ").append(this.dataModificacao.format(formatter));
         }
-
         resultado.append("\n\n");
+
         return resultado.toString();
     }
 

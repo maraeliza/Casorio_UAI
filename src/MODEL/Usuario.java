@@ -27,8 +27,9 @@ public class Usuario implements ClasseInterface {
     public static int total;
 
     public Usuario() {
-        this.setTipo(1);
+
         this.idPessoa = 0;
+        this.setTipo(1);
     }
 
     public int getIdPessoa() {
@@ -176,10 +177,11 @@ public class Usuario implements ClasseInterface {
 
     public boolean criar(Object vetor[]) {
         boolean criou = false;
-
+        System.out.println("Metodo para criar usuario");
+         System.out.println("VETOR "+vetor[0] + " "+vetor[1] + " "+vetor[2] + " "+vetor[3]);
         //Pessoa pessoa, String login, String senha, int tipo
-        if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null) {
-
+        if (vetor[0] != null && vetor[1] != null && vetor[2] != null ) {
+            System.out.println("VETOR NAO NULO");
             String login = (String) vetor[1];
             String senha = (String) vetor[2];
 
@@ -212,6 +214,8 @@ public class Usuario implements ClasseInterface {
     }
 
     public boolean criar(Usuario user, Object vetor[]) {
+        
+        System.out.println("Chamando o metodo criar com o user");
         return criar(vetor);
     }
 
@@ -250,7 +254,6 @@ public class Usuario implements ClasseInterface {
         campos[1] = "ID DA PESSOA: ";
         campos[2] = "Login: ";
         campos[3] = "Senha: ";
-
         return campos;
     }
 
