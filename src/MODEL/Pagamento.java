@@ -5,22 +5,39 @@
 package MODEL;
 
 import java.time.LocalDate;
-
 import java.time.format.DateTimeFormatter;
 
 public class Pagamento implements ClasseInterface {
 
     private int id;
     private LocalDate data;
-    private Pessoa pessoa; // Supondo que a classe Pessoa já exista
+    private int idPessoa;
+    private Pessoa pessoa;
     private String descricao;
     private String nome;
-    private Fornecedor fornecedor; // Supondo que a classe Fornecedor já exista
+    private int idFornecedor;
+    private Fornecedor fornecedor;
     private double valor;
-    private int parcela; // Para pagamento parcelado
+    private int parcela;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
     private static int total;
+
+    public int getIdPessoa() {
+        return idPessoa;
+    }
+
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
+    }
+
+    public int getIdFornecedor() {
+        return idFornecedor;
+    }
+
+    public void setIdFornecedor(int idFornecedor) {
+        this.idFornecedor = idFornecedor;
+    }
 
     public String getNome() {
         return nome;
@@ -41,14 +58,39 @@ public class Pagamento implements ClasseInterface {
     public static String[] getCampos() {
         String[] campos = new String[10];
         campos[0] = "ID: ";
-        campos[1] = "DATA: ";
-        campos[2] = "PESSOA: ";
-        campos[3] = "DESCRIÇÃO: ";
-        campos[4] = "FORNECEDOR: ";
+        campos[1] = "ID DA PESSOA: ";
+        campos[2] = "ID DO FORNECEDOR: ";
+        campos[3] = "DATA: ";
+        campos[4] = "DESCRIÇÃO: ";
         campos[5] = "VALOR: ";
         campos[6] = "PARCELA: ";
-
         return campos;
+    }
+
+    public boolean trocarPessoa(int idPessoa, Pessoa p) {
+
+        //checa se o id é diferente
+        if ((this.getIdPessoa() == 0 || this.getIdPessoa() != idPessoa)
+                && p != null) {
+
+            this.setPessoa(p);
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean trocarFornecedor(int idFornecedor, Fornecedor fornecedor) {
+
+        //checa se o id é diferente
+        if ((this.getIdFornecedor() == 0 || this.getIdFornecedor() != idFornecedor)
+                && fornecedor != null) {
+
+            this.setFornecedor(fornecedor);
+
+            return true;
+        }
+        return false;
     }
 
     public int getId() {
@@ -87,8 +129,11 @@ public class Pagamento implements ClasseInterface {
         return fornecedor;
     }
 
-    public void setFornecedor(Fornecedor fornecedor) {
-        this.fornecedor = fornecedor;
+    public void setFornecedor(Fornecedor forn) {
+        if (forn != null) {
+            this.fornecedor = forn;
+            this.setIdFornecedor(this.fornecedor.getId());
+        }
     }
 
     public double getValor() {
@@ -122,10 +167,12 @@ public class Pagamento implements ClasseInterface {
     public void setDataModificacao(LocalDate dataModificacao) {
         this.dataModificacao = dataModificacao;
     }
+
     public boolean criar(Usuario user, Object vetor[]) {
         return criar(vetor);
     }
-    public boolean criar( Object vetor[]) {
+
+    public boolean criar(Object vetor[]) {
         System.out.println("CRIANDO UM NOVO PAGAMENTO!");
         System.out.println("Dados: " + vetor[0] + " " + vetor[1] + " " + vetor[2] + " " + vetor[3] + " " + vetor[4]);
 

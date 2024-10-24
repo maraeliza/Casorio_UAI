@@ -22,7 +22,16 @@ public class Presente implements ClasseInterface {
     private LocalDate dataModificacao;
     private boolean escolhido;
     public static int total;
+    private int idPessoa;
 
+    public int getIdPessoa() {
+        return idPessoa;
+    }
+
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
+    }
+     
     public static String[] getCampos() {
         String[] campos = new String[3];
         campos[0] = "ID: ";
@@ -160,7 +169,7 @@ public class Presente implements ClasseInterface {
         if (this.escolhido) {
             resultado.append("\nEscolhido: SIM");
             if (this.pessoa != null && this.pessoa.getNome() != null && this.pessoa.getNome().length() > 0) {
-                resultado.append("\nPessoa: ").append(this.pessoa.getNome());
+                resultado.append("\nPresenteador(a): ").append(this.pessoa.getNome());
             }
         } else {
             resultado.append("\nEscolhido: NÃO");
@@ -227,8 +236,15 @@ public class Presente implements ClasseInterface {
         if (p != null && this.escolhido == false) {
             this.pessoa = p;
             this.escolhido = true;
+            this.setIdPessoa(this.pessoa.getId());
+            return true;
+        }else  if (p != null && this.escolhido) {
+            this.pessoa = null;
+            this.setIdPessoa(0);
+            this.escolhido = false;
             return true;
         }
+        
         return false;
     }
 

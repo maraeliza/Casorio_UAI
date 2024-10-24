@@ -37,7 +37,7 @@ public class Pessoa implements ClasseInterface {
         campos[0] = "ID: ";
         campos[1] = "NOME: ";
         campos[2] = "TELEFONE: ";
-        campos[3] = "TIPO: ";
+        campos[3] = "TIPO (noivo/noiva, cerimonial, etc): ";
         campos[4] = "DATA DE NASCIMENTO: ";
         return campos;
     }
@@ -89,7 +89,6 @@ public class Pessoa implements ClasseInterface {
     public static void setTotal(int total) {
         Pessoa.total = total;
     }
-
 
     public void update(Object vetor[]) {
         boolean alterou = false;
@@ -229,7 +228,17 @@ public class Pessoa implements ClasseInterface {
         if (this.telefone != null && !this.telefone.isEmpty()) {
             resultado.append("\nTelefone: ").append(this.telefone);
         }
-
+        // Verifica e adiciona o tipo
+        if (this.tipo != null && !this.tipo.isEmpty()) {
+            resultado.append("\nTipo: ").append(this.tipo.toUpperCase() );
+        }
+        resultado.append("\nUsuário Cadastrado: ");
+         // Verifica e adiciona o usuario
+        if (this.isUserVinculado()) {
+            resultado.append("SIM");
+        }else{
+            resultado.append("NÃO");
+        }
         // Verifica e formata a data de criação
         if (this.dataCriacao != null) {
             resultado.append("\nData de Criação: ").append(this.dataCriacao.format(formatter));
@@ -254,7 +263,7 @@ public class Pessoa implements ClasseInterface {
     }
 
     public String getTipo() {
-        return this.tipo;
+        return this.tipo.toUpperCase();
 
     }
 

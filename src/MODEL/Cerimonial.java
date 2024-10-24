@@ -8,15 +8,16 @@ package MODEL;
  *
  * @author Jussie
  */
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Cerimonial implements ClasseInterface {
 
-    public int id;
+    private int id;
+    private int idUsuario;
+    private Usuario user;
     private String nome;
-    private String telefone;
-
+    
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
 
@@ -25,8 +26,9 @@ public class Cerimonial implements ClasseInterface {
     public static String[] getCampos() {
         String[] campos = new String[2];
         campos[0] = "ID: ";
-        campos[1] = "Nome: ";
-        campos[2] = "Telefone: ";
+        campos[1] = "ID Usuário: ";
+       
+       
 
         return campos;
     }
@@ -39,10 +41,7 @@ public class Cerimonial implements ClasseInterface {
             alterado = true;
         }
 
-        if (vetor[1] != null) {
-            this.telefone = (String) vetor[1];
-            alterado = true;
-        }
+      
 
         if (alterado) {
             this.dataCriacao = LocalDate.now();
@@ -61,10 +60,7 @@ public class Cerimonial implements ClasseInterface {
             alterado = true;
         }
 
-        if (vetor[1] != null) {
-            this.telefone = (String) vetor[1];
-            alterado = true;
-        }
+        
 
         if (alterado) {
             this.dataCriacao = LocalDate.now();
@@ -86,13 +82,7 @@ public class Cerimonial implements ClasseInterface {
             }
         }
 
-        if (vetor[1] != null) {
-            String novoTelefone = (String) vetor[1];
-            if (novoTelefone.length() > 0) {
-                this.telefone = novoTelefone;
-                alterou = true;
-            }
-        }
+       
 
         if (alterou) {
             this.atualizarDataModificacao();
@@ -125,14 +115,6 @@ public class Cerimonial implements ClasseInterface {
         this.dataModificacao = LocalDate.now();
     }
 
-    public String getTelefone() {
-        return this.telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-        this.dataModificacao = LocalDate.now();
-    }
 
     public LocalDate getDataCriacao() {
         return this.dataCriacao;
@@ -146,7 +128,7 @@ public class Cerimonial implements ClasseInterface {
     public void criar(String nome, String telefone) {
         this.id = ++total;
         this.nome = nome;
-        this.telefone = telefone;
+        
         this.dataCriacao = LocalDate.now();
         this.dataModificacao = null;
     }
@@ -160,10 +142,7 @@ public class Cerimonial implements ClasseInterface {
             alterou = true;
         }
 
-        if (telefone != null && !telefone.isEmpty()) {
-            this.telefone = telefone;
-            alterou = true;
-        }
+        
 
         if (alterou) {
             this.atualizarDataModificacao();
@@ -189,10 +168,7 @@ public class Cerimonial implements ClasseInterface {
         resultado.append("Cerimonial ").append(this.id);
         resultado.append("\nNome: ").append(this.nome);
 
-        // Verifica e adiciona o telefone
-        if (this.telefone != null && !this.telefone.isEmpty()) {
-            resultado.append("\nTelefone: ").append(this.telefone);
-        }
+       
 
         // Verifica e formata a data de criação
         if (this.dataCriacao != null) {

@@ -20,6 +20,7 @@ public class Menu_DEL {
     private int nColetados;
     private DAO dao;
     private int idClasse;
+
     public void exibir(DAO dao, int idClasse) {
         this.dao = dao;
         this.idClasse = idClasse;
@@ -32,9 +33,10 @@ public class Menu_DEL {
             texto += "\n\nDigite o ID para excluir: ";
             String res = JOptionPane.showInputDialog(null, texto, "0");
             if (res != null && res.length() > 0) {
-                    int id = Util.stringToInt(res);
+                int id = Util.stringToInt(res);
+                if (id != 0) {
                     System.out.println("TEXTO: " + texto);
-               
+
                     // Invoca o método estático (passando null porque não precisamos de uma instância)
                     boolean sucess = this.dao.delItemByID(this.idClasse, id);
 
@@ -46,7 +48,7 @@ public class Menu_DEL {
                         System.out.println("Nao foi possivel fazer a exclusao");
                         Util.mostrarErro("Não foi possível fazer a exclusão");
                     }
-              
+                }
             }
 
         } catch (Exception e) {

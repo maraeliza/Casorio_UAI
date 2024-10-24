@@ -5,7 +5,6 @@
 package MODEL;
 
 import java.time.LocalDate;
-
 import java.time.format.DateTimeFormatter;
 
 public class Cartorio implements ClasseInterface {
@@ -19,7 +18,7 @@ public class Cartorio implements ClasseInterface {
     private LocalDate dataModificacao;
 
     public static int total;
-
+    @Override
     public boolean criar(Usuario user, Object vetor[]) {
         boolean alterado = false;
 
@@ -46,7 +45,7 @@ public class Cartorio implements ClasseInterface {
 
         return alterado;
     }
-
+    @Override
     public boolean criar(Object vetor[]) {
         boolean alterado = false;
 
@@ -73,13 +72,13 @@ public class Cartorio implements ClasseInterface {
 
         return alterado;
     }
-
+    @Override
     public void update(Object vetor[]) {
         boolean alterou = false;
 
         if (vetor[0] != null) {
             String novoNome = (String) vetor[0];
-            if (novoNome.length() > 0) {
+            if (novoNome.length() > 0 && !this.nome.equals(novoNome)) {
                 this.nome = novoNome;
                 alterou = true;
             }
@@ -87,7 +86,7 @@ public class Cartorio implements ClasseInterface {
 
         if (vetor[1] != null) {
             String novoTelefone = (String) vetor[1];
-            if (novoTelefone.length() > 0) {
+            if (novoTelefone.length() > 0 && !this.telefone.equals(novoTelefone)) {
                 this.telefone = novoTelefone;
                 alterou = true;
             }
@@ -95,7 +94,7 @@ public class Cartorio implements ClasseInterface {
 
         if (vetor[2] != null) {
             String novoEndereco = (String) vetor[2];
-            if (novoEndereco.length() > 0) {
+            if (novoEndereco.length() > 0 && !this.endereco.equals(novoEndereco)) {
                 this.endereco = novoEndereco;
                 alterou = true;
             }
@@ -107,13 +106,14 @@ public class Cartorio implements ClasseInterface {
     }
 
     public static String[] getCampos() {
-        String[] campos = new String[2];
+        String[] campos = new String[10];
         campos[0] = "ID: ";
         campos[1] = "Nome: ";
         campos[2] = "Telefone: ";
         campos[3] = "Endereço: ";
         return campos;
     }
+   
 
     // Getters e Setters
     public int getId() {

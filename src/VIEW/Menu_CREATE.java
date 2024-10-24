@@ -64,27 +64,32 @@ public class Menu_CREATE {
         for (int i = 1; i < this.vetor.length; i++) {
             if (this.vetor[i] != null && result != null) {
                 conteudo = "\nCADASTRAR " + this.nomeClasse.toUpperCase();
-                if (this.nomeClasse.toUpperCase().equals("USUÁRIOS") && i == 1) {
-                    conteudo += this.montarPainelUsuarios();
-                }
-                if (this.nomeClasse.toUpperCase().equals("EVENTO")) {
-                    conteudo += this.montarPainelEvento(i);
-                }
+                conteudo += "\n" + this.montarOpcoes(this.nomeClasse, i);
+
                 conteudo += "\n\nINSIRA " + this.vetor[i].toUpperCase();
                 do {
                     result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-                    if (result.length() > 0) {
-                        this.valores[this.nColetados] = result;
-                        this.nColetados++;
+                    if (result != null) {
+                        if (result.length() > 0) {
+                            this.valores[this.nColetados] = result;
+                            this.nColetados++;
+                        } else {
+                            Util.mostrarErro("Preencha o campo!");
+                        }
                     } else {
-                        Util.mostrarErro("Preencha o campo!");
+                        break;
                     }
-                } while (result.length() <= 0);
+
+                } while (result.length() <= 0 && result != null);
 
                 System.out.println(this.valores[this.nColetados]);
             }
         }
-        this.dao.cadastrar(this.idClasse, this.valores, this.userLogado);
+        if (result != null) {
+            this.dao.cadastrar(this.idClasse, this.valores, this.userLogado);
+            Menu_READ menuVer = new Menu_READ();
+            menuVer.exibir(this.dao, this.idClasse);
+        }
 
     }
 
@@ -95,39 +100,92 @@ public class Menu_CREATE {
         return conteudo;
     }
 
-    public String montarPainelEvento(int i) {
-
+    public String montarOpcoes(String nomeClasse, int i) {
+        nomeClasse = nomeClasse.toUpperCase();
         String conteudo = "";
+        switch (nomeClasse) {
+            case "USUÁRIOS" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getNomesPessoasSemUsers();
+                        return conteudo;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "PAGAMENTO" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getNomes(2);
+                        return conteudo;
+                    }
+                    case 2 -> {
+                        if (this.dao.getTotalClasse(4) > 1) {
+                            conteudo += "\nID E NOME DOS FORNECEDORES:";
+                        } else {
+                            conteudo += "\nID E NOME DO FORNECEDOR:";
+                        }
 
-        switch (i) {
-            case 2 -> {
-                if (this.dao.getTotalClasse(7) > 1) {
-                    conteudo += "\nID E NOME DAS IGREJAS:";
-                } else {
-                    conteudo += "\nID E NOME DA IGREJA:";
-                }
-                conteudo += this.dao.getNomes(7);
-            }
-            case 3 -> {
-                if (this.dao.getTotalClasse(8) > 1) {
-                    conteudo += "\nID E NOME DOS CARTÓRIOS:";
-                } else {
-                    conteudo += "\nID E NOME DO CARTÓRIO:";
-                }
+                        conteudo += this.dao.getNomes(4);
+                        return conteudo;
 
-                conteudo += this.dao.getNomes(8);
-            }
-            case 4 -> {
-                if (this.dao.getTotalClasse(6) > 1) {
-                    conteudo += "\nID E NOME DOS CERIMONIAIS:";
-                } else {
-                    conteudo += "\nID E NOME DO CERIMONIAL:";
+                    }
+
+                    default -> {
+                        break;
+                    }
                 }
-                conteudo += this.dao.getNomes(6);
             }
+
+            case "EVENTO" -> {
+                switch (i) {
+                    case 2 -> {
+                        if (this.dao.getTotalClasse(7) > 1) {
+                            conteudo += "\nID E NOME DAS IGREJAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA IGREJA:";
+                        }
+                        conteudo += this.dao.getNomes(7);
+                    }
+                    case 3 -> {
+                        if (this.dao.getTotalClasse(8) > 1) {
+                            conteudo += "\nID E NOME DOS CARTÓRIOS:";
+                        } else {
+                            conteudo += "\nID E NOME DO CARTÓRIO:";
+                        }
+
+                        conteudo += this.dao.getNomes(8);
+                    }
+                    case 4 -> {
+                        if (this.dao.getTotalClasse(6) > 1) {
+                            conteudo += "\nID E NOME DOS CERIMONIAIS:";
+                        } else {
+                            conteudo += "\nID E NOME DO CERIMONIAL:";
+                        }
+                        conteudo += this.dao.getNomes(6);
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+
             default -> {
                 break;
             }
+
         }
 
         return conteudo;

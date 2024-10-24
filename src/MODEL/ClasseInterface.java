@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public interface ClasseInterface {
 
     int getId();
-
     void setId(int id);
 
     String ler();

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 public class Igreja implements ClasseInterface {
 
-    public int id;
+    private int id;
     private String nome;
     private String endereco;
 
@@ -22,7 +22,14 @@ public class Igreja implements ClasseInterface {
     private LocalDate dataModificacao;
 
     public static int total;
+    public static String[] getCampos() {
+        String[] campos = new String[3]; // Somente 3 campos necessários
+        campos[0] = "ID: ";
+        campos[1] = "Nome: ";
+        campos[2] = "Endereço: ";
 
+        return campos;
+    }
     // Getters e Setters
     public int getId() {
         return this.id;
@@ -91,12 +98,12 @@ public class Igreja implements ClasseInterface {
     public boolean criar(Object vetor[]) {
         boolean alterado = false;
 
-        if (vetor[0] != null) {
+        if (vetor[1] != null) {
             this.nome = (String) vetor[0];
             alterado = true;
         }
 
-        if (vetor[1] != null) {
+        if (vetor[2] != null) {
             this.endereco = (String) vetor[1];
             alterado = true;
         }
@@ -113,16 +120,16 @@ public class Igreja implements ClasseInterface {
     public void update(Object vetor[]) {
         boolean alterou = false;
 
-        if (vetor[0] != null) {
-            String novoNome = (String) vetor[0];
+        if (vetor[1] != null) {
+            String novoNome = (String) vetor[1];
             if (novoNome.length() > 0) {
                 this.nome = novoNome;
                 alterou = true;
             }
         }
 
-        if (vetor[1] != null) {
-            String novoEndereco = (String) vetor[1];
+        if (vetor[2] != null) {
+            String novoEndereco = (String) vetor[2];
             if (novoEndereco.length() > 0) {
                 this.endereco = novoEndereco;
                 alterou = true;

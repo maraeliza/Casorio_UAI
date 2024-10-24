@@ -4,6 +4,7 @@
  */
 package VIEW;
 
+import MODEL.*;
 import CONTROLLER.DAO;
 import javax.swing.JOptionPane;
 
@@ -11,18 +12,20 @@ import javax.swing.JOptionPane;
  *
  * @author Mara
  */
-public class Menu_UPDATE {
+public class MenuEscolherPresente {
 
     private String nomeClasse;
     private String texto;
     private String vetor[];
     private String valores[];
     private Class classe;
-    private int nColetados; 
+    private int nColetados;
     private DAO dao;
     private int idClasse;
+    private Usuario user;
 
-    public void exibir(DAO dao, int idClasse) {
+    public void exibir(DAO dao, int idClasse, Usuario user) {
+        this.user = user;
         this.dao = dao;
         this.idClasse = idClasse;
         this.vetor = new String[10];
@@ -57,7 +60,7 @@ public class Menu_UPDATE {
         this.valores = new String[10];
         conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
         conteudo += "\n" + objetos + "\n\n";
-        conteudo += "\n\nINSIRA 0 PARA CANCELAR \nINSIRA O " + this.vetor[0].toUpperCase().replace(":","") + " DO ITEM PARA ATUALIZÁ-LO:";
+        conteudo += "\n\nINSIRA 0 PARA VOLTAR \n\nINSIRA O " + this.vetor[0].toUpperCase().replace(":", "") + " DO PRESENTE PARA ESCOLHER\nOU PARA CANCELAR SUA ESCOLHA:";
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
@@ -66,19 +69,33 @@ public class Menu_UPDATE {
                 try {
                     boolean existe = this.dao.find(this.idClasse, idInserido);
                     if (existe) {
-                        this.nColetados = 0;
-                        for (int i = 1; i < this.vetor.length; i++) {
-                            if (this.vetor[i] != null && result != null) {
-                                conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
-                                conteudo += "\n\nINSIRA " + this.vetor[i].toUpperCase();
-                                result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-                                this.nColetados++;
-                                this.valores[this.nColetados] = result;
-                                System.out.println("Valor coletado: "+this.valores[this.nColetados]);
+                        Presente presente = (Presente) this.dao.getItemByID(idClasse, idInserido);
+                        if (presente != null) {
+                            if (presente.getEscolhido()) {
+                                if (this.user.getIdPessoa() == presente.getIdPessoa()) {
+                                    presente.escolher(this.user.getPessoa());
+                                    if (presente.getEscolhido()) {
+                                        Util.mostrarMSG("Presente escolhido com sucesso!");
+                                    } else {
+                                        Util.mostrarMSG("Escolha do presente cancelada!");
+                                    }
+                                } else {
+                                    Util.mostrarMSG("Você não é o presenteador!");
+                                }
+                            } else {
+                                presente.escolher(this.user.getPessoa());
+                                if (presente.getEscolhido()) {
+                                    Util.mostrarMSG("Presente escolhido com sucesso!");
+                                } else {
+                                    Util.mostrarMSG("Escolha do presente cancelada!");
+                                }
                             }
+
+                        } else {
+                            Util.mostrarMSG("Presente não encontrado!");
                         }
-                        this.dao.atualizar(this.idClasse, this.valores);
-                        this.exibir(this.dao, this.idClasse);
+
+                        this.exibir(this.dao, this.idClasse, this.user);
                     } else {
                         Util.mostrarErro("Elemento de id " + result + " não encontrado!");
                     }

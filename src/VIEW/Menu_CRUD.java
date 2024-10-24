@@ -5,9 +5,9 @@
 package VIEW;
 
 import CONTROLLER.DAO;
+import MODEL.Usuario;
 import javax.swing.JOptionPane;
 
-import MODEL.Usuario;
 /**
  *
  * @author Mara
@@ -25,10 +25,9 @@ public class Menu_CRUD {
     private Usuario user;
     private DAO dao;
     private int idClasse;
-    
 
     private void definirTexto(String classNome) {
-        this.texto = "\n\nMENU DE " + classNome ;
+        this.texto = "\n\nMENU DE " + classNome;
         this.texto += "\n\nEscolha a opção a seguir ";
         this.texto += "\n1. Adicionar novo";
         this.texto += "\n2. Ver todos";
@@ -36,18 +35,26 @@ public class Menu_CRUD {
         if (this.user != null && this.user.getTipo() == 1) {
             this.texto += "\n3. Atualizar";
             this.texto += "\n4. Deletar";
-            this.texto += "\n5. Voltar";
+            if (this.idClasse == 1) {
+                this.texto += "\n5. Escolher Presente";
+                this.texto += "\n6. Voltar";
+            } else {
+                this.texto += "\n5. Voltar";
+            }
+
         } else {
+
             this.texto += "\n3. Voltar";
+
         }
 
         this.texto += "\n\nDigite aqui o número da sua opção: ";
 
     }
 
-    public void exibir( DAO dao, int idClasse, boolean logou, Usuario user) {
+    public void exibir(DAO dao, int idClasse, boolean logou, Usuario user) {
         this.dao = dao;
-        System.out.println("Atualizando id da classe para "+idClasse);
+        System.out.println("Atualizando id da classe para " + idClasse);
         this.idClasse = idClasse;
         this.logou = logou;
         this.user = user;
@@ -80,17 +87,18 @@ public class Menu_CRUD {
                 case 1 -> {
                     Menu_CREATE menuAdd = new Menu_CREATE();
                     menuAdd.exibir(this.dao, this.idClasse, this.user);
+
                     break;
                 }
                 case 2 -> {
                     Menu_READ menuVer = new Menu_READ();
-                    menuVer.exibir(this.dao,this.idClasse);
+                    menuVer.exibir(this.dao, this.idClasse);
                     break;
                 }
                 case 3 -> {
                     if (this.user != null && this.user.getTipo() == 1) {
                         Menu_UPDATE menuUp = new Menu_UPDATE();
-                        menuUp.exibir(this.dao,this.idClasse);
+                        menuUp.exibir(this.dao, this.idClasse);
                     } else {
                         MenuInicial menu = new MenuInicial();
                         menu.exibir(this.dao, this.logou, this.user);
@@ -110,6 +118,21 @@ public class Menu_CRUD {
                     break;
                 }
                 case 5 -> {
+                    if (this.idClasse == 1) {
+
+                        MenuEscolherPresente menu = new MenuEscolherPresente();
+                        menu.exibir(this.dao, this.idClasse, this.user);
+                        break;
+
+                    } else {
+                        MenuInicial menu = new MenuInicial();
+                        menu.exibir(this.dao, this.logou, this.user);
+                    }
+
+                    break;
+                }
+                case 6 -> {
+
                     MenuInicial menu = new MenuInicial();
                     menu.exibir(this.dao, this.logou, this.user);
                     break;

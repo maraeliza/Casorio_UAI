@@ -26,6 +26,11 @@ public class Usuario implements ClasseInterface {
     private DAO dao;
     public static int total;
 
+    public Usuario() {
+        this.setTipo(1);
+        this.idPessoa = 0;
+    }
+
     public int getIdPessoa() {
         return idPessoa;
     }
@@ -55,7 +60,11 @@ public class Usuario implements ClasseInterface {
     }
 
     public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
+        if (pessoa != null) {
+            this.pessoa = pessoa;
+            this.pessoa.setUserVinculado(true);
+            this.setIdPessoa(this.pessoa.getId());
+        }
     }
 
     public void setTipo(int tipo) {
@@ -168,43 +177,33 @@ public class Usuario implements ClasseInterface {
     public boolean criar(Object vetor[]) {
         boolean criou = false;
 
-        int idPessoa = (int) vetor[0];
         //Pessoa pessoa, String login, String senha, int tipo
         if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null) {
 
-            if (idPessoa != 0) {
+            String login = (String) vetor[1];
+            String senha = (String) vetor[2];
 
-                Pessoa pessoa = (Pessoa) vetor[4];
-                if (pessoa != null) {
-                    if (!pessoa.isUserVinculado()) {
-                        if (pessoa != null
-                                && idPessoa == pessoa.getId()
-                                && !pessoa.isUserVinculado()) {
+            if (login.length() > 0 && senha.length() > 0) {
 
-                            String login = (String) vetor[1];
-                            String senha = (String) vetor[2];
-                            int tipo = (int) vetor[3];
+                this.id = ++total;
+                this.login = login;
+                this.senha = senha;
+                this.pessoa.setUserVinculado(true);
+                this.dataCriacao = LocalDate.now();
+                this.dataModificacao = null;
+                System.out.println("USUARIO: " + this);
+                System.out.println("TIPO: " + this.pessoa.getTipo());
+                if (this.pessoa.getTipo().toUpperCase().equals("ADMIN")
+                        || this.pessoa.getTipo().toUpperCase().equals("NOIVO")
+                        || this.pessoa.getTipo().toUpperCase().equals("NOIVA")
+                        || this.pessoa.getTipo().toUpperCase().equals("CERIMONIAL")) {
 
-                            if (login.length() > 0 && senha.length() > 0 && this.checarTipo(tipo)) {
-                                pessoa.setUserVinculado(true);
-                                this.pessoa = pessoa;
-                                this.idPessoa = idPessoa;
-                                this.id = ++total;
-                                this.login = login;
-                                this.senha = senha;
-                                this.tipo = tipo;
-                                this.dataCriacao = LocalDate.now();
-                                this.dataModificacao = null;
-                                criou = true;
-
-                            }
-                        }
-                    }
-
+                    this.tipo = 1;
                 } else {
-
-                    Util.mostrarErro("Pessoa de id " + vetor[0] + " não encontrada");
+                    this.tipo = 2;
                 }
+
+                criou = true;
 
             }
 
@@ -213,40 +212,7 @@ public class Usuario implements ClasseInterface {
     }
 
     public boolean criar(Usuario user, Object vetor[]) {
-        boolean criou = false;
-        int idPessoa = Util.stringToInt((String) vetor[0]);
-
-        //Pessoa pessoa, String login, String senha, int tipo
-        if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null) {
-
-            if (idPessoa != 0) {
-                Pessoa pessoa = (Pessoa) vetor[4];
-                if (pessoa != null
-                        && idPessoa == pessoa.getId()
-                        && !pessoa.isUserVinculado()) {
-
-                    String login = (String) vetor[1];
-                    String senha = (String) vetor[2];
-                    int tipo = Util.stringToInt((String) vetor[3]);
-
-                    if (login.length() > 0 && senha.length() > 0 && this.checarTipo(tipo)) {
-                        pessoa.setUserVinculado(true);
-                        this.pessoa = pessoa;
-                        this.idPessoa = idPessoa;
-                        this.id = ++total;
-                        this.pessoa = pessoa;
-                        this.login = login;
-                        this.senha = senha;
-                        this.tipo = tipo;
-                        this.dataCriacao = LocalDate.now();
-                        this.dataModificacao = null;
-                        criou = true;
-                    }
-                }
-            }
-
-        }
-        return criou;
+        return criar(vetor);
     }
 
     public boolean checarTipo(int tipo) {
@@ -261,7 +227,8 @@ public class Usuario implements ClasseInterface {
         resultado.append("\n\nUsuário ").append(this.id);
         resultado.append("\n Nome: ").append(this.getNome());
         resultado.append("\n Login: ").append(this.login);
-        resultado.append("\n Senha: ").append(this.senha); // Considere ocultar a senha em produção
+        resultado.append("\n Senha: ").append(this.senha);
+        resultado.append("\n Tipo: ").append(this.pessoa.getTipo());
 
         // Verifica e formata a data de criação
         if (this.dataCriacao != null) {
@@ -283,7 +250,7 @@ public class Usuario implements ClasseInterface {
         campos[1] = "ID DA PESSOA: ";
         campos[2] = "Login: ";
         campos[3] = "Senha: ";
-        campos[4] = "Tipo: ";
+
         return campos;
     }
 
@@ -337,9 +304,20 @@ public class Usuario implements ClasseInterface {
         Usuario.total = totalUsuario;
     }
 
-    public void trocarPessoa(Pessoa p) {
-        this.getPessoa().setUserVinculado(false);
-        this.setPessoa(p);
-        this.getPessoa().setUserVinculado(true);
+    public boolean trocarPessoa(int idPessoa, Pessoa p) {
+
+        //checa se o id é diferente e se pessoa já não tem user vinculado
+        if ((this.getIdPessoa() == 0 || this.getIdPessoa() != idPessoa)
+                && p != null && !p.isUserVinculado()) {
+
+            if (this.getIdPessoa() > 0 && this.getPessoa() != null) {
+                this.getPessoa().setUserVinculado(false);
+            }
+
+            this.setPessoa(p);
+
+            return true;
+        }
+        return false;
     }
 }
