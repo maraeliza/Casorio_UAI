@@ -23,11 +23,20 @@ public class Presente implements ClasseInterface {
     private boolean escolhido;
     public static int total;
     private int idPessoa;
+    private boolean comprado;
 
     public int getIdPessoa() {
         return idPessoa;
     }
 
+    public boolean isComprado() {
+        return comprado;
+    }
+
+    public void setComprado(boolean comprado) {
+        this.comprado = comprado;
+    }
+    
     public void setIdPessoa(int idPessoa) {
         this.idPessoa = idPessoa;
     }

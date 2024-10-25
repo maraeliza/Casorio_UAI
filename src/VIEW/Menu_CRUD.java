@@ -43,8 +43,8 @@ public class Menu_CRUD {
             }
 
         } else {
-
-            this.texto += "\n3. Voltar";
+            this.texto += "\n3. Escolher Presente";
+            this.texto += "\n4. Voltar";
 
         }
 
@@ -96,7 +96,13 @@ public class Menu_CRUD {
                     break;
                 }
                 case 3 -> {
-                    if (this.user != null && this.user.getTipo() == 1) {
+                     if (this.idClasse == 1 && this.user != null && this.user.getTipo() != 1 ) {
+
+                        MenuEscolherPresente menu = new MenuEscolherPresente();
+                        menu.exibir(this.dao, this.idClasse, this.user);
+                        break;
+
+                    }else if (this.user != null && this.user.getTipo() == 1) {
                         Menu_UPDATE menuUp = new Menu_UPDATE();
                         menuUp.exibir(this.dao, this.idClasse);
                     } else {
@@ -107,7 +113,7 @@ public class Menu_CRUD {
                     break;
                 }
                 case 4 -> {
-                    if (this.user != null && this.user.getTipo() == 1) {
+                      if (this.user != null && this.user.getTipo() == 1) {
                         Menu_DEL menuDel = new Menu_DEL();
                         menuDel.exibir(this.dao, this.idClasse);
                     } else {
