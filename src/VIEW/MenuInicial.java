@@ -108,7 +108,7 @@ public class MenuInicial {
         this.userLogado = userLogou;
         int o = -1;
         do {
-            this.definirTexto("João", "Maria");
+            this.definirTexto(this.dao.getNoivos(0).getNome(), this.dao.getNoivos(1).getNome());
 
             this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
             System.out.println(this.op);

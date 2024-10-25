@@ -177,6 +177,8 @@ public class Recado implements ClasseInterface {
         // Verifica se a pessoa não é nula e se o nome é válido
         if (this.pessoa != null && this.pessoa.getNome() != null && this.pessoa.getNome().length() > 1) {
             resultado.append("\n   Autor: ").append(this.pessoa.getNome());
+        }else{
+            resultado.append("\n   Autor: Anônimo");
         }
 
         // Verifica e formata a data de criação

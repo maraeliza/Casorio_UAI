@@ -37,7 +37,8 @@ public class Menu_CRUD {
             this.texto += "\n4. Deletar";
             if (this.idClasse == 1) {
                 this.texto += "\n5. Escolher Presente";
-                this.texto += "\n6. Voltar";
+                this.texto += "\n6. Comprar  Presente";
+                this.texto += "\n7. Voltar";
             } else {
                 this.texto += "\n5. Voltar";
             }
@@ -96,13 +97,13 @@ public class Menu_CRUD {
                     break;
                 }
                 case 3 -> {
-                     if (this.idClasse == 1 && this.user != null && this.user.getTipo() != 1 ) {
+                    if (this.idClasse == 1 && this.user != null && this.user.getTipo() != 1) {
 
                         MenuEscolherPresente menu = new MenuEscolherPresente();
                         menu.exibir(this.dao, this.idClasse, this.user);
                         break;
 
-                    }else if (this.user != null && this.user.getTipo() == 1) {
+                    } else if (this.user != null && this.user.getTipo() == 1) {
                         Menu_UPDATE menuUp = new Menu_UPDATE();
                         menuUp.exibir(this.dao, this.idClasse);
                     } else {
@@ -113,7 +114,7 @@ public class Menu_CRUD {
                     break;
                 }
                 case 4 -> {
-                      if (this.user != null && this.user.getTipo() == 1) {
+                    if (this.user != null && this.user.getTipo() == 1) {
                         Menu_DEL menuDel = new Menu_DEL();
                         menuDel.exibir(this.dao, this.idClasse);
                     } else {
@@ -124,7 +125,7 @@ public class Menu_CRUD {
                     break;
                 }
                 case 5 -> {
-                    if (this.idClasse == 1) {
+                    if (this.idClasse == 1 && this.user != null) {
 
                         MenuEscolherPresente menu = new MenuEscolherPresente();
                         menu.exibir(this.dao, this.idClasse, this.user);
@@ -138,9 +139,16 @@ public class Menu_CRUD {
                     break;
                 }
                 case 6 -> {
+                    if (this.idClasse == 1 && this.user != null ) {
 
-                    MenuInicial menu = new MenuInicial();
-                    menu.exibir(this.dao, this.logou, this.user);
+                        MenuComprarPresente menu = new MenuComprarPresente();
+                        menu.exibir(this.dao, this.idClasse, this.user);
+                        break;
+
+                    } else {
+                        MenuInicial menu = new MenuInicial();
+                        menu.exibir(this.dao, this.logou, this.user);
+                    }
                     break;
                 }
 

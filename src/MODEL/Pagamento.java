@@ -4,6 +4,7 @@
  */
 package MODEL;
 
+import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -59,8 +60,8 @@ public class Pagamento implements ClasseInterface {
         String[] campos = new String[10];
         campos[0] = "ID: ";
         campos[1] = "ID DA PESSOA: ";
-        campos[2] = "ID DO FORNECEDOR: ";
-        campos[3] = "DATA: ";
+        campos[2] = "ID DO FORNECEDOR (0 PARA NENHUM FORNECEDOR): ";
+        campos[3] = "DATA (DD/MM/YYYY): ";
         campos[4] = "DESCRIÇÃO: ";
         campos[5] = "VALOR: ";
         campos[6] = "PARCELA: ";
@@ -178,31 +179,17 @@ public class Pagamento implements ClasseInterface {
 
         boolean alterado = false;
 
-        if (vetor[0] != null && vetor[0] instanceof LocalDate) {
-            this.data = (LocalDate) vetor[0]; // Data do pagamento
-            if (vetor[1] != null && vetor[1] instanceof Pessoa) {
-                this.pessoa = (Pessoa) vetor[1]; // Pessoa
-                alterado = true;
-            }
+        if (vetor[0] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null && vetor[5] != null) {
+            System.out.println("DATA VALIDA " + (String) vetor[2]);
+            this.data = Util.stringToDate((String) vetor[2]); // Data do pagamento
+
+            this.descricao = (String) vetor[3]; // Descrição
+            this.valor = Util.stringToDouble((String) vetor[4]);
+            this.parcela = Util.stringToInt((String) vetor[5]);
+            alterado = true;
+
         }
-
         if (alterado) {
-            if (vetor[2] != null && vetor[2] instanceof String) {
-                this.descricao = (String) vetor[2]; // Descrição
-            }
-
-            if (vetor[3] != null && vetor[3] instanceof Fornecedor) {
-                this.fornecedor = (Fornecedor) vetor[3]; // Fornecedor
-            }
-
-            if (vetor[4] != null && vetor[4] instanceof Double) {
-                this.valor = (Double) vetor[4]; // Valor
-            }
-
-            if (vetor[5] != null && vetor[5] instanceof Integer) {
-                this.parcela = (Integer) vetor[5]; // Parcela
-            }
-
             // Atribui o ID único e define as datas de criação e modificação
             this.id = ++total;
             this.dataCriacao = LocalDate.now();
@@ -275,48 +262,38 @@ public class Pagamento implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
+        System.out.println("CHAMOU A FUNÇÃO UPDATE PARA PAGAMENTO");
         boolean alterou = false;
 
-        if (vetor[0] != null && vetor[0] instanceof LocalDate) {
-            LocalDate novaData = (LocalDate) vetor[0];
-            if (!novaData.equals(this.data)) {
-                this.data = novaData;
-                alterou = true;
-            }
+        // Verifica e atualiza data do pagamento (vetor[3])
+        if (vetor[3] != null && !((String) vetor[3]).isEmpty()) {
+            this.data = Util.stringToDate((String) vetor[3]);
+            System.out.println("Data de pagamento atualizada para: " + this.data);
+            alterou = true;
         }
 
-        if (vetor[1] != null) {
-            String descricao = (String) vetor[1];
-            if (descricao.length() > 0 && !descricao.equals(this.descricao)) {
-                this.descricao = descricao;
-                alterou = true;
-            }
+        // Verifica e atualiza descrição (vetor[4])
+        if (vetor[4] != null && !((String) vetor[4]).isEmpty()) {
+            this.descricao = (String) vetor[4];
+            System.out.println("Descrição atualizada para: " + this.descricao);
+            alterou = true;
         }
 
-        if (vetor[2] != null) {
-            Fornecedor f = (Fornecedor) vetor[2];
-            if (f != null && !f.equals(this.fornecedor)) {
-                this.fornecedor = f;
-                alterou = true;
-            }
+        // Verifica e atualiza valor (vetor[5])
+        if (vetor[5] != null && !((String) vetor[5]).isEmpty()) {
+            this.valor = Util.stringToDouble((String) vetor[5]);
+            System.out.println("Valor atualizado para: " + this.valor);
+            alterou = true;
         }
 
-        if (vetor[3] != null) {
-            Double novoValor = (Double) vetor[3];
-            if (novoValor != null && !novoValor.equals(this.valor)) {
-                this.valor = novoValor;
-                alterou = true;
-            }
+        // Verifica e atualiza parcela (vetor[6])
+        if (vetor[6] != null && !((String) vetor[6]).isEmpty()) {
+            this.parcela = Util.stringToInt((String) vetor[6]);
+            System.out.println("Parcela atualizada para: " + this.parcela);
+            alterou = true;
         }
 
-        if (vetor[4] != null) {
-            Integer novaParcela = (Integer) vetor[4];
-            if (novaParcela != null && !novaParcela.equals(this.parcela)) {
-                this.parcela = novaParcela;
-                alterou = true;
-            }
-        }
-
+        // Atualiza a data de modificação caso tenha havido alguma alteração
         if (alterou) {
             this.atualizarDataModificacao();
         }

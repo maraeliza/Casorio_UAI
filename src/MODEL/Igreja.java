@@ -74,6 +74,11 @@ public class Igreja implements ClasseInterface {
     }
 
     public boolean criar(Usuario user, Object vetor[]) {
+     
+        return criar(vetor);
+    }
+
+    public boolean criar(Object vetor[]) {
         boolean alterado = false;
 
         if (vetor[0] != null) {
@@ -82,28 +87,6 @@ public class Igreja implements ClasseInterface {
         }
 
         if (vetor[1] != null) {
-            this.endereco = (String) vetor[1];
-            alterado = true;
-        }
-
-        if (alterado) {
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null;
-            this.id = ++total; // Supondo que 'total' é um contador de IDs
-        }
-
-        return alterado;
-    }
-
-    public boolean criar(Object vetor[]) {
-        boolean alterado = false;
-
-        if (vetor[1] != null) {
-            this.nome = (String) vetor[0];
-            alterado = true;
-        }
-
-        if (vetor[2] != null) {
             this.endereco = (String) vetor[1];
             alterado = true;
         }

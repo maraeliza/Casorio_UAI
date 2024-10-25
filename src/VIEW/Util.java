@@ -3,9 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package VIEW;
+import javax.swing.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import javax.swing.*;
+import java.time.format.DateTimeParseException;
 /**
  *
  * @author Mara
@@ -70,5 +72,15 @@ public class Util {
         // Converte o LocalDate para String usando o formatter
         String dataFormatada = data.format(formatter);
         return dataFormatada;
+    }
+     public static LocalDate stringToDate(String dateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        try {
+            return LocalDate.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            Util.mostrarErro("Data inserida no formato incorreto");
+            return null;
+        }
     }
 }

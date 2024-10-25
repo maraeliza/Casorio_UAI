@@ -17,13 +17,25 @@ public class Presente implements ClasseInterface {
     private int id;
     private String nome;
     private String tipo;
+
+    private String link;
     private Pessoa pessoa;
+
+    private LocalDate dataComrpa;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
     private boolean escolhido;
     public static int total;
     private int idPessoa;
     private boolean comprado;
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
 
     public int getIdPessoa() {
         return idPessoa;
@@ -36,17 +48,17 @@ public class Presente implements ClasseInterface {
     public void setComprado(boolean comprado) {
         this.comprado = comprado;
     }
-    
+
     public void setIdPessoa(int idPessoa) {
         this.idPessoa = idPessoa;
     }
-     
+
     public static String[] getCampos() {
-        String[] campos = new String[3];
+        String[] campos = new String[10];
         campos[0] = "ID: ";
         campos[1] = "NOME: ";
         campos[2] = "TIPO: ";
-
+        campos[3] = "LINK DE COMPRA: ";
         return campos;
     }
 
@@ -115,7 +127,7 @@ public class Presente implements ClasseInterface {
         boolean alterado = false;
         System.out.println("CRIANDO UM NOVO PRESENTE!");
         System.out.println(vetor[0] + " " + vetor[1] + " " + vetor[2]);
-        
+
         if (vetor[0] != null && vetor[0] instanceof String) {
             this.nome = (String) vetor[0]; // Nome
             if (vetor[1] != null && vetor[1] instanceof String) {
@@ -142,7 +154,10 @@ public class Presente implements ClasseInterface {
             this.nome = (String) vetor[0]; // Nome
             if (vetor[1] != null && vetor[1] instanceof String) {
                 this.tipo = (String) vetor[1]; // Tipo
-                alterado = true;
+                if (vetor[2] != null && vetor[2] instanceof String) {
+                    this.link = (String) vetor[2]; // Tipo
+                    alterado = true;
+                }
             }
 
         }
@@ -173,7 +188,18 @@ public class Presente implements ClasseInterface {
         if (this.tipo != null && this.tipo.length() > 0) {
             resultado.append("\nTipo: ").append(this.tipo);
         }
-
+        // Verifica e adiciona o tipo
+        if (this.link != null && this.link.length() > 0) {
+            resultado.append("\nLink de compra: ").append(this.link);
+        }
+        if (this.comprado) {
+            resultado.append("\nComprado: SIM");
+            if (this.pessoa != null && this.pessoa.getNome() != null && this.pessoa.getNome().length() > 0) {
+                resultado.append("\nComprador(a): ").append(this.pessoa.getNome());
+            }
+        } else {
+            resultado.append("\nComprado: NÃO");
+        }
         // Verifica se foi escolhido e adiciona informações da pessoa
         if (this.escolhido) {
             resultado.append("\nEscolhido: SIM");
@@ -240,6 +266,23 @@ public class Presente implements ClasseInterface {
 
     }
 
+    public boolean comprar(Pessoa p) {
+
+        if (p != null && this.comprado == false) {
+            this.pessoa = p;
+            this.comprado = true;
+            this.setIdPessoa(this.pessoa.getId());
+            return true;
+        } else if (p != null && this.comprado) {
+            this.pessoa = null;
+            this.setIdPessoa(0);
+            this.comprado = false;
+            return true;
+        }
+        this.atualizarDataModificacao();
+        return false;
+    }
+
     public boolean escolher(Pessoa p) {
 
         if (p != null && this.escolhido == false) {
@@ -247,13 +290,14 @@ public class Presente implements ClasseInterface {
             this.escolhido = true;
             this.setIdPessoa(this.pessoa.getId());
             return true;
-        }else  if (p != null && this.escolhido) {
+        } else if (p != null && this.escolhido) {
             this.pessoa = null;
             this.setIdPessoa(0);
             this.escolhido = false;
+
             return true;
         }
-        
+        this.atualizarDataModificacao();
         return false;
     }
 
