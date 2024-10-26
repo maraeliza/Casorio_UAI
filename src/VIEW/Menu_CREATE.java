@@ -86,7 +86,12 @@ public class Menu_CREATE {
             }
         }
         if (result != null) {
-            this.dao.cadastrar(this.idClasse, this.valores, this.userLogado);
+            if(this.dao.cadastrar(this.idClasse, this.valores, this.userLogado)){
+                Util.mostrarMSG("Cadastrado com sucesso!");
+            }else{
+                Util.mostrarErro("Não foi possível realizar o cadastro!");
+            }
+            
             Menu_READ menuVer = new Menu_READ();
             menuVer.exibir(this.dao, this.idClasse);
         }
@@ -113,6 +118,47 @@ public class Menu_CREATE {
                             conteudo += "\nID E NOME DA PESSOA:";
                         }
                         conteudo += this.dao.getNomesPessoasSemUsers();
+                        return conteudo;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "CONVIDADO INDIVIDUAL" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getNomesPessoasSemConvidado();
+                        return conteudo;
+                    }
+                    case 2 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS FAMÍLIAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA FAMÍLIA:";
+                        }
+                        conteudo += this.dao.getNomes(10);
+                        return conteudo;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "CERIMONIAL" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getCerimoniaisIdNomeDisponiveis();
                         return conteudo;
                     }
                     default -> {

@@ -29,25 +29,46 @@ public class Menu_CRUD {
     private void definirTexto(String classNome) {
         this.texto = "\n\nMENU DE " + classNome;
         this.texto += "\n\nEscolha a opção a seguir ";
-        this.texto += "\n1. Adicionar novo";
-        this.texto += "\n2. Ver todos";
-
-        if (this.user != null && this.user.getTipo() == 1) {
-            this.texto += "\n3. Atualizar";
-            this.texto += "\n4. Deletar";
+        if (this.user.getTipo() == 1) {
             if (this.idClasse == 1) {
+                this.texto += "\n1. Adicionar novo";
+                this.texto += "\n2. Ver todos";
+                this.texto += "\n3. Editar " + classNome.toLowerCase();
+                this.texto += "\n4. Deletar";
                 this.texto += "\n5. Escolher Presente";
                 this.texto += "\n6. Comprar  Presente";
                 this.texto += "\n7. Voltar";
-            } else {
+            }
+            else if (this.idClasse == 11) {
+                this.texto += "\n1. Adicionar novo";
+                this.texto += "\n2. Ver todos";
+                this.texto += "\n3. Editar " + classNome.toLowerCase();
+                this.texto += "\n4. Deletar";
+                this.texto += "\n5. Realizar Pagamento";
+                this.texto += "\n6. Pesquisar Pagamento";
+                this.texto += "\n7. Agendar Pagamento";
+                this.texto += "\n8. Voltar";
+            } 
+            else if (this.idClasse == 12) {
+                this.texto += "\n1. Adicionar novo";
+                this.texto += "\n2. Ver todos";
+                this.texto += "\n3. Voltar";
+            }
+            else if (this.idClasse == 13) {
+                this.texto += "\n1. Ver todos";
+                this.texto += "\n2. Voltar";
+            }
+            else {
+                this.texto += "\n1. Adicionar novo";
+                this.texto += "\n2. Ver todos";
+                this.texto += "\n3. Editar " + classNome.toLowerCase();
+                this.texto += "\n4. Deletar";
                 this.texto += "\n5. Voltar";
             }
-
-        } else {
-            this.texto += "\n3. Escolher Presente";
-            this.texto += "\n4. Voltar";
-
         }
+        
+        
+
 
         this.texto += "\n\nDigite aqui o número da sua opção: ";
 
@@ -131,6 +152,12 @@ public class Menu_CRUD {
                         menu.exibir(this.dao, this.idClasse, this.user);
                         break;
 
+                    } else if (this.idClasse == 11 && this.user != null) {
+                        System.out.println("Criando o menu de realizar pagamento");
+                        MenuFazerPagamento menu = new MenuFazerPagamento();
+                        menu.exibir(this.dao, this.idClasse, this.user);
+                        break;
+
                     } else {
                         MenuInicial menu = new MenuInicial();
                         menu.exibir(this.dao, this.logou, this.user);
@@ -139,9 +166,15 @@ public class Menu_CRUD {
                     break;
                 }
                 case 6 -> {
-                    if (this.idClasse == 1 && this.user != null ) {
+                    if (this.idClasse == 1 && this.user != null) {
 
                         MenuComprarPresente menu = new MenuComprarPresente();
+                        menu.exibir(this.dao, this.idClasse, this.user);
+                        break;
+
+                    } else if (this.idClasse == 11 && this.user != null) {
+
+                        MenuPesquisarPagamento menu = new MenuPesquisarPagamento();
                         menu.exibir(this.dao, this.idClasse, this.user);
                         break;
 

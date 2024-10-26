@@ -64,6 +64,7 @@ public class Usuario implements ClasseInterface {
         if (pessoa != null) {
             this.pessoa = pessoa;
             this.pessoa.setUserVinculado(true);
+        
             this.setIdPessoa(this.pessoa.getId());
         }
     }
@@ -138,11 +139,8 @@ public class Usuario implements ClasseInterface {
         int idPessoa = Util.stringToInt((String) vetor[0]);
         if (idPessoa != 0) {
             Pessoa pessoa = (Pessoa) dao.getItemByID(2, idPessoa);
-            if (pessoa != null && idPessoa == pessoa.getId()) {
-                this.pessoa = pessoa;
-                this.idPessoa = idPessoa;
-                alterou = true;
-
+            if (!pessoa.isUserVinculado() || this.getIdPessoa() != pessoa.getId()) {
+                this.trocarPessoa(idPessoa, pessoa);
             }
         }
         if (vetor[1] != null) {
@@ -175,48 +173,76 @@ public class Usuario implements ClasseInterface {
 
     }
 
-    public boolean criar(Object vetor[]) {
+    public boolean criar(DAO dao, Object vetor[]) {
+        this.dao = dao;
         boolean criou = false;
-        System.out.println("Metodo para criar usuario");
-         System.out.println("VETOR "+vetor[0] + " "+vetor[1] + " "+vetor[2] + " "+vetor[3]);
-        //Pessoa pessoa, String login, String senha, int tipo
-        if (vetor[0] != null && vetor[1] != null && vetor[2] != null ) {
-            System.out.println("VETOR NAO NULO");
-            String login = (String) vetor[1];
-            String senha = (String) vetor[2];
-
-            if (login.length() > 0 && senha.length() > 0) {
-
-                this.id = ++total;
-                this.login = login;
-                this.senha = senha;
-                this.pessoa.setUserVinculado(true);
-                this.dataCriacao = LocalDate.now();
-                this.dataModificacao = null;
-                System.out.println("USUARIO: " + this);
-                System.out.println("TIPO: " + this.pessoa.getTipo());
-                if (this.pessoa.getTipo().toUpperCase().equals("ADMIN")
-                        || this.pessoa.getTipo().toUpperCase().equals("NOIVO")
-                        || this.pessoa.getTipo().toUpperCase().equals("NOIVA")
-                        || this.pessoa.getTipo().toUpperCase().equals("CERIMONIAL")) {
-
-                    this.tipo = 1;
-                } else {
-                    this.tipo = 2;
+        if(this.dao != null){
+            System.out.println("usuario detectado");
+          
+            int idP = Util.stringToInt((String) vetor[0]);
+            System.out.println("ID DA PESSOA " + idP);
+            Pessoa pessoa = (Pessoa) dao.getItemByID(2, idP);
+            System.out.println("NOME: " + pessoa.getNome());
+            if (pessoa != null) {
+    
+                if (!pessoa.isUserVinculado() ) {
+                    System.out.println("Pessoa não tem usuario vinculado");
+    
+                    System.out.println("Trocando pessoa do usuario");
+                    this.trocarPessoa(idP, pessoa);
+                    System.out.println("criando usuario");
+    
+                    System.out.println("Metodo para criar usuario");
+                    System.out.println("VETOR " + vetor[0] + " " + vetor[1] + " " + vetor[2]);
+                    //Pessoa pessoa, String login, String senha, int tipo
+                    if (vetor[0] != null && vetor[1] != null && vetor[2] != null) {
+                        System.out.println("VETOR NAO NULO");
+                        String login = (String) vetor[1];
+                        String senha = (String) vetor[2];
+    
+                        if (login.length() > 0 && senha.length() > 0) {
+    
+                            this.id = ++total;
+                            this.login = login;
+                            this.senha = senha;
+                            this.pessoa.setUserVinculado(true);
+                            this.dataCriacao = LocalDate.now();
+                            this.dataModificacao = null;
+                            System.out.println("USUARIO: " + this);
+                            System.out.println("TIPO: " + this.pessoa.getTipo());
+                            if (this.pessoa.getTipo().toUpperCase().equals("ADMIN")
+                                    || this.pessoa.getTipo().toUpperCase().equals("NOIVO")
+                                    || this.pessoa.getTipo().toUpperCase().equals("NOIVA")
+                                    || this.pessoa.getTipo().toUpperCase().equals("CERIMONIAL")) {
+    
+                                this.tipo = 1;
+                            } else {
+                                this.tipo = 2;
+                            }
+    
+                            criou = true;
+    
+                        }
+    
+                    }
+                } else if (pessoa.isUserVinculado()) {
+                    Util.mostrarErro("A conta de usuário de " + pessoa.getNome() + " já existe!");
                 }
-
-                criou = true;
-
+    
+            } else {
+                Util.mostrarErro("Pessoa de id " + vetor[0] + " não encontrada");
+    
             }
-
         }
+        
+
         return criou;
     }
 
-    public boolean criar(Usuario user, Object vetor[]) {
-        
+    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
+
         System.out.println("Chamando o metodo criar com o user");
-        return criar(vetor);
+        return criar(dao, vetor);
     }
 
     public boolean checarTipo(int tipo) {
@@ -261,9 +287,10 @@ public class Usuario implements ClasseInterface {
         this.dataModificacao = LocalDate.now();
     }
 
-    public void deletar() {
-        Usuario.total--;
+    public boolean deletar() {
+        --total;
         this.pessoa.setUserVinculado(false);
+        return true;
     }
 
     public String getLogin() {

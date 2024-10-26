@@ -4,6 +4,7 @@
  */
 package MODEL;
 
+import CONTROLLER.DAO;
 import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,8 +23,44 @@ public class Pessoa implements ClasseInterface {
     private LocalDate dataModificacao;
     private LocalDate nascimento;
     private boolean userVinculado;
+    private boolean cerimonialVinculado;
+    private boolean convidadoVinculado;
+    
     private String tipo;
     public static int total;
+    private DAO dao;
+
+    public Pessoa() {
+        this.userVinculado = false;
+        this.cerimonialVinculado = false;
+        this.convidadoVinculado = false;
+    }
+
+    public boolean isConvidadoVinculado() {
+        return convidadoVinculado;
+    }
+
+    public void setConvidadoVinculado(boolean convidadoVinculado) {
+        this.convidadoVinculado = convidadoVinculado;
+    }
+
+    public DAO getDao() {
+        return dao;
+    }
+
+    public void setDao(DAO dao) {
+        this.dao = dao;
+    }
+        
+    
+    
+    public boolean isCerimonialVinculado() {
+        return cerimonialVinculado;
+    }
+
+    public void setCerimonialVinculado(boolean cerimonialVinculado) {
+        this.cerimonialVinculado = cerimonialVinculado;
+    }
 
     public boolean isUserVinculado() {
         return userVinculado;
@@ -140,43 +177,49 @@ public class Pessoa implements ClasseInterface {
         }
     }
 
-    public boolean criar(Usuario user, Object[] vetor) {
-        return criar(vetor);
+    public boolean criar(DAO dao, Usuario user, Object[] vetor) {
+        System.out.println("criando pessoa");
+        return criar(dao, vetor);
 
     }
 
-    public boolean criar(Object[] vetor) {
+    public boolean criar(DAO dao, Object[] vetor) {
+        System.out.println("criando pessoa");
         boolean criado = false;
-        if (vetor[0] != null && vetor[0] instanceof String) {
-            this.nome = (String) vetor[0]; // Nome
-            if (vetor[1] != null && vetor[1] instanceof String) {
-                this.telefone = (String) vetor[1]; // Telefone
-                if (vetor[2] != null && vetor[2] instanceof String) {
-                    this.tipo = (String) vetor[2]; // Tipo
-                    if (vetor[3] != null && vetor[3] instanceof String) {
-                        String nascimentoStr = (String) vetor[3];
-                        try {
-                            this.nascimento = Util.stringToDate(nascimentoStr);
-                            if(this.nascimento != null ){
-                                criado = true;
+        this.dao = dao;
+        if (this.dao != null) {
+            if (vetor[0] != null && vetor[0] instanceof String) {
+                this.nome = (String) vetor[0]; // Nome
+                if (vetor[1] != null && vetor[1] instanceof String) {
+                    this.telefone = (String) vetor[1]; // Telefone
+                    if (vetor[2] != null && vetor[2] instanceof String) {
+                        this.tipo = (String) vetor[2]; // Tipo
+                        if (vetor[3] != null && vetor[3] instanceof String) {
+                            String nascimentoStr = (String) vetor[3];
+                            try {
+                                this.nascimento = Util.stringToDate(nascimentoStr);
+                                if (this.nascimento != null) {
+                                    criado = true;
+                                }
+
+                            } catch (DateTimeParseException e) {
+                                Util.mostrarErro("Formato de data inválido: " + nascimentoStr);
                             }
-                            
-                        } catch (DateTimeParseException e) {
-                            Util.mostrarErro("Formato de data inválido: " + nascimentoStr);
                         }
                     }
+
                 }
 
             }
+            if (criado) {
+                // Atribui o ID único e define as datas de criação e modificação
+                this.id = ++total;
+                this.dataCriacao = LocalDate.now();
+                this.dataModificacao = null; // Nenhuma modificação inicial
 
+            }
         }
-        if (criado) {
-            // Atribui o ID único e define as datas de criação e modificação
-            this.id = ++total;
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null; // Nenhuma modificação inicial
 
-        }
         return criado;
     }
 
@@ -222,8 +265,16 @@ public class Pessoa implements ClasseInterface {
         return resultado.toString();
     }
 
-    public void deletar() {
-        --Pessoa.total;
+    public boolean deletar() {
+        if (this.userVinculado) {
+            Util.mostrarErro(this.getNome() + " não pode ser deletado, tem usuário vinculado!");
+
+            return false;
+        } else {
+            --Pessoa.total;
+            return true;
+        }
+
     }
 
     public String getNome() {

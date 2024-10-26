@@ -7,6 +7,8 @@ package MODEL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import CONTROLLER.DAO;
+
 public class Cartorio implements ClasseInterface {
 
     private int id;
@@ -16,10 +18,10 @@ public class Cartorio implements ClasseInterface {
 
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
-
+    private DAO dao;
     public static int total;
     @Override
-    public boolean criar(Usuario user, Object vetor[]) {
+    public boolean criar(DAO dao,Usuario user, Object vetor[]) {
         boolean alterado = false;
 
         if (vetor[0] != null) {
@@ -46,7 +48,7 @@ public class Cartorio implements ClasseInterface {
         return alterado;
     }
     @Override
-    public boolean criar(Object vetor[]) {
+    public boolean criar(DAO dao,Object vetor[]) {
         boolean alterado = false;
 
         if (vetor[0] != null) {
@@ -168,7 +170,7 @@ public class Cartorio implements ClasseInterface {
     }
 
     // Método para criar um novo cartório
-    public void criar(String nome, String telefone, String endereco) {
+    public void criar(DAO dao, String nome, String telefone, String endereco) {
         this.id = ++total;
         this.nome = nome;
         this.telefone = telefone;
@@ -207,8 +209,9 @@ public class Cartorio implements ClasseInterface {
     }
 
     // Método para deletar cartório
-    public void deletar() {
+    public boolean deletar() {
         --total;
+        return true;
     }
 
     public String ler() {

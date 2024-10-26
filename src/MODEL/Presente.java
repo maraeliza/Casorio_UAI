@@ -8,6 +8,8 @@ import java.time.LocalDate;
 
 import java.time.format.DateTimeFormatter;
 
+import CONTROLLER.DAO;
+
 /**
  *
  * @author Mara
@@ -28,7 +30,7 @@ public class Presente implements ClasseInterface {
     public static int total;
     private int idPessoa;
     private boolean comprado;
-
+    private DAO dao;
     public String getLink() {
         return link;
     }
@@ -123,30 +125,7 @@ public class Presente implements ClasseInterface {
         return this.dataModificacao;
     }
 
-    public boolean criar(Object vetor[]) {
-        boolean alterado = false;
-        System.out.println("CRIANDO UM NOVO PRESENTE!");
-        System.out.println(vetor[0] + " " + vetor[1] + " " + vetor[2]);
-
-        if (vetor[0] != null && vetor[0] instanceof String) {
-            this.nome = (String) vetor[0]; // Nome
-            if (vetor[1] != null && vetor[1] instanceof String) {
-                this.tipo = (String) vetor[1]; // Tipo
-                alterado = true;
-            }
-
-        }
-        if (alterado) {
-            // Atribui o ID único e define as datas de criação e modificação
-            this.id = ++total;
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null; // Nenhuma modificação inicial
-            this.escolhido = false;
-        }
-        return alterado;
-    }
-
-    public boolean criar(Usuario user, Object vetor[]) {
+    public boolean criar(DAO dao, Object vetor[]) {
         System.out.println("CRIANDO UM NOVO PRESENTE!");
         System.out.println(vetor[0] + " " + vetor[1] + " " + vetor[2]);
         boolean alterado = false;
@@ -169,6 +148,11 @@ public class Presente implements ClasseInterface {
             this.escolhido = false;
         }
         return alterado;
+    }
+
+    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
+
+        return criar(dao, vetor);
 
     }
 
@@ -243,23 +227,6 @@ public class Presente implements ClasseInterface {
             }
         }
 
-        if (vetor[3] != null) {
-            Pessoa p = (Pessoa) vetor[3];
-            if (p != null) {
-                this.pessoa = p;
-                alterou = true;
-
-            }
-        }
-        if (vetor[4] != null) {
-            boolean escolheu = (boolean) vetor[4];
-            if (escolheu != this.escolhido) {
-                this.escolhido = escolheu;
-                alterou = true;
-
-            }
-        }
-
         if (alterou) {
             this.atualizarDataModificacao();
         }
@@ -306,9 +273,8 @@ public class Presente implements ClasseInterface {
         this.dataModificacao = LocalDate.now();
     }
 
-    public void deletar() {
-
-        Presente.total--;
-
+    public boolean deletar() {
+        --Presente.total;
+        return true;
     }
 }

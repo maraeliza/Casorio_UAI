@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package MODEL;
-
+import CONTROLLER.DAO;
 import java.time.LocalDate;
 
 /**
@@ -17,11 +17,11 @@ public interface ClasseInterface {
 
     String ler();
     String getNome();
-    void deletar();
+    boolean deletar();
 
-    boolean criar(Object vetor[]);
+    boolean criar(DAO dao, Object vetor[]);
 
-    boolean criar(Usuario user, Object vetor[]);
+    boolean criar(DAO dao, Usuario user, Object vetor[]);
 
     void update(Object vetor[]);
 

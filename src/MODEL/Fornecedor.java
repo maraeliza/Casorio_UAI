@@ -4,6 +4,7 @@
  */
 package MODEL;
 
+import CONTROLLER.DAO;
 import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +18,12 @@ public class Fornecedor implements ClasseInterface {
     private double valorAPagar;
     private int parcelas;
     private int estado; // "pago" ou "em pagamento"
+    private boolean quitado;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
 
     public static int total;
+    private DAO dao;
 
     // Getters e Setters
     public int getId() {
@@ -101,69 +104,37 @@ public class Fornecedor implements ClasseInterface {
         this.dataModificacao = LocalDate.now();
     }
 
-    public boolean criar(Usuario user, Object vetor[]) {
-        return criar(vetor);
+    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
+        return criar(dao, vetor);
     }
 
     @Override
-    public boolean criar(Object vetor[]) {
-        if (vetor.length < 6) {
-            return false; // Verifica se há informações suficientes
-        }
-        this.nome = (String) vetor[0];
-        this.cnpj = (String) vetor[1];
-        this.telefone = (String) vetor[2];
-
-        if (vetor[4] instanceof String) {
-            this.valorAPagar = Double.parseDouble((String) vetor[3]);
-        } else {
-            this.valorAPagar = (Double) vetor[3]; // Se já for Double
+    public boolean criar(DAO dao, Object vetor[]) {
+        this.dao = dao;
+        if (this.dao != null) {
+            this.nome = (String) vetor[0];
+            this.cnpj = (String) vetor[1];
+            this.telefone = (String) vetor[2];
+            this.dataCriacao = LocalDate.now();
+            this.dataModificacao = null;
+            this.id = ++total; // Aumenta o contador de IDs
         }
 
-        // Conversão de String para Integer
-        if (vetor[4] instanceof String) {
-            this.parcelas = Integer.parseInt((String) vetor[4]);
-        } else {
-            this.parcelas = (Integer) vetor[4]; // Se já for Integer
-        }
-
-        String estadoTemp = ((String) vetor[5]).toUpperCase();
-        if ("PAGO".equals(estadoTemp)) {
-            this.estado = 1; // Estado pago
-        } else {
-            this.estado = 0; // Estado em pagamento ou outro
-        }
-
-        this.dataCriacao = LocalDate.now();
-        this.dataModificacao = null;
-        this.id = ++total; // Aumenta o contador de IDs
         return true;
     }
 
     public static String[] getCampos() {
-
         String[] campos = new String[10];
         campos[0] = "ID: ";
         campos[1] = "nome: ";
         campos[2] = "CNPJ: ";
         campos[3] = "telefone: ";
-
-        campos[4] = "Valor A Pagar: ";
-        campos[5] = "Parcelas: ";
-
-        campos[6] = "Estado ('pago' ou 'em aberto'): ";
-
         return campos;
     }
 
     public void update(Object vetor[]) {
         System.out.println("CHAMOU A FUNCAO UPDATE");
         boolean alterado = false;
-
-        if (vetor.length < 6) {
-            System.out.println("INFORMAÇÕES INSUFICIENTES");
-            return; // Verifica se há informações suficientes
-        }
 
         // Verifica e atualiza o nome
         if (vetor[1] != null && !((String) vetor[1]).trim().isEmpty()) {
@@ -183,40 +154,15 @@ public class Fornecedor implements ClasseInterface {
             alterado = true;
         }
 
-        // Verifica e atualiza o valor a pagar
-        if (vetor[4] != null) {
-            try {
-                this.valorAPagar = Util.stringToDouble((String) vetor[4]); // Conversão usando stringToDouble
-                alterado = true;
-            } catch (NumberFormatException e) {
-                System.out.println("VALOR A PAGAR INVÁLIDO");
-            }
-        }
-
-        // Verifica e atualiza o número de parcelas
-        if (vetor[5] != null) {
-            this.setParcelas(
-                    Util.stringToInt((String) vetor[5])
-            );
-            alterado = true;
-        }
-
-        // Verifica e atualiza o estado
-        String estadoTemp = ((String) vetor[6]).toUpperCase();
-        if ("PAGO".equals(estadoTemp)) {
-            this.estado = 1; // Estado pago
-        } else {
-            this.estado = 0; // Estado em pagamento ou outro
-        }
-
         if (alterado) {
             this.atualizarDataModificacao(); // Atualiza a data de modificação
         }
     }
 
     @Override
-    public void deletar() {
-        --total; // Decrementa o total
+    public boolean deletar() {
+        --total;
+        return true;
     }
 
     public String ler() {
@@ -236,15 +182,17 @@ public class Fornecedor implements ClasseInterface {
         if (this.telefone != null && !this.telefone.isEmpty()) {
             resultado.append("Telefone: ").append(this.telefone).append("\n");
         }
+        if (this.valorAPagar > 0) {
+            resultado.append("Valor a Pagar: ").append(this.valorAPagar).append("\n");
 
-        resultado.append("Valor a Pagar: ").append(this.valorAPagar).append("\n");
+            if (this.parcelas > 0) {
+                resultado.append("Parcelas: ").append(this.parcelas).append("\n");
+            }
 
-        if (this.parcelas > 0) {
-            resultado.append("Parcelas: ").append(this.parcelas).append("\n");
+            String estadoDescricao = this.quitado ? "Pago" : "Não pago";
+            resultado.append("Estado: ").append(estadoDescricao).append("\n");
+
         }
-
-        String estadoDescricao = (this.estado == 1) ? "Pago" : "Não pago";
-        resultado.append("Estado: ").append(estadoDescricao).append("\n");
 
         if (this.dataCriacao != null) {
             resultado.append("Data de Criação: ").append(this.dataCriacao.format(formatter)).append("\n");
@@ -253,8 +201,32 @@ public class Fornecedor implements ClasseInterface {
         if (this.dataModificacao != null) {
             resultado.append("Data de Modificação: ").append(this.dataModificacao.format(formatter));
         }
-
+        resultado.append("\n");
         return resultado.toString();
+    }
+
+    public boolean isQuitado() {
+        return quitado;
+    }
+
+    public void setQuitado(boolean quitado) {
+        this.quitado = quitado;
+    }
+
+    public static int getTotal() {
+        return total;
+    }
+
+    public static void setTotal(int total) {
+        Fornecedor.total = total;
+    }
+
+    public DAO getDao() {
+        return dao;
+    }
+
+    public void setDao(DAO dao) {
+        this.dao = dao;
     }
 
 }

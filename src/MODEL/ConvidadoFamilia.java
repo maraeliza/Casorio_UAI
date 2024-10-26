@@ -3,58 +3,88 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package MODEL;
-import VIEW.Util;
+
+import CONTROLLER.DAO;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import java.util.Random;
 
 /**
  *
  * @author CAUPT - ALUNOS
  */
-public class ConvidadoFamilia {
 
-    public int id;
-    Pessoa pessoa;
-    String comentario;
+    
+public class ConvidadoFamilia implements ClasseInterface {
+    
+    private int id;
+    private String nome;
+    private String acesso;  
+    private LocalDate dataCriacao;
+    private LocalDate dataModificacao;
+    private DAO dao;
+    
+    public static int total;
+    
+    public static String[] getCampos() {
+        String[] campos = new String[10]; // Somente 3 campos necessários
+        campos[0] = "ID: ";
+        campos[1] = "Nome da Familia: ";
+        
 
-    LocalDate dataCriacao;
-    LocalDate dataModificacao;
+        return campos;
+    }
+    private String gerarAcesso() {
+        String primeiroNomeNoivo = this.dao.getNoivos(0).getNome();
+        String primeiroNomeNoiva = this.dao.getNoivos(1).getNome();
+        LocalDate dataCasamento = ((Evento) this.dao.getItemByID(5,1)).getData();
+        String diaMesAno = String.format("%02d%02d%d", dataCasamento.getDayOfMonth(), dataCasamento.getMonthValue(), dataCasamento.getYear());
+        String letrasAleatorias = gerarLetrasAleatorias(4);
+        return primeiroNomeNoivo + primeiroNomeNoiva + diaMesAno + letrasAleatorias;
+    }
 
-    public static int totalRecados;
+   
+    private String gerarLetrasAleatorias(int tamanho) {
+        String letras = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder(tamanho);
+        Random random = new Random();
+        for (int i = 0; i < tamanho; i++) {
+            sb.append(letras.charAt(random.nextInt(letras.length())));
+            
+            
+        }
+        return sb.toString();
+    }
 
     public int getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getTotalRecados() {
-        return totalRecados;
+    public String getNome() {
+        return this.nome;
     }
 
-    public static void setTotalRecados(int t) {
-        totalRecados = t;
+    public void setNome(String nomeFamilia) {
+        this.nome = nomeFamilia;
     }
 
-    public String getComentario() {
-        return this.comentario;
+    public String getAcesso() {
+        return acesso;
     }
 
-    public void setComentario(String comentario) {
-        this.comentario = comentario;
-        this.dataModificacao = LocalDate.now();
+    public void setAcesso(String acesso) {
+        this.acesso = acesso;
     }
 
-    public Pessoa getPessoa() {
-        return this.pessoa;
+    public void setDataModificacao(LocalDate dataModificacao) {
+        this.dataModificacao = dataModificacao;
     }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-        this.dataModificacao = LocalDate.now();
-    }
-
+    
     public LocalDate getDataCriacao() {
         return this.dataCriacao;
     }
@@ -63,53 +93,92 @@ public class ConvidadoFamilia {
         return this.dataModificacao;
     }
 
-    public void criar(Pessoa pessoa, String comentario) {
-        this.id = ++totalRecados;
-        this.pessoa = pessoa;
-        this.comentario = comentario;
-        this.dataCriacao = LocalDate.now();
-        this.dataModificacao = null;
-
-    }
-
-public void update(String comentario,  Pessoa p){
-        boolean alterou = false;
-        if(comentario.length() > 0){
-            this.comentario = comentario;
-            alterou = true;
-            
-        }
-       
-        if(p != null){
-            this.pessoa = p;
-            alterou = true;
-            
-        }
-        
-        if(alterou){
-            this.atualizarDataModificacao();
-        }
-        
-    }
-    private void atualizarDataModificacao() {
+    public void atualizarDataModificacao() {
 
         this.dataModificacao = LocalDate.now();
     }
 
-    private void deletar() {
-        --totalRecados;
-    }
 
-    public String ler() {
-        String dados = "";
-        dados = "\n\nID: " + this.id;
-        dados += "\n   Comentário: " + this.comentario;
-        if(this.pessoa != null){
-            dados += "\n   Autor: " + this.pessoa.getNome();
+    public boolean criar(DAO dao, Object[] vetor) {
+       if (vetor.length < 3) {
+            return false; // Verifica se há informações suficientes
         }
-        dados += "\n Data de criação: " + Util.dateToString(this.dataCriacao);
+        this.nome = (String) vetor[0];
+        this.acesso = this.gerarAcesso();
         
-
-        return dados;
+        this.dataCriacao = LocalDate.now();
+        this.dataModificacao = null;
+        this.id = ++total; // Aumenta o contador de IDs
+        return true;
+ 
     }
+
+   
+    public boolean criar(DAO dao, Usuario user, Object[] vetor) {
+        if(dao!=null){
+            
+            this.dao = dao;
+            return criar(this.dao, vetor);
+        }
+        return false;
+    }
+
+    public void update(Object vetor[]) {
+        boolean alterou = false;
+
+        // Atualiza o nome da familia
+        if (vetor[1] != null && vetor[1] instanceof String) {
+            String nmFamilia = (String) vetor[1];
+            if (!nmFamilia.isEmpty()) {
+                this.nome = nmFamilia;
+                alterou = true;
+            }
+        }
+
+        // Atualiza o acesso
+        if (vetor[2] != null && vetor[2] instanceof String) {
+            String acesso = (String) vetor[2];
+            if (!acesso.isEmpty()) {
+                this.acesso = acesso;
+                alterou = true;
+            }
+        }
+        if(alterou){
+            atualizarDataModificacao();
+        }
+        }
+    
+    public String ler() {
+        StringBuilder resultado = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Adiciona informações da pessoa
+        resultado.append("Familia ").append(this.id);
+        resultado.append("\nNome da Familia: ").append(this.nome);
+
+
+        // Verifica e adiciona o Acesso
+        if (this.acesso != null && !this.acesso.isEmpty()) {
+            resultado.append("\nAcesso da Familia: ").append(this.acesso);
+        }
+        
+        // Verifica e formata a data de criação
+        if (this.dataCriacao != null) {
+            resultado.append("\nData de Criação: ").append(this.dataCriacao.format(formatter));
+        }
+
+        // Verifica e formata a data de modificação
+        if (this.dataModificacao != null) {
+            resultado.append("\nData da Última Modificação: ").append(this.dataModificacao.format(formatter));
+        }
+
+        resultado.append("\n\n");
+        return resultado.toString();
+    }
+    
+    public boolean deletar() {
+        --ConvidadoFamilia.total;
+        return true;
+    }
+
 }

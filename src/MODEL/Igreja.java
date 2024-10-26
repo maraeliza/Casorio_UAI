@@ -9,8 +9,9 @@ package MODEL;
  * @author Jussie
  */
 
-import java.time.format.DateTimeFormatter;
+import CONTROLLER.DAO;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Igreja implements ClasseInterface {
 
@@ -22,6 +23,7 @@ public class Igreja implements ClasseInterface {
     private LocalDate dataModificacao;
 
     public static int total;
+        private DAO dao;
     public static String[] getCampos() {
         String[] campos = new String[3]; // Somente 3 campos necessários
         campos[0] = "ID: ";
@@ -73,12 +75,12 @@ public class Igreja implements ClasseInterface {
         return this.dataModificacao;
     }
 
-    public boolean criar(Usuario user, Object vetor[]) {
+    public boolean criar(DAO dao,Usuario user, Object vetor[]) {
      
-        return criar(vetor);
+        return criar(dao,vetor);
     }
 
-    public boolean criar(Object vetor[]) {
+    public boolean criar(DAO dao,Object vetor[]) {
         boolean alterado = false;
 
         if (vetor[0] != null) {
@@ -158,8 +160,9 @@ public class Igreja implements ClasseInterface {
     }
 
     // Método para deletar igreja
-    public void deletar() {
+    public boolean deletar() {
         --total;
+        return true;
     }
 
     // Método para ler os dados da igreja

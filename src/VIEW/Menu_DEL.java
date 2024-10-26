@@ -5,7 +5,6 @@
 package VIEW;
 
 import CONTROLLER.DAO;
-import MODEL.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -32,7 +31,7 @@ public class Menu_DEL {
             String texto = "";
             if (idClasse == 2) {
                 texto = this.dao.getNomesPessoasSemUsers();
-            }else{
+            } else {
                 texto = this.dao.getTexto(idClasse);
             }
             texto += "\n\nDigite o ID para excluir: ";
@@ -42,19 +41,8 @@ public class Menu_DEL {
                 if (id != 0) {
                     System.out.println("TEXTO: " + texto);
                     boolean sucess = false;
-                    if (idClasse == 2) {
-                        Pessoa p = (Pessoa)  this.dao.getItemByID(2, id);
-                        if(p!=null && !p.isUserVinculado()){
-                            sucess = this.dao.delItemByID(this.idClasse, id);
-                        }else{
-                            sucess = false;
-                            Util.mostrarErro("Não foi possível fazer a exclusão, pois "+p.getNome()+" tem um usuário vinculado!");
-                        }
-                    }else{
-                        // Invoca o método estático (passando null porque não precisamos de uma instância)
-                        sucess = this.dao.delItemByID(this.idClasse, id);
-                    }
                     
+                    sucess = this.dao.delItemByID(this.idClasse, id);
 
                     if (sucess) {
                         JOptionPane.showMessageDialog(null, "Elemento " + id + " excluído com sucesso!", "DELETADO", JOptionPane.INFORMATION_MESSAGE);

@@ -9,10 +9,12 @@ import MODEL.Cerimonial;
 import MODEL.ClasseInterface;
 import MODEL.ConvidadoFamilia;
 import MODEL.ConvidadoIndividual;
+import MODEL.Despesa;
 import MODEL.Evento;
 import MODEL.Fornecedor;
 import MODEL.Igreja;
 import MODEL.Pagamento;
+import MODEL.Parcela;
 import MODEL.Pessoa;
 import MODEL.Presente;
 import MODEL.Recado;
@@ -41,6 +43,9 @@ public class DAO {
     private ConvidadoFamilia[] convidadosFamilia;
     private Pagamento[] pagamentos;
     private Relatorio[] relatorios;
+    private Parcela[] parcelas;
+    private Despesa[] despesas;
+    
     private Object[][] todosOsVetores;
     private Class<?> listaClasses[];
     private String listaNomesClasses[];
@@ -59,9 +64,11 @@ public class DAO {
         this.listaNomesClasses[8] = "CARTÓRIO";
         this.listaNomesClasses[9] = "CONVIDADO INDIVIDUAL";
         this.listaNomesClasses[10] = "CONVIDADO FAMÍLIA";
-        this.listaNomesClasses[11] = "PAGAMENTO";
-        this.listaNomesClasses[12] = "RELATÓRIOS";
 
+        this.listaNomesClasses[11] = "PAGAMENTOS";
+        this.listaNomesClasses[12] = "DESPESAS";
+        this.listaNomesClasses[13] = "PARCELAS";
+      
         this.listaClasses = new Class<?>[]{
             Recado.class, // RECADOS        0
             Presente.class, // PRESENTES    1
@@ -75,7 +82,8 @@ public class DAO {
             ConvidadoIndividual.class, // CONVIDADO INDIVIDUAL 9
             ConvidadoFamilia.class, // CONVIDADO FAMÍLIA 10
             Pagamento.class, // PAGAMENTO 11
-            Relatorio.class // RELATÓRIOS 12
+            Despesa.class, // DESPESAS 12
+            Parcela.class // PARCELAS  13
         };
 
         recados = new Recado[10];            // Por exemplo, vetor com 10 elementos
@@ -90,7 +98,9 @@ public class DAO {
         convidadosIndividuais = new ConvidadoIndividual[10];
         convidadosFamilia = new ConvidadoFamilia[10];
         pagamentos = new Pagamento[10];
-        relatorios = new Relatorio[10];
+        despesas = new Despesa[10];
+        parcelas = new Parcela[10];
+        
         this.todosOsVetores = new Object[][]{
             recados,//0
             presentes,//1
@@ -104,95 +114,81 @@ public class DAO {
             convidadosIndividuais,//9
             convidadosFamilia,//10
             pagamentos,//11
-            relatorios//12
+            despesas,//12
+            parcelas //13
         };
+
+    }
+
+    public void criar() {
         this.addInfosIniciais();
     }
 
     public void addInfosIniciais() {
-        Object[] pessoa1Dados = {"ADMINISTRADOR", "7777 5555", "ADMIN", "01/01/2001"};
-        Pessoa pessoa1 = new Pessoa();
-        pessoa1.criar(pessoa1Dados);
-        this.addVetor(2, pessoa1);
+
+        Object[] dados = {"ADMINISTRADOR", "7777 5555", "ADMIN", "01/01/2001"};
+        this.cadastrar(2, dados, this.userLogado);
+
+        Object[] userDados1 = {"1", "admin", "1234"};
+        this.cadastrar(3, userDados1, this.userLogado);
 
         Object[] pessoa2Dados = {"José", "3432 2556", "NOIVO", "01/01/2001"};
-        Pessoa pessoa2 = new Pessoa();
-        pessoa2.criar(pessoa2Dados);
-        this.addVetor(2, pessoa2);
+        this.cadastrar(2, pessoa2Dados, this.userLogado);
 
         Object[] pessoa3Dados = {"Maria", "3431 1335", "NOIVA", "01/01/2001"};
-        Pessoa pessoa3 = new Pessoa();
-        pessoa3.criar(pessoa3Dados);
-        this.addVetor(2, pessoa3);
+        this.cadastrar(2, pessoa3Dados, this.userLogado);
 
         Object[] pessoa4Dados = {"Ana", "3431 1335", "convidado", "01/01/2001"};
-        Pessoa pessoa4 = new Pessoa();
-        pessoa4.criar(pessoa4Dados);
-        this.addVetor(2, pessoa4);
+        this.cadastrar(2, pessoa4Dados, this.userLogado);
 
-        Usuario user1 = new Usuario();
-        Object[] userDados1 = {1, "admin", "1234", 1, pessoa1};
-        user1.trocarPessoa(1, pessoa1);
-        user1.criar(userDados1);
+        Object[] pessoa5Dados = {"Ricardo", "3431 1335", "cerimonial", "31/01/1989"};
+        this.cadastrar(2, pessoa5Dados, this.userLogado);
 
-        this.addVetor(3, user1);
+        Object[] pessoa6Dados = {"Fábio", "3431 1335", "cerimonial", "15/05/1989"};
+        this.cadastrar(2, pessoa6Dados, this.userLogado);
+
+        Object[] userDados2 = {"6", "login", "senha"};
+        this.cadastrar(3, userDados2, this.userLogado);
+        Object[] cerD = {"6"};
+        this.cadastrar(6, cerD, this.userLogado);
 
         Object[] fornecedorBuffet = {"Buffet Delicioso", "12.345.678/0001-99", "(34) 1234-5678", 15000.0, 5, "em aberto"};
-        Fornecedor buffet = new Fornecedor();
-        buffet.criar(fornecedorBuffet);
-        this.addVetor(4, buffet);
+        this.cadastrar(4, fornecedorBuffet, this.userLogado);
 
         Object[] fornecedorDecoracao = {"Flores e Cores Decoração", "98.765.432/0001-11", "(34) 9876-5432", 8000.0, 3, "pago"};
-        Fornecedor decoracao = new Fornecedor();
-        decoracao.criar(fornecedorDecoracao);
-        this.addVetor(4, decoracao);
+        this.cadastrar(4, fornecedorDecoracao, this.userLogado);
 
         Object[] fornecedorFotografia = {"Momentos Eternos Fotografia", "11.223.344/0001-22", "(34) 1122-3344", 5000.0, 2, "em aberto"};
-        Fornecedor fotografia = new Fornecedor();
-        fotografia.criar(fornecedorFotografia);
-        this.addVetor(4, fotografia);
+        this.cadastrar(4, fornecedorFotografia, this.userLogado);
 
-        Object[] fornecedorMusica = { "Som & Luz Banda", "22.334.556/0001-33", "(34) 2233-4455", 7000.0, 4, "pago"};
-        Fornecedor musica = new Fornecedor();
-        musica.criar(fornecedorMusica);
-        this.addVetor(4, musica);
+        Object[] fornecedorMusica = {"Som & Luz Banda", "22.334.556/0001-33", "(34) 2233-4455", 7000.0, 4, "pago"};
+        this.cadastrar(4, fornecedorMusica, this.userLogado);
 
         Object[] fornecedorConvites = {"Convites Perfeitos", "33.445.667/0001-44", "(34) 3344-5566", 2000.0, 1, "em aberto"};
-        Fornecedor convites = new Fornecedor();
-        convites.criar(fornecedorConvites);
-        this.addVetor(4, convites);
+        this.cadastrar(4, fornecedorConvites, this.userLogado);
 
         // Exemplo de igrejas para o casamento
         Object[] igrejaDados1 = {"Igreja Matriz", "Rua das Flores, 123"};
-        Igreja igreja1 = new Igreja();
-        igreja1.criar(igrejaDados1);
-        this.addVetor(7, igreja1);
+        this.cadastrar(7, igrejaDados1, this.userLogado);
 
         Object[] igrejaDados2 = {"Capela São José", "Avenida Central, 456"};
-        Igreja igreja2 = new Igreja();
-        igreja2.criar(igrejaDados2);
-        this.addVetor(7, igreja2);
+        this.cadastrar(7, igrejaDados2, this.userLogado);
 
         Object[] igrejaDados3 = {"Igreja Nossa Senhora das Graças", "Praça das Palmeiras, 789"};
-        Igreja igreja3 = new Igreja();
-        igreja3.criar(igrejaDados3);
-        this.addVetor(7, igreja3);
+        this.cadastrar(7, igrejaDados3, this.userLogado);
 
         // Exemplo de cartórios para o casamento
         Object[] cartorioDados1 = {"Cartório Central", "(34) 1234-5678", "Avenida Brasil, 100"};
-        Cartorio cartorio1 = new Cartorio();
-        cartorio1.criar(cartorioDados1);
-        this.addVetor(8, cartorio1);
+        this.cadastrar(8, cartorioDados1, this.userLogado);
 
         Object[] cartorioDados2 = {"Cartório do Povo", "(34) 8765-4321", "Rua da Independência, 200"};
-        Cartorio cartorio2 = new Cartorio();
-        cartorio2.criar(cartorioDados2);
-        this.addVetor(8, cartorio2);
+        this.cadastrar(8, cartorioDados2, this.userLogado);
 
         Object[] cartorioDados3 = {"Cartório e Registro São José", "(34) 5678-1234", "Praça da República, 300"};
-        Cartorio cartorio3 = new Cartorio();
-        cartorio3.criar(cartorioDados3);
-        this.addVetor(8, cartorio3);
+        this.cadastrar(8, cartorioDados3, this.userLogado);
+
+        Object[] eventoPrincipal = {"15/12/2024", "1", "1", "1", "❤ Casorio de Maria e José ❤"};
+        this.cadastrar(5, eventoPrincipal, this.userLogado);
 
     }
 
@@ -375,7 +371,7 @@ public class DAO {
         return this.listaClasses[idClasse];
     }
 
-    public void cadastrar(int idClasse, Object infos[], Usuario userLogado) {
+    public boolean cadastrar(int idClasse, Object infos[], Usuario userLogado) {
         boolean criado = false;
         System.out.println("ADICIONANDO NO VETOR DA CLASSE DE ID " + idClasse);
         System.out.println("CLASSE NOME: " + this.getNameClasseById(idClasse));
@@ -387,107 +383,24 @@ public class DAO {
             ClasseInterface objeto = (ClasseInterface) classe.getDeclaredConstructor().newInstance();
             System.out.println("CRIANDO O OBJETO");
             // Chama o método criar com as informações fornecidas
+            criado = objeto.criar(this, userLogado, infos);
 
-            if (idClasse == 3) {
-                System.out.println("usuario detectado");
-
-                int idPessoa = Util.stringToInt((String) infos[0]);
-                System.out.println("ID DA PESSOA " + idPessoa);
-                Pessoa pessoa = (Pessoa) this.getItemByID(2, idPessoa);
-                System.out.println("NOME: " + pessoa.getNome());
-                if (pessoa != null) {
-
-                    if (!pessoa.isUserVinculado()) {
-                        System.out.println("Pessoa não tem usuario vinculado");
-                        Usuario user = (Usuario) objeto;
-                        System.out.println("Trocando pessoa do usuario");
-                        user.trocarPessoa(idPessoa, pessoa);
-                        System.out.println("criando usuario");
-                        criado = user.criar(userLogado, infos);
-                    } else {
-                        Util.mostrarErro("A conta de usuário de " + pessoa.getNome() + " já existe!");
-                    }
-
-                } else {
-                    Util.mostrarErro("Pessoa de id " + infos[0] + " não encontrada");
-
-                }
-            } else if (idClasse == 11) {
-
-                int idPessoa = Util.stringToInt((String) infos[0]);
-                System.out.println("pagamento detectado, encontrando pessoa de id " + idPessoa);
-                Pessoa pessoa = (Pessoa) this.getItemByID(2, idPessoa);
-                System.out.println("Pessoa encontrada " + pessoa.getNome());
-                if (pessoa != null) {
-                    System.out.println("CRIANDO OBJETO PAGAMENTO ");
-                    Pagamento pagamento = (Pagamento) objeto;
-                    System.out.println("Definindo a pessoa");
-                    pagamento.trocarPessoa(idPessoa, pessoa);
-                    int idFornecedor = Util.stringToInt((String) infos[1]);
-                    System.out.println("pagamento detectado, encontrando fornecedor de id " + idFornecedor);
-                    if (idFornecedor != 0) {
-                        Fornecedor fornecedor = (Fornecedor) this.getItemByID(4, idFornecedor);
-                        System.out.println("fornecedor encontrada " + fornecedor.getNome());
-                        if (fornecedor != null) {
-                            pagamento.trocarFornecedor(idFornecedor, fornecedor);
-                            criado = pagamento.criar(userLogado, infos);
-                        }
-                    } else {
-                        criado = pagamento.criar(userLogado, infos);
-                    }
-
-                } else if (idClasse == 5) {
-                    System.out.println("novo evento detectado");
-
-                    Pessoa noiva = this.getNoivos(1);
-                    Pessoa noivo = this.getNoivos(0);
-
-                    int idIgreja = Util.stringToInt((String) infos[1]);
-                    Igreja igreja = (Igreja) this.getItemByID(7, idIgreja);
-
-                    int idCartorio = Util.stringToInt((String) infos[2]);
-                    Cartorio cartorio = (Cartorio) this.getItemByID(8, idCartorio);
-
-                    int idCerimonial = Util.stringToInt((String) infos[3]);
-                    Cerimonial cerimonial = (Cerimonial) this.getItemByID(6, idCerimonial);
-                    if (noiva != null && noivo != null) {
-                        Evento evento = (Evento) objeto;
-
-                        evento.setNoiva(noiva);
-                        evento.setNoivo(noivo);
-
-                        evento.setIgreja(igreja);
-                        evento.setCartorio(cartorio);
-                        evento.setCerimonial(cerimonial);
-
-                        criado = evento.criar(userLogado, infos);
-                    }
-
-                } else {
-                    Util.mostrarErro("Pessoa de id " + infos[0] + " não encontrada");
-
-                }
-            } else {
-                criado = objeto.criar(userLogado, infos);
-            }
             System.out.println("criado: " + criado);
             if (criado) {
                 System.out.println("add no vetor");
                 // Adiciona o objeto ao vetor correspondente
                 boolean adicionado = this.addVetor(idClasse, objeto);
+                return adicionado;
 
-                if (adicionado) {
-                    Util.mostrarMSG("Cadastrado com sucesso!");
-                } else {
-                    Util.mostrarErro("Não foi possível realizar o cadastro!");
-                }
             } else {
-                Util.mostrarErro("Não foi possível realizar o cadastro!");
+                Util.mostrarErro("Não foi possível realizar o cadastro do objeto da classe " + this.getNameClasseById(idClasse) + "!");
+                return criado;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERRO AO CRIAR O OBJETO: " + e.getMessage());
+            return false;
         }
     }
 
@@ -496,59 +409,9 @@ public class DAO {
         if (id != 0) {
             if (this.find(idClasse, id)) {
                 ClasseInterface objeto = this.getItemByID(idClasse, id);
-                //------------------USUARIOS------------------
-                if (idClasse == 3) {
-                    Usuario user = (Usuario) objeto;
-                    if (infos[1] != null) {
-                        int idPessoa = Util.stringToInt((String) infos[1]);
-                        Pessoa pessoa = (Pessoa) this.getItemByID(2, idPessoa);
-                        if (pessoa != null) {
-                            //checa se a pessoa já não está vinculada a outro usuário
-                            if (!pessoa.isUserVinculado() || user.getIdPessoa() == pessoa.getId()) {
-                                user.trocarPessoa(idPessoa, pessoa);
-                                user.update(infos);
-                            } else {
-                                Util.mostrarErro("Pessoa " + pessoa.getNome() + " já está vinculada a conta de usuário!");
-                            }
-                        }
-                    } else {
-                        System.out.println("ATUALIZANDO ITEM");
-                        user.update(infos);
-                    }
-                } //------------------CERIMONIAL------------------
-                //------------------PAGAMENTOS------------------
-                else if (idClasse == 11 || infos[2].equals('0')) {
-                    System.out.println("convertendo pagamento");
-                    Pagamento pagamento = (Pagamento) objeto;
-                    if (infos[1] != null || !infos[1].equals('0')) {
-                        System.out.println("Coletando o id da pessoa");
-                        int idPessoa = Util.stringToInt((String) infos[1]);
-                        Pessoa pessoa = (Pessoa) this.getItemByID(2, idPessoa);
-                        if (pessoa != null) {
-                            pagamento.trocarPessoa(idPessoa, pessoa);
-                        }
-                    }
 
-                    if (infos[2] != null || !infos[2].equals('0')) {
-                        System.out.println("ATUALIZANDO FORNECEDOR");
-                        int idFornecedor = Util.stringToInt((String) infos[2]);
+                objeto.update(infos);
 
-                        // Obtém o fornecedor pelo ID
-                        Fornecedor fornecedor = (Fornecedor) this.getItemByID(4, idFornecedor);
-                        if (fornecedor != null) {
-                            pagamento.trocarFornecedor(idFornecedor, fornecedor);
-                            System.out.println("Fornecedor associado com sucesso.");
-                        } else {
-                            System.out.println("Fornecedor não encontrado para o ID: " + idFornecedor);
-                        }
-                    }
-                    pagamento.update(infos);
-
-                } //------------------EVENTOS------------------
-                //------------------OUTRAS CLASSES------------------
-                else {
-                    objeto.update(infos);
-                }
             } else {
                 Util.mostrarErro("NÃO ENCONTRADO");
             }
@@ -558,11 +421,8 @@ public class DAO {
 
     public boolean addVetor(int idClasse, Object ob) {
         Object[] vetor = this.getVetorById(idClasse);
-        System.out.println("ADICIONANDO NO VETOR");
         for (int i = 0; i < vetor.length; i++) {
-            System.out.println("Percorrendo vetor");
             if (vetor[i] == null) {
-                System.out.println("ITEM NULO ");
                 vetor[i] = ob;
                 return true;
             }
@@ -610,22 +470,21 @@ public class DAO {
     }
 
     public boolean delItemByID(int idClasse, int id) {
-        System.out.println("DELETANDO ITEM " + id + " DA CLASSE DE ID " + idClasse);
-        System.out.println("NOME DA CLASSE " + this.getNameClasseById(idClasse));
+        System.out.println("DELETANDO ITEM " + id + " DA CLASSE " + this.getNameClasseById(idClasse));
         Object[] vetor = this.getVetorById(idClasse);
-        System.out.println("vetor pego");
         for (int i = 0; i < vetor.length; i++) {
             // Verifica se o item não é nulo e se implementa a interface
             if (vetor[i] != null && vetor[i] instanceof ClasseInterface) {
-                System.out.println("verificado!");
-                ClasseInterface item = (ClasseInterface) vetor[i]; // Faz o cast
-                if (item.getId() == id) {
-                    item.deletar();
-                    System.out.println("elemento encontrado");
-                    vetor[i] = null; // Remove o item
-                    System.out.println("elemento apagado");
+                ClasseInterface item = (ClasseInterface) vetor[i];
 
-                    return true;
+                if (item.getId() == id) {
+
+                    boolean podeApagar = item.deletar();
+                    if (podeApagar) {
+                        vetor[i] = null; // Remove o item
+                    }
+
+                    return podeApagar;
                 }
             }
         }
@@ -649,6 +508,28 @@ public class DAO {
             return null;
         }
         return p;
+    }
+
+    public String getCerimoniaisIdNomeDisponiveis() {
+        String texto = "";
+        int n = 0;
+        Pessoa vPessoas[] = (Pessoa[]) this.todosOsVetores[2];
+        for (int i = 0; i < vPessoas.length; i++) {
+            if (vPessoas[i] != null) {
+                if (vPessoas[i].getTipo().equals("CERIMONIAL")
+                        && !vPessoas[i].isCerimonialVinculado()
+                        && vPessoas[i].isUserVinculado()) {
+                    texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome();
+                    texto += "     tipo: " + vPessoas[i].getTipo();
+                    texto += "\n";
+                    n++;
+                }
+            }
+        }
+        if (n == 0) {
+            texto = "\nNenhum cerimonial encontrado!";
+        }
+        return texto;
     }
 
     public String getNoivo(int noiva) {
@@ -688,6 +569,44 @@ public class DAO {
         return texto;
     }
 
+    public String getDespesasPendentes(){
+        String texto = "\n                    ";
+
+        Despesa[] vObj = (Despesa[]) this.todosOsVetores[12];
+        int c = 0;
+        for (int i = 0; i < vObj.length; i++) {
+            if (vObj[i] != null && !vObj[i].isPago()) {
+                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
+                texto += "\n";
+                c++;
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNenhuma despesa encontrada!\n\n";
+        }
+        return texto;
+    }
+    public String getParcelasPendentes(int idDespesa){
+        String texto = "\n";
+
+
+        Despesa despesa = (Despesa) this.getItemByID(12, idDespesa); 
+        
+        int c = 0;
+        for (int i = 0; i < despesa.getvParcelas().length; i++) {
+            if (despesa.getvParcelas()[i] != null && !despesa.getvParcelas()[i].isPago()) {
+                texto += despesa.getvParcelas()[i].ler();
+                c++;
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNenhuma parcela pendente de pagamento encontrada!\n\n";
+        }
+        return texto;
+    }
+
     public String getNomes(int idClasse) {
         String texto = "\n                    ";
 
@@ -715,7 +634,7 @@ public class DAO {
         int c = 0;
         for (int i = 0; i < vPessoas.length; i++) {
             if (vPessoas[i] != null) {
-                if (!vPessoas[i].isUserVinculado()) {
+                if (!vPessoas[i].isUserVinculado() && !vPessoas[i].getTipo().toUpperCase().equals("CONVIDADO")) {
                     texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome() + "\nTipo: " + vPessoas[i].getTipo();
                     c++;
                     texto += "\n";
@@ -727,6 +646,40 @@ public class DAO {
             texto = "\n\nNENHUMA PESSOA CADASTRADA SEM USUÁRIO VINCULADO!\n\n";
         }
         return texto;
+    }
+    public String getNomesPessoasSemConvidado() {
+        String texto = "\n                    ";
+        Pessoa vPessoas[] = (Pessoa[]) this.todosOsVetores[2];
+        Usuario vUsers[] = (Usuario[]) this.todosOsVetores[3];
+        boolean userVinculado = false;
+        int c = 0;
+        for (int i = 0; i < vPessoas.length; i++) {
+            if (vPessoas[i] != null) {
+                if (!vPessoas[i].isUserVinculado() 
+                    && !vPessoas[i].isConvidadoVinculado() 
+                    && vPessoas[i].getTipo().toUpperCase().equals("CONVIDADO")
+                    ) {
+                    texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome() + "\nTipo: " + vPessoas[i].getTipo();
+                    c++;
+                    texto += "\n";
+                }
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNENHUMA PESSOA CADASTRADA SEM USUÁRIO VINCULADO!\n\n";
+        }
+        return texto;
+    }
+    public Usuario getUserByIdPessoa(int id) {
+        Usuario vUsers[] = (Usuario[]) this.todosOsVetores[3];
+        for (int u = 0; u < vUsers.length; u++) {
+            if (vUsers[u].getIdPessoa() == id) {
+                return vUsers[u];
+            }
+
+        }
+        return null;
     }
 
     public String getPresentesEscolhidos(Usuario user) {

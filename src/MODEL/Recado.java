@@ -9,6 +9,8 @@ import java.time.LocalDate;
 
 import java.time.format.DateTimeFormatter;
 
+import CONTROLLER.DAO;
+
 /**
  *
  * @author CAUPT - ALUNOS
@@ -23,7 +25,7 @@ public class Recado implements ClasseInterface {
     private LocalDate dataModificacao;
 
     public static int total;
-
+    private DAO dao;
     public String getNome() {
         return nome;
     }
@@ -81,7 +83,7 @@ public class Recado implements ClasseInterface {
         return this.dataModificacao;
     }
 
-    public boolean criar(Object vetor[]) {
+    public boolean criar(DAO dao,Object vetor[]) {
         boolean alterado = false;
         if (vetor[1] != null) {
             this.comentario = (String) vetor[1];
@@ -96,7 +98,7 @@ public class Recado implements ClasseInterface {
         return alterado;
     }
 
-    public boolean criar(Usuario user, Object vetor[]) {
+    public boolean criar(DAO dao,Usuario user, Object vetor[]) {
         boolean alterado = false;
         if (vetor[0] != null) {
             this.comentario = (String) vetor[0];
@@ -158,8 +160,9 @@ public class Recado implements ClasseInterface {
         this.dataModificacao = LocalDate.now();
     }
 
-    public void deletar() {
-        --total;
+    public boolean deletar() {
+        --Recado.total;
+        return true;
     }
 
     public String ler() {

@@ -45,9 +45,13 @@ public class MenuInicial {
         listaClasses[8] = "CARTÓRIO";
         listaClasses[9] = "CONVIDADO INDIVIDUAL";
         listaClasses[10] = "CONVIDADO FAMÍLIA";
-        listaClasses[11] = "PAGAMENTO";
-        listaClasses[12] = "RELATÓRIOS";
-
+        
+        listaClasses[11] = "PAGAMENTOS";
+        listaClasses[12] = "DESPESAS";
+        listaClasses[13] = "PARCELAS";
+        
+        listaClasses[14] = "RELATÓRIOS";
+        listaClasses[15] = "CALENDÁRIO";
         this.listaNomeClasses = listaClasses;
         
 
@@ -125,8 +129,11 @@ public class MenuInicial {
     }
 
     private void lidarEscolha(int o) {
-        if(o == 13){
+        if(o == 15){
              MenuRelatorio menu = new MenuRelatorio();
+             menu.exibir(this.dao, this.userLogado,MenuInicial.logou);
+        }else if(o == 16){
+             MenuCalendario menu = new MenuCalendario();
              menu.exibir(this.dao, this.userLogado,MenuInicial.logou);
         }
         if (o >= this.nOps) {
