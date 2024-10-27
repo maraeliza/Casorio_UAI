@@ -56,8 +56,8 @@ public class Menu_UPDATE {
 
         this.valores = new String[10];
         conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
-        conteudo += "\n" + objetos + "\n\n";
-        conteudo += "\n\nINSIRA 0 PARA CANCELAR \nINSIRA O " + this.vetor[0].toUpperCase().replace(":","") + " DO ITEM PARA ATUALIZÁ-LO:";
+        conteudo += "\n" + objetos + "\n";
+        conteudo += "\n\nINSIRA: \nID DO ITEM ➡ PARA EDITÁ-LO:"+"\n"+"DIGITE 0      ➡ PARA VOLTAR";
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
@@ -74,7 +74,6 @@ public class Menu_UPDATE {
                                 result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
                                 this.nColetados++;
                                 this.valores[this.nColetados] = result;
-                                System.out.println("Valor coletado: "+this.valores[this.nColetados]);
                             }
                         }
                         this.dao.atualizar(this.idClasse, this.valores);

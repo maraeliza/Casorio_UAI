@@ -4,12 +4,9 @@
  */
 package MODEL;
 
-import VIEW.Util;
-import java.time.LocalDate;
-
-import java.time.format.DateTimeFormatter;
-
 import CONTROLLER.DAO;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *

@@ -25,53 +25,80 @@ public class Menu_CRUD {
     private Usuario user;
     private DAO dao;
     private int idClasse;
+    private int nOps;
 
     private void definirTexto(String classNome) {
         this.texto = "\n\nMENU DE " + classNome;
         this.texto += "\n\nEscolha a opção a seguir ";
-        if (this.user.getTipo() == 1) {
-            if (this.idClasse == 1) {
-                this.texto += "\n1. Adicionar novo";
-                this.texto += "\n2. Ver todos";
-                this.texto += "\n3. Editar " + classNome.toLowerCase();
-                this.texto += "\n4. Deletar";
-                this.texto += "\n5. Escolher Presente";
-                this.texto += "\n6. Comprar  Presente";
-                this.texto += "\n7. Voltar";
+
+        // Definindo um vetor de opções com tamanho máximo suficiente
+        String[] opcoes = new String[10];
+        int contador = 0; // Contador para armazenar a posição no vetor
+
+        // Adiciona opções de acordo com o tipo de usuário e idClasse
+        if (this.user.getTipo() == 1) { // Usuário administrador
+            switch (this.idClasse) {
+                case 1 -> {
+                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Editar " + classNome.toLowerCase();
+                    opcoes[contador++] = "Deletar";
+                    opcoes[contador++] = "Escolher Presente";
+                    opcoes[contador++] = "Comprar Presente";
+                    opcoes[contador++] = "Voltar";
+                }
+                case 11 -> {
+                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Editar " + classNome.toLowerCase();
+                    opcoes[contador++] = "Deletar";
+                    opcoes[contador++] = "Realizar Pagamento";
+                    opcoes[contador++] = "Agendar Pagamento";
+                    opcoes[contador++] = "Voltar";
+                }
+                case 12 -> {
+                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Voltar";
+                }
+                case 13 -> {
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Voltar";
+                }
+                default -> {
+                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Editar " + classNome.toLowerCase();
+                    opcoes[contador++] = "Deletar";
+                    opcoes[contador++] = "Voltar";
+                }
             }
-            else if (this.idClasse == 11) {
-                this.texto += "\n1. Adicionar novo";
-                this.texto += "\n2. Ver todos";
-                this.texto += "\n3. Editar " + classNome.toLowerCase();
-                this.texto += "\n4. Deletar";
-                this.texto += "\n5. Realizar Pagamento";
-                this.texto += "\n6. Pesquisar Pagamento";
-                this.texto += "\n7. Agendar Pagamento";
-                this.texto += "\n8. Voltar";
-            } 
-            else if (this.idClasse == 12) {
-                this.texto += "\n1. Adicionar novo";
-                this.texto += "\n2. Ver todos";
-                this.texto += "\n3. Voltar";
-            }
-            else if (this.idClasse == 13) {
-                this.texto += "\n1. Ver todos";
-                this.texto += "\n2. Voltar";
-            }
-            else {
-                this.texto += "\n1. Adicionar novo";
-                this.texto += "\n2. Ver todos";
-                this.texto += "\n3. Editar " + classNome.toLowerCase();
-                this.texto += "\n4. Deletar";
-                this.texto += "\n5. Voltar";
+        } else { // Usuário não administrador
+            switch (this.idClasse) {
+                case 1 -> {
+                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Voltar";
+                }
+                case 2 -> {
+                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Ver todos";
+                    opcoes[contador++] = "Voltar";
+                }
+
+                default -> {
+                    break;
+                }
             }
         }
-        
-        
-
+        System.out.println("Número de opções exibidas: "+this.nOps);
+        this.nOps = contador;
+        // Adiciona o número e texto de cada opção ao menu
+        for (int i = 0; i < contador; i++) {
+            this.texto += "\n" + (i + 1) + ". " + opcoes[i];
+        }
 
         this.texto += "\n\nDigite aqui o número da sua opção: ";
-
     }
 
     public void exibir(DAO dao, int idClasse, boolean logou, Usuario user) {
@@ -99,99 +126,122 @@ public class Menu_CRUD {
     }
 
     private void lidarEscolha() {
-        if (this.op == null) {
+        System.out.println("Lidando com a escolha "+this.op+" do usuario para a classe de id "+this.idClasse);
+        if (this.op == null || Util.stringToInt(this.op) >= this.nOps) {
+            System.out.println("Menu inicial sendo exibido, pois op e nulo ou maior que o número de opções "+this.nOps);
             MenuInicial menu = new MenuInicial();
             menu.exibir(this.dao, this.logou, this.user);
         } else {
             this.o = Util.stringToInt(this.op);
-            switch (o) {
+            if (this.o < 0) {
+                System.out.println("Menu inicial sendo exibido, pois op e menor que 0");
+                MenuInicial menu = new MenuInicial();
+                menu.exibir(this.dao, this.logou, this.user);
+            } else {
+                switch (this.o) {
 
-                case 1 -> {
-                    Menu_CREATE menuAdd = new Menu_CREATE();
-                    menuAdd.exibir(this.dao, this.idClasse, this.user);
+                    case 1 -> {
+                        if (this.idClasse != 13) {
+                            Menu_CREATE menuAdd = new Menu_CREATE();
+                            menuAdd.exibir(this.dao, this.idClasse, this.user);
 
-                    break;
-                }
-                case 2 -> {
-                    Menu_READ menuVer = new Menu_READ();
-                    menuVer.exibir(this.dao, this.idClasse);
-                    break;
-                }
-                case 3 -> {
-                    if (this.idClasse == 1 && this.user != null && this.user.getTipo() != 1) {
+                        } else if (this.user != null && this.user.getTipo() == 1) {
+                            Menu_READ menuVer = new Menu_READ();
+                            menuVer.exibir(this.dao, this.idClasse);
+                        }
 
-                        MenuEscolherPresente menu = new MenuEscolherPresente();
-                        menu.exibir(this.dao, this.idClasse, this.user);
                         break;
+                    }
+                    case 2 -> {
+                        Menu_READ menuVer = new Menu_READ();
+                        menuVer.exibir(this.dao, this.idClasse);
+                        break;
+                    }
+                    case 3 -> {
+                        if (
+                            this.idClasse != 12 && 
+                            this.idClasse != 13 && 
+                            this.user != null   && 
+                            this.user.getTipo() == 1
+                            ) {
+                            Menu_UPDATE menuUp = new Menu_UPDATE();
+                            menuUp.exibir(this.dao, this.idClasse);
+                        } else {
+                            System.out.println("Menu inicial sendo exibido, pois user nao e adm");
+                            MenuInicial menu = new MenuInicial();
+                            menu.exibir(this.dao, this.logou, this.user);
+                        }
 
-                    } else if (this.user != null && this.user.getTipo() == 1) {
-                        Menu_UPDATE menuUp = new Menu_UPDATE();
-                        menuUp.exibir(this.dao, this.idClasse);
-                    } else {
-                        MenuInicial menu = new MenuInicial();
-                        menu.exibir(this.dao, this.logou, this.user);
+                        break;
+                    }
+                    case 4 -> {
+                        if (
+                            this.idClasse != 12 && 
+                            this.idClasse != 13 && 
+                            this.user != null   && 
+                            this.user.getTipo() == 1
+                            ) {
+                            Menu_DEL menuDel = new Menu_DEL();
+                            menuDel.exibir(this.dao, this.idClasse);
+                        } else {
+                            System.out.println("Menu inicial sendo exibido, pois a opcao deletar nao esta disponivel ao usuario");
+                            MenuInicial menu = new MenuInicial();
+                            menu.exibir(this.dao, this.logou, this.user);
+                        }
+
+                        break;
+                    }
+                    case 5 -> {
+                        if (this.idClasse == 1 && this.user != null) {
+
+                            MenuEscolherPresente menu = new MenuEscolherPresente();
+                            menu.exibir(this.dao, this.idClasse, this.user);
+                            break;
+
+                        } else if (this.idClasse == 11 && this.user != null) {
+                            System.out.println("Criando o menu de realizar pagamento");
+                            MenuFazerPagamento menu = new MenuFazerPagamento();
+                            menu.exibir(this.dao, this.idClasse, this.user);
+                            break;
+
+                        } else {
+                            MenuInicial menu = new MenuInicial();
+                            menu.exibir(this.dao, this.logou, this.user);
+                        }
+
+                        break;
+                    }
+                    case 6 -> {
+                        if (this.idClasse == 1 && this.user != null) {
+
+                            MenuComprarPresente menu = new MenuComprarPresente();
+                            menu.exibir(this.dao, this.idClasse, this.user);
+                            break;
+
+                        } else if (this.idClasse == 11 && this.user != null) {
+                            System.out.println("Opcao escolhida: AGENDAR PAGAMENTO");
+                            MenuAgendarPagamento menu = new MenuAgendarPagamento();
+                            menu.exibir(this.dao, this.idClasse, this.user);
+                            break;
+
+                        } else {
+                            MenuInicial menu = new MenuInicial();
+                            menu.exibir(this.dao, this.logou, this.user);
+                        }
+                        break;
                     }
 
-                    break;
-                }
-                case 4 -> {
-                    if (this.user != null && this.user.getTipo() == 1) {
-                        Menu_DEL menuDel = new Menu_DEL();
-                        menuDel.exibir(this.dao, this.idClasse);
-                    } else {
+                    default -> {
+                        System.out.println("Menu inicial sendo exibido, pois a opcao nao disponivel");
+                           
                         MenuInicial menu = new MenuInicial();
                         menu.exibir(this.dao, this.logou, this.user);
+                        break;
                     }
 
-                    break;
                 }
-                case 5 -> {
-                    if (this.idClasse == 1 && this.user != null) {
-
-                        MenuEscolherPresente menu = new MenuEscolherPresente();
-                        menu.exibir(this.dao, this.idClasse, this.user);
-                        break;
-
-                    } else if (this.idClasse == 11 && this.user != null) {
-                        System.out.println("Criando o menu de realizar pagamento");
-                        MenuFazerPagamento menu = new MenuFazerPagamento();
-                        menu.exibir(this.dao, this.idClasse, this.user);
-                        break;
-
-                    } else {
-                        MenuInicial menu = new MenuInicial();
-                        menu.exibir(this.dao, this.logou, this.user);
-                    }
-
-                    break;
-                }
-                case 6 -> {
-                    if (this.idClasse == 1 && this.user != null) {
-
-                        MenuComprarPresente menu = new MenuComprarPresente();
-                        menu.exibir(this.dao, this.idClasse, this.user);
-                        break;
-
-                    } else if (this.idClasse == 11 && this.user != null) {
-
-                        MenuPesquisarPagamento menu = new MenuPesquisarPagamento();
-                        menu.exibir(this.dao, this.idClasse, this.user);
-                        break;
-
-                    } else {
-                        MenuInicial menu = new MenuInicial();
-                        menu.exibir(this.dao, this.logou, this.user);
-                    }
-                    break;
-                }
-
-                default -> {
-                    MenuInicial menu = new MenuInicial();
-                    menu.exibir(this.dao, this.logou, this.user);
-                    break;
-                }
-
             }
+
         }
 
     }

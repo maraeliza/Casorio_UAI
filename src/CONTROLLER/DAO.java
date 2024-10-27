@@ -337,22 +337,18 @@ public class DAO {
         System.out.println("");
         String texto = this.listaNomesClasses[idClasse] + " JÁ CADASTRADOS";
         if (this.getTotalClasse(idClasse) > 1) {
-            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " itens\n\n";
+            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " itens";
         } else if (this.getTotalClasse(idClasse) == 1) {
-            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " item\n\n";
+            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " item";
         }
 
-        if (this.getTotalClasse(idClasse) > 0 && this.getTotalClasse(idClasse) <= 5) {
+        if (this.getTotalClasse(idClasse) > 0 && this.getTotalClasse(idClasse) <= 7) {
             Object[] vetor = this.getVetorById(idClasse);
             for (int i = 0; i < vetor.length; i++) {
                 if (vetor[i] != null) {
-                    System.out.println("ITEM NÃO NULO");
                     if (vetor[i] instanceof ClasseInterface) {
-
                         int id = ((ClasseInterface) vetor[i]).getId();
-                        System.out.println("LENDO ITEM DE ID " + id);
                         texto += ((ClasseInterface) vetor[i]).ler();
-                        System.out.println("LENDO TEXTO  ");
                     }
 
                 }
@@ -390,6 +386,11 @@ public class DAO {
                 System.out.println("add no vetor");
                 // Adiciona o objeto ao vetor correspondente
                 boolean adicionado = this.addVetor(idClasse, objeto);
+
+                if (idClasse == 12) {
+                  ((Despesa)  objeto).criarParcelas();
+                }
+
                 return adicionado;
 
             } else {
@@ -592,11 +593,12 @@ public class DAO {
 
 
         Despesa despesa = (Despesa) this.getItemByID(12, idDespesa); 
-        
+        Parcela vDespesa[] = despesa.getvParcelas();
         int c = 0;
-        for (int i = 0; i < despesa.getvParcelas().length; i++) {
-            if (despesa.getvParcelas()[i] != null && !despesa.getvParcelas()[i].isPago()) {
-                texto += despesa.getvParcelas()[i].ler();
+
+        for (int i = 0; i < vDespesa.length; i++) {
+            if (vDespesa[i] != null && !vDespesa[i].isPago()) {
+                texto += vDespesa[i].ler();
                 c++;
             }
         }

@@ -228,7 +228,7 @@ public class Pessoa implements ClasseInterface {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         // Adiciona informações da pessoa
-        resultado.append("Pessoa ").append(this.id);
+        resultado.append("\nPessoa ").append(this.id);
         resultado.append("\nNome: ").append(this.nome);
 
         // Verifica e formata a data de nascimento

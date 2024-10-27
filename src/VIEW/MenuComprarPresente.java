@@ -4,8 +4,8 @@
  */
 package VIEW;
 
-import MODEL.*;
 import CONTROLLER.DAO;
+import MODEL.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -53,7 +53,7 @@ public class MenuComprarPresente {
         this.valores = new String[10];
         conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
         conteudo += "\n" + objetos + "\n\n";
-        conteudo += "\n\nINSIRA 0 PARA VOLTAR \n\nINSIRA O ID DO PRESENTE PARA CONFIRMAR COMPRA\nOU PARA CANCELAR SUA CONFIRMAÇÃO:";
+        conteudo += "\n\nINSIRA: \nID DO PRESENTE ➡ PARA CONFIRMAR/CANCELAR COMPRA:"+"\n"+"DIGITE 0                 ➡ PARA VOLTAR";
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);

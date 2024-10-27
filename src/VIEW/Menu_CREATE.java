@@ -81,8 +81,6 @@ public class Menu_CREATE {
                     }
 
                 } while (result.length() <= 0 && result != null);
-
-                System.out.println(this.valores[this.nColetados]);
             }
         }
         if (result != null) {
@@ -125,6 +123,23 @@ public class Menu_CREATE {
                     }
                 }
             }
+            case "DESPESAS" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(4) > 1) {
+                            conteudo += "\nID E NOME DOS FORNECEDORES::";
+                        } else {
+                            conteudo += "\nID E NOME DO FORNECEDOR:";
+                        }
+                        conteudo += this.dao.getNomes(4);
+                        return conteudo;
+                    }
+                    
+                    default -> {
+                        break;
+                    }
+                }
+            }
             case "CONVIDADO INDIVIDUAL" -> {
                 switch (i) {
                     case 1 -> {
@@ -137,7 +152,7 @@ public class Menu_CREATE {
                         return conteudo;
                     }
                     case 2 -> {
-                        if (this.dao.getTotalClasse(2) > 1) {
+                        if (this.dao.getTotalClasse(10) > 1) {
                             conteudo += "\nID E NOME DAS FAMÍLIAS:";
                         } else {
                             conteudo += "\nID E NOME DA FAMÍLIA:";
@@ -166,18 +181,10 @@ public class Menu_CREATE {
                     }
                 }
             }
-            case "PAGAMENTO" -> {
+            case "PAGAMENTOS" -> {
                 switch (i) {
+                    
                     case 1 -> {
-                        if (this.dao.getTotalClasse(2) > 1) {
-                            conteudo += "\nID E NOME DAS PESSOAS:";
-                        } else {
-                            conteudo += "\nID E NOME DA PESSOA:";
-                        }
-                        conteudo += this.dao.getNomes(2);
-                        return conteudo;
-                    }
-                    case 2 -> {
                         if (this.dao.getTotalClasse(4) > 1) {
                             conteudo += "\nID E NOME DOS FORNECEDORES:";
                         } else {

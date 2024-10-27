@@ -39,35 +39,33 @@ public class MenuFazerPagamento {
         this.texto += "\n2. Pagar parcela de despesa";
         this.texto += "\n3. Lançar pagamento avulso";
 
-        this.texto += "\n0. Para voltar";
+        this.texto += "\n\n0. Para voltar";
         this.texto += "\n\nDigite aqui o número da sua opção: ";
 
     }
 
     public void montarPainel() {
-        String result = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
+        String result = JOptionPane.showInputDialog(null, this.texto,  "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
             if (idInserido != 0) {
                 switch (idInserido) {
-                    case 1:
-                        this.pagarDespesa();
-                        break;
-                    case 2:
-                        this.pagarParcela();
-                        break;
-                    case 3:
-                        this.pagamentoAvulso();
-                        break;
-
-                    default:
-                        break;
+                    case 1 -> this.pagarDespesa();
+                    case 2 -> this.pagarParcela();
+                    case 3 -> this.pagamentoAvulso();
+                    default -> this.criarMenuCRUD(this.dao, 11);
                 }
+            }else{
+                this.criarMenuCRUD(this.dao, 11); 
             }
         } else {
             Util.mostrarErro("Pagamento cancelado!");
         }
 
+    }
+    public void criarMenuCRUD(DAO dao, int idClasse) {
+        Menu_CRUD menu = new Menu_CRUD();
+        menu.exibir(this.dao, idClasse, true, this.user);
     }
 
     public void pagarParcela() {
@@ -88,7 +86,7 @@ public class MenuFazerPagamento {
                         System.out.println("realizar o pagamento!");
                         Parcela parcela = (Parcela) this.dao.getItemByID(13, idInserido);
                         if (parcela != null) {
-                            parcela.pagar();
+                            parcela.pagar(false);
                             Util.mostrarMSG("Pagamento da parcela feito com sucesso!");
                         } else {
                             Util.mostrarMSG("Parcela não encontrada!");
@@ -115,37 +113,21 @@ public class MenuFazerPagamento {
                 LocalDate hoje = LocalDate.now();
                 System.out.println("despesa selecionada: " + idInserido);
                 System.out.println("realizar o pagamento!");
-                Despesa despesa = (Despesa) this.dao.getItemByID(11, idInserido);
-                if (despesa != null) {
+                Despesa despesa = (Despesa) this.dao.getItemByID(12, idInserido);
+                if (despesa != null && !despesa.isPago()) {
                     despesa.pagar();
                     Util.mostrarMSG("Pagamento da despesa feito com sucesso!");
                 } else {
-                    Util.mostrarMSG("Despesa não encontrada!");
+                    Util.mostrarMSG("Despesa não encontrada ou já está paga!");
                 }
                
 
+            }else{
+                this.criarMenuCRUD(this.dao, 11); 
             }
+        }else{
+            this.criarMenuCRUD(this.dao, 11); 
         }
-    }
-
-    public boolean add(String atributo) {
-        for (int i = 0; i < this.vetor.length; i++) {
-            if (this.vetor[i] == null) {
-                this.vetor[i] = atributo;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean cleanVetor() {
-        for (int i = 0; i < this.vetor.length; i++) {
-            if (this.vetor[i] != null) {
-                this.vetor[i] = null;
-                return true;
-            }
-        }
-        return false;
     }
 
 }
