@@ -3,9 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package VIEW;
+
 import CONTROLLER.DAO;
-import javax.swing.JOptionPane;
 import MODEL.Usuario;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,7 +16,7 @@ public class MenuRelatorio {
 
     private String texto;
     private String op;
-    private  boolean logou;
+    private boolean logou;
     private String opcoes[];
     private Usuario userLogado;
     private String listaNomeClasses[] = new String[20];
@@ -58,7 +59,6 @@ public class MenuRelatorio {
     private String definirOpcoes() {
         String Opcoes = "";
         this.nOps = 1;
-        System.out.println("definindo opcoes");
 
         for (int n = 0; n < this.listaNomeClasses.length; n++) {
             if (this.listaNomeClasses[n] != null) {
@@ -81,8 +81,7 @@ public class MenuRelatorio {
             this.definirTexto();
 
             this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-            System.out.println(this.op);
-
+        
             if (this.op != null) {
                 o = Util.stringToInt(this.op);
                 this.lidarEscolha(o);
@@ -95,6 +94,14 @@ public class MenuRelatorio {
     }
 
     private void lidarEscolha(int o) {
+
+        if (o == 1) {
+            Menu_READ menuVer = new Menu_READ();
+            menuVer.exibir(this.dao, 0);
+        }else if (o == 4) {
+            Menu_READ menuVer = new Menu_READ();
+            menuVer.exibir(this.dao, 11, true);
+        }
 
         if (o >= this.nOps) {
             MenuInicial menu = new MenuInicial();

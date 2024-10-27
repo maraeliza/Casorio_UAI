@@ -27,7 +27,6 @@ public class Menu_DEL {
         this.nomeClasse = this.dao.getNameClasseById(idClasse);;
 
         try {
-            System.out.println("NOME DA CLASSE: " + this.nomeClasse);
             String texto = "";
             if (idClasse == 2) {
                 texto = this.dao.getNomesPessoasSemUsers();
@@ -39,7 +38,6 @@ public class Menu_DEL {
             if (res != null && res.length() > 0) {
                 int id = Util.stringToInt(res);
                 if (id != 0) {
-                    System.out.println("TEXTO: " + texto);
                     boolean sucess = false;
                     
                     sucess = this.dao.delItemByID(this.idClasse, id);
@@ -49,7 +47,6 @@ public class Menu_DEL {
                         this.exibir(this.dao, this.idClasse);
 
                     } else {
-                        System.out.println("Nao foi possivel fazer a exclusao");
                         Util.mostrarErro("Não foi possível fazer a exclusão");
                     }
                 }

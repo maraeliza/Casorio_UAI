@@ -5,7 +5,6 @@
 package MODEL;
 
 import CONTROLLER.DAO;
-import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -16,6 +15,8 @@ public class Fornecedor implements ClasseInterface {
     private String cnpj;
     private String telefone;
     private double valorAPagar;
+    private double valorTotal;
+    private double valorPago;
     private int parcelas;
     private int estado; // "pago" ou "em pagamento"
     private boolean quitado;
@@ -25,7 +26,160 @@ public class Fornecedor implements ClasseInterface {
     public static int total;
     private DAO dao;
 
+    @Override
+    public boolean criar(DAO dao, Object vetor[]) {
+        this.dao = dao;
+        if (this.dao != null) {
+            this.nome = (String) vetor[0];
+            this.cnpj = (String) vetor[1];
+            this.telefone = (String) vetor[2];
+            this.dataCriacao = LocalDate.now();
+            this.dataModificacao = null;
+            this.id = ++total; // Aumenta o contador de IDs
+        }
+
+        return true;
+    }
+
+    public static String[] getCampos() {
+        String[] campos = new String[10];
+        campos[0] = "ID: ";
+        campos[1] = "nome: ";
+        campos[2] = "CNPJ: ";
+        campos[3] = "telefone: ";
+        return campos;
+    }
+
+    public void update(Object vetor[]) {
+        boolean alterado = false;
+
+        // Verifica e atualiza o nome
+        if (vetor[1] != null && !((String) vetor[1]).trim().isEmpty()) {
+            this.nome = (String) vetor[1];
+            alterado = true;
+        }
+
+        // Verifica e atualiza o CNPJ
+        if (vetor[2] != null && !((String) vetor[2]).trim().isEmpty()) {
+            this.cnpj = (String) vetor[2];
+            alterado = true;
+        }
+
+        // Verifica e atualiza o telefone
+        if (vetor[3] != null && !((String) vetor[3]).trim().isEmpty()) {
+            this.telefone = (String) vetor[3];
+            alterado = true;
+        }
+        this.atualizarValores();
+        if (alterado) {
+            this.atualizarDataModificacao(); // Atualiza a data de modificação
+        }
+    }
+
+    @Override
+    public boolean deletar() {
+        --total;
+        return true;
+    }
+
+    public void atualizarValores() {
+        //pega todas as despesas vinculadas ao fornecedor
+         Despesa[] despesas = this.dao.getDespesas();
+        for (int n = 0; n < despesas.length; n++) {
+            if (despesas[n] != null) {
+                if (despesas[n].getIdFornecedor() == this.getId()) {
+                  this.valorTotal += despesas[n].getValorTotal();
+
+                    //verifica se a despesa está paga  e adiciona ao valor pago
+                    if (despesas[n].isPago()) {
+                        this.valorPago += despesas[n].getValorTotal();
+                    } else {
+                        //caso seja parcelada e não quitada, percorre cada parcela, verifica se a parcela está paga e adiciona em valor pago
+                        if (despesas[n].isParcelado()) {
+                            for (int i = 0; i < despesas[n].getvParcelas().length; i++) {
+                                Parcela p = despesas[n].getvParcelas()[i];
+                                if (p != null) {
+                                    if (p.isPago()) {
+                                        this.valorPago += p.getValor();
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    //calcula a diferença e define o valor a pagar
+                    this.valorAPagar = this.valorTotal - this.valorPago;
+                }
+
+            }
+        }
+
+        this.setQuitado(this.valorAPagar == 0 && this.valorTotal > 0);
+
+    }
+
+    public String ler() {
+        this.atualizarValores();
+         StringBuilder resultado = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        resultado.append("\nID: ").append(this.id).append("\n");
+
+        if (this.nome != null && !this.nome.isEmpty()) {
+            resultado.append("Nome: ").append(this.nome).append("\n");
+        }
+
+        if (this.cnpj != null && !this.cnpj.isEmpty()) {
+            resultado.append("CNPJ: ").append(this.cnpj).append("\n");
+        }
+
+        if (this.telefone != null && !this.telefone.isEmpty()) {
+            resultado.append("Telefone: ").append(this.telefone).append("\n");
+        }
+        if (this.valorTotal > 0) {
+            resultado.append("Valor Total: ").append(this.valorTotal).append("            ");
+            if (this.valorAPagar > 0) {
+                resultado.append("Valor a Pagar: ").append(this.valorAPagar).append("\n");
+                if (this.parcelas > 0) {
+                    resultado.append("Parcelas: ").append(this.parcelas).append("\n");
+                }
+            }
+            String estadoDescricao = this.quitado ? "Pago" : "Em andamento";
+            resultado.append("Estado: ").append(estadoDescricao).append("\n");
+        }
+
+        if (this.dataModificacao != null) {
+            resultado.append("Data de Modificação: ").append(this.dataModificacao.format(formatter));
+        }
+        resultado.append("\n");
+        return resultado.toString();
+    }
+
+    public boolean isQuitado() {
+        return quitado;
+    }
+
+    public void setQuitado(boolean quitado) {
+        this.quitado = quitado;
+    }
+
+    public static int getTotal() {
+        return total;
+    }
+
+    public static void setTotal(int total) {
+        Fornecedor.total = total;
+    }
+
+    public DAO getDao() {
+        return dao;
+    }
+
+    public void setDao(DAO dao) {
+        this.dao = dao;
+    }
     // Getters e Setters
+
     public int getId() {
         return this.id;
     }
@@ -108,125 +262,20 @@ public class Fornecedor implements ClasseInterface {
         return criar(dao, vetor);
     }
 
-    @Override
-    public boolean criar(DAO dao, Object vetor[]) {
-        this.dao = dao;
-        if (this.dao != null) {
-            this.nome = (String) vetor[0];
-            this.cnpj = (String) vetor[1];
-            this.telefone = (String) vetor[2];
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null;
-            this.id = ++total; // Aumenta o contador de IDs
-        }
-
-        return true;
+    public double getValorTotal() {
+        return valorTotal;
     }
 
-    public static String[] getCampos() {
-        String[] campos = new String[10];
-        campos[0] = "ID: ";
-        campos[1] = "nome: ";
-        campos[2] = "CNPJ: ";
-        campos[3] = "telefone: ";
-        return campos;
+    public void setValorTotal(double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
-    public void update(Object vetor[]) {
-        System.out.println("CHAMOU A FUNCAO UPDATE");
-        boolean alterado = false;
-
-        // Verifica e atualiza o nome
-        if (vetor[1] != null && !((String) vetor[1]).trim().isEmpty()) {
-            this.nome = (String) vetor[1];
-            alterado = true;
-        }
-
-        // Verifica e atualiza o CNPJ
-        if (vetor[2] != null && !((String) vetor[2]).trim().isEmpty()) {
-            this.cnpj = (String) vetor[2];
-            alterado = true;
-        }
-
-        // Verifica e atualiza o telefone
-        if (vetor[3] != null && !((String) vetor[3]).trim().isEmpty()) {
-            this.telefone = (String) vetor[3];
-            alterado = true;
-        }
-
-        if (alterado) {
-            this.atualizarDataModificacao(); // Atualiza a data de modificação
-        }
+    public double getValorPago() {
+        return valorPago;
     }
 
-    @Override
-    public boolean deletar() {
-        --total;
-        return true;
-    }
-
-    public String ler() {
-        StringBuilder resultado = new StringBuilder();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
-        resultado.append("\nID: ").append(this.id).append("\n");
-
-        if (this.nome != null && !this.nome.isEmpty()) {
-            resultado.append("Nome: ").append(this.nome).append("\n");
-        }
-
-        if (this.cnpj != null && !this.cnpj.isEmpty()) {
-            resultado.append("CNPJ: ").append(this.cnpj).append("\n");
-        }
-
-        if (this.telefone != null && !this.telefone.isEmpty()) {
-            resultado.append("Telefone: ").append(this.telefone).append("\n");
-        }
-        if (this.valorAPagar > 0) {
-            resultado.append("Valor a Pagar: ").append(this.valorAPagar).append("\n");
-
-            if (this.parcelas > 0) {
-                resultado.append("Parcelas: ").append(this.parcelas).append("\n");
-            }
-
-            String estadoDescricao = this.quitado ? "Pago" : "Não pago";
-            resultado.append("Estado: ").append(estadoDescricao).append("\n");
-
-        }
-
-        if (this.dataCriacao != null) {
-            resultado.append("Data de Criação: ").append(this.dataCriacao.format(formatter)).append("\n");
-        }
-
-        if (this.dataModificacao != null) {
-            resultado.append("Data de Modificação: ").append(this.dataModificacao.format(formatter));
-        }
-        resultado.append("\n");
-        return resultado.toString();
-    }
-
-    public boolean isQuitado() {
-        return quitado;
-    }
-
-    public void setQuitado(boolean quitado) {
-        this.quitado = quitado;
-    }
-
-    public static int getTotal() {
-        return total;
-    }
-
-    public static void setTotal(int total) {
-        Fornecedor.total = total;
-    }
-
-    public DAO getDao() {
-        return dao;
-    }
-
-    public void setDao(DAO dao) {
-        this.dao = dao;
+    public void setValorPago(double valorPago) {
+        this.valorPago = valorPago;
     }
 
 }

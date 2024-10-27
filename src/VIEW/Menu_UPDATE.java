@@ -70,6 +70,7 @@ public class Menu_UPDATE {
                         for (int i = 1; i < this.vetor.length; i++) {
                             if (this.vetor[i] != null && result != null) {
                                 conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
+                                conteudo += "\n" + this.montarOpcoes(this.nomeClasse, i);
                                 conteudo += "\n\nINSIRA " + this.vetor[i].toUpperCase();
                                 result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
                                 this.nColetados++;
@@ -110,6 +111,147 @@ public class Menu_UPDATE {
             }
         }
         return false;
+    }
+    public String montarOpcoes(String nomeClasse, int i) {
+        nomeClasse = nomeClasse.toUpperCase();
+        String conteudo = "";
+        switch (nomeClasse) {
+            case "USUÁRIOS" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getNomesPessoasSemUsers();
+                        return conteudo;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "DESPESAS" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(4) > 1) {
+                            conteudo += "\nID E NOME DOS FORNECEDORES::";
+                        } else {
+                            conteudo += "\nID E NOME DO FORNECEDOR:";
+                        }
+                        conteudo += this.dao.getNomes(4);
+                        return conteudo;
+                    }
+                    
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "CONVIDADO INDIVIDUAL" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getNomesPessoasSemConvidado();
+                        return conteudo;
+                    }
+                    case 2 -> {
+                        if (this.dao.getTotalClasse(10) > 1) {
+                            conteudo += "\nID E NOME DAS FAMÍLIAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA FAMÍLIA:";
+                        }
+                        conteudo += this.dao.getNomes(10);
+                        return conteudo;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "CERIMONIAL" -> {
+                switch (i) {
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(2) > 1) {
+                            conteudo += "\nID E NOME DAS PESSOAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA PESSOA:";
+                        }
+                        conteudo += this.dao.getCerimoniaisIdNomeDisponiveis();
+                        return conteudo;
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+            case "PAGAMENTOS" -> {
+                switch (i) {
+                    
+                    case 1 -> {
+                        if (this.dao.getTotalClasse(4) > 1) {
+                            conteudo += "\nID E NOME DOS FORNECEDORES:";
+                        } else {
+                            conteudo += "\nID E NOME DO FORNECEDOR:";
+                        }
+
+                        conteudo += this.dao.getNomes(4);
+                        return conteudo;
+
+                    }
+
+                    default -> {
+                        break;
+                    }
+                }
+            }
+
+            case "EVENTO" -> {
+                switch (i) {
+                    case 2 -> {
+                        if (this.dao.getTotalClasse(7) > 1) {
+                            conteudo += "\nID E NOME DAS IGREJAS:";
+                        } else {
+                            conteudo += "\nID E NOME DA IGREJA:";
+                        }
+                        conteudo += this.dao.getNomes(7);
+                    }
+                    case 3 -> {
+                        if (this.dao.getTotalClasse(8) > 1) {
+                            conteudo += "\nID E NOME DOS CARTÓRIOS:";
+                        } else {
+                            conteudo += "\nID E NOME DO CARTÓRIO:";
+                        }
+
+                        conteudo += this.dao.getNomes(8);
+                    }
+                    case 4 -> {
+                        if (this.dao.getTotalClasse(6) > 1) {
+                            conteudo += "\nID E NOME DOS CERIMONIAIS:";
+                        } else {
+                            conteudo += "\nID E NOME DO CERIMONIAL:";
+                        }
+                        conteudo += this.dao.getNomes(6);
+                    }
+                    default -> {
+                        break;
+                    }
+                }
+            }
+
+            default -> {
+                break;
+            }
+
+        }
+
+        return conteudo;
+
     }
 
 }

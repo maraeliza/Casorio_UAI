@@ -4,8 +4,8 @@
  */
 package VIEW;
 import CONTROLLER.DAO;
-import javax.swing.JOptionPane;
 import MODEL.Usuario;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -57,8 +57,7 @@ public class MenuCalendario {
     private String definirOpcoes() {
         String Opcoes = "";
         this.nOps = 1;
-        System.out.println("definindo opcoes");
-
+  
         for (int n = 0; n < this.listaNomeClasses.length; n++) {
             if (this.listaNomeClasses[n] != null) {
                 Opcoes += "\n" + Util.intToString(this.nOps) + ". " + this.listaNomeClasses[n];
@@ -80,9 +79,7 @@ public class MenuCalendario {
             this.definirTexto();
 
             this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-            System.out.println(this.op);
-
-            if (this.op != null) {
+             if (this.op != null) {
                 o = Util.stringToInt(this.op);
                 this.lidarEscolha(o);
             } else {

@@ -10,7 +10,6 @@ import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
 public class Despesa implements ClasseInterface {
 
     private int id;
@@ -62,20 +61,16 @@ public class Despesa implements ClasseInterface {
     }
 
     public boolean criar(DAO dao, Object vetor[]) {
-        System.out.println("CRIANDO UMA NOVA DESPESA!");
-        System.out.println("Dados: " + vetor[0] + " " + vetor[1] + " " + vetor[2] + " " + vetor[3] + " " + vetor[4]);
-
+    
         this.dao = dao;
         boolean alterado = false;
         if (this.dao != null) {
             int idFornecedor = Util.stringToInt((String) vetor[0]);
-            System.out.println("Despesa detectada, encontrando fornecedor de id " + idFornecedor);
             if (idFornecedor != 0) {
                 Fornecedor fornecedor = (Fornecedor) this.dao.getItemByID(4, idFornecedor);
 
                 if (fornecedor != null) {
-                    System.out.println("fornecedor encontrado " + fornecedor.getNome());
-                    this.trocarFornecedor(idFornecedor, fornecedor);
+                   this.trocarFornecedor(idFornecedor, fornecedor);
 
                     if (vetor[0] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null && vetor[5] != null) {
                         if (vetor[1] != null && vetor[1] instanceof String) {
@@ -108,7 +103,6 @@ public class Despesa implements ClasseInterface {
 
                         // Atribui o ID único e define as datas de criação e modificação
                         total++;
-                        System.out.println("DEFININDO O ID DA DESPESA: " + this.id);
                         this.dataCriacao = LocalDate.now();
                         this.dataModificacao = null; // Nenhuma modificação inicial
                     }
@@ -124,27 +118,24 @@ public class Despesa implements ClasseInterface {
     public void criarParcelas() {
         Double valor = this.getValorTotal() / this.getnParcelas();
         this.vParcelas = new Parcela[this.getnParcelas()];
-        System.out.println("Criando parcela para despesa de id " + this.getId());
         for (int i = 0; i < this.getnParcelas(); i++) {
             LocalDate dataVencimento = this.getDataPrimeiroVencimento().plusMonths(i);
             Object infos[] = {this.getId(), dataVencimento, valor, i + 1, this.getnParcelas(), this.getNome()};
-            this.dao.cadastrar(13, infos, this.user);
+            this.dao.cadastrar(13, infos);
             //pegando última parcela criada
             int t = this.dao.getTotalClasse(13);
-            System.out.println("Total de parcelas criadas: "+t);
             Parcela p = (Parcela) this.dao.getItemByID(13, t);
             if (p != null) {
-                System.out.println("Parcela com id: "+t+" "+p.getValor()+" da despesa de id "+p.getIdDespesa());
                 //add no vetor
                 this.add(p);
             }
-           
 
         }
         LocalDate dataVencimento = this.getDataPrimeiroVencimento().plusMonths(this.getnParcelas() - 1);
         this.setDataUltimoVencimento(dataVencimento);
 
     }
+
     public boolean add(Parcela p) {
         for (int i = 0; i < this.vParcelas.length; i++) {
             if (this.vParcelas[i] == null) {
@@ -192,32 +183,31 @@ public class Despesa implements ClasseInterface {
 
         resultado.append("Valor Total: ").append(this.valorTotal).append("\n");
 
-
         resultado.append("Pago: ").append(this.pago ? "Sim" : "Não").append("\n");
         if (!this.pago) {
             resultado.append("Pagamento Agendado: ").append(this.agendado ? "Sim" : "Não").append("\n");
             if (this.isAgendado()) {
                 resultado.append("Data do Agendamento: ").append(this.dataAgendamento.format(formatter)).append("\n");
-           
+
             }
             if (this.dataPrimeiroVencimento != null && !this.parcelado) {
                 resultado.append("Data de Vencimento: ").append(this.dataPrimeiroVencimento.format(formatter)).append("\n");
             }
-        }else{
+        } else {
             if (this.dataQuitacao != null) {
                 resultado.append("Data de Quitação: ").append(this.dataQuitacao.format(formatter)).append("\n");
             }
         }
 
         if (this.parcelado) {
-            if (this.dataPrimeiroVencimento != null && !this.pago ) {
+            if (this.dataPrimeiroVencimento != null && !this.pago) {
                 resultado.append("Data do Primeiro Vencimento: ").append(this.dataPrimeiroVencimento.format(formatter)).append("\n");
             }
-    
+
             if (this.dataUltimoVencimento != null) {
                 resultado.append("Data do Último Vencimento: ").append(this.dataUltimoVencimento.format(formatter)).append("\n");
             }
-    
+
             resultado.append("Parcelado: Sim\n");
             resultado.append("Número de Parcelas: ").append(this.nParcelas).append("\n");
 
@@ -229,13 +219,12 @@ public class Despesa implements ClasseInterface {
                 resultado.append("Data de Criação: ").append(this.dataCriacao.format(formatter)).append("\n");
             }
         }
-       
+
         resultado.append("\n");
         return resultado.toString();
     }
 
     public void update(Object vetor[]) {
-        System.out.println("CHAMOU A FUNÇÃO UPDATE PARA PAGAMENTO");
         boolean alterou = false;
 
         // Atualiza a data de modificação caso tenha havido alguma alteração
@@ -243,54 +232,44 @@ public class Despesa implements ClasseInterface {
             this.atualizarDataModificacao();
         }
     }
-    public void cancelarAgendamento(){
-        
+
+    public void cancelarAgendamento() {
+
         this.setAgendado(false);
         this.setDataAgendamento(null);
         if (this.isParcelado()) {
             for (int p = 0; p < this.getnParcelas(); p++) {
-                System.out.println("Cancelando agendamento do pagamento da parcela: " + p);
                 Parcela parcela = this.getvParcelas()[p];
-                System.out.println("parcela pega");
                 if (parcela != null && !parcela.isPago()) {
-                    System.out.println("pagando parcela");
                     parcela.cancelarAgendamento();
                 }
 
             }
         }
     }
-    public boolean agendar(LocalDate dataAgendamento) {
-        LocalDate hoje = LocalDate.now();
-        if (hoje.isAfter(dataAgendamento) ) {
-            Util.mostrarErro("Não é possível agendar pagamento para o passado!");
-            return false;
-        }else{
-            if (this.isAgendado()) {
-                this.cancelarAgendamento();
-            }else{
-                
-                this.setAgendado(true);
-                this.setDataAgendamento(dataAgendamento);
-                if (this.isParcelado()) {
-                    for (int p = 0; p < this.getnParcelas(); p++) {
-                        System.out.println("Realizando agendamento do pagamento da parcela: " + p);
-                        Parcela parcela = this.getvParcelas()[p];
-                        System.out.println("parcela pega");
-                        if (parcela != null && !parcela.isPago()) {
-                            System.out.println("pagando parcela");
-                            parcela.agendarForce(dataAgendamento);
-                        }
-    
-                    }
-                }
-                Util.mostrarMSG("Agendamento feito com sucesso!");
-            }
-            return true;
-        }
-        
-    }
 
+    public boolean agendar(LocalDate dataAgendamento) {
+   
+        if (this.isAgendado()) {
+            this.cancelarAgendamento();
+        } else {
+
+            this.setAgendado(true);
+            this.setDataAgendamento(dataAgendamento);
+            if (this.isParcelado()) {
+                for (int p = 0; p < this.getnParcelas(); p++) {
+                     Parcela parcela = this.getvParcelas()[p];
+                     if (parcela != null && !parcela.isPago()) {
+                        parcela.agendarForce(dataAgendamento);
+                    }
+
+                }
+            }
+            Util.mostrarMSG("Agendamento feito com sucesso!");
+        }
+        return true;
+
+    }
 
     public void pagar() {
         if (!this.isPago()) {
@@ -300,11 +279,8 @@ public class Despesa implements ClasseInterface {
             this.setAgendado(false);
             if (this.isParcelado()) {
                 for (int p = 0; p < this.getnParcelas(); p++) {
-                    System.out.println("Realizando pagamento da parcela: " + p);
-                    Parcela parcela = this.getvParcelas()[p];
-                    System.out.println("parcela pega");
+                     Parcela parcela = this.getvParcelas()[p];
                     if (parcela != null && !parcela.isPago()) {
-                        System.out.println("pagando parcela");
                         parcela.pagar(true);
                     }
 
@@ -312,8 +288,8 @@ public class Despesa implements ClasseInterface {
                 Menu_READ menuVer = new Menu_READ();
                 menuVer.exibir(this.dao, 11);
             } else {
-                Object infos[] = {this.getIdFornecedor(), hoje, this.getDescricao(), this.getValorTotal(), 1, this.getId(),1};
-                this.dao.cadastrar(11, infos, this.user);
+                Object infos[] = {this.getIdFornecedor(), hoje, this.getDescricao(), this.getValorTotal(), 1, this.getId(), 1};
+                this.dao.cadastrar(11, infos);
                 Menu_READ menuVer = new Menu_READ();
                 menuVer.exibir(this.dao, 11);
             }
@@ -455,7 +431,6 @@ public class Despesa implements ClasseInterface {
         Despesa.total = total;
     }
 
-
     public boolean isAgendado() {
         return agendado;
     }
@@ -487,5 +462,5 @@ public class Despesa implements ClasseInterface {
     public void setDataAgendamento(LocalDate dataAgendamento) {
         this.dataAgendamento = dataAgendamento;
     }
-    
+
 }

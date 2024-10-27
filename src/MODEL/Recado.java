@@ -80,22 +80,9 @@ public class Recado implements ClasseInterface {
         return this.dataModificacao;
     }
 
-    public boolean criar(DAO dao,Object vetor[]) {
-        boolean alterado = false;
-        if (vetor[1] != null) {
-            this.comentario = (String) vetor[1];
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null;
-            this.id = ++total;
-              alterado = true;
-        }
-        if (vetor[0] != null) {
-            this.pessoa = (Pessoa) vetor[0];
-        }
-        return alterado;
-    }
 
-    public boolean criar(DAO dao,Usuario user, Object vetor[]) {
+    public boolean criar(DAO dao,Object vetor[]) {
+        this.dao = dao;
         boolean alterado = false;
         if (vetor[0] != null) {
             this.comentario = (String) vetor[0];
@@ -104,8 +91,8 @@ public class Recado implements ClasseInterface {
             this.id = ++total;
             alterado = true;
         }
-        if (user != null) {
-            this.pessoa = user.getPessoa();
+        if (this.dao.getUserLogado() != null) {
+            this.pessoa = this.dao.getUserLogado().getPessoa();
         }
         return alterado;
     }

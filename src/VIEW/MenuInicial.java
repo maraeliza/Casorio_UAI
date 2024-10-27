@@ -83,9 +83,8 @@ public class MenuInicial {
     private String definirOpcoes() {
         String Opcoes = "";
         this.nOps = 1;
-        System.out.println("definindo opcoes");
         if (this.userLogado != null && this.userLogado.getTipo() == 1) {
-            System.out.println("Usuario adm");
+    
             for (int n = 0; n < this.listaNomeClasses.length; n++) {
                 if (this.listaNomeClasses[n] != null) {
                     Opcoes += "\n" + Util.intToString(this.nOps) + ". " + this.listaNomeClasses[n];
@@ -95,7 +94,6 @@ public class MenuInicial {
             }
 
         } else {
-            System.out.println("Usuario NÃO adm");
             for (int n = 0; n < 2; n++) {
                 if (this.listaNomeClasses[n] != null) {
                     Opcoes += "\n" + Util.intToString(this.nOps) + ". " + this.listaNomeClasses[n];
@@ -115,30 +113,30 @@ public class MenuInicial {
             this.definirTexto(this.dao.getNoivos(0).getNome(), this.dao.getNoivos(1).getNome());
 
             this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-            System.out.println(this.op);
-
+          
             if (this.op != null) {
                 o = Util.stringToInt(this.op);
                 this.lidarEscolha(o);
             } else {
-                TelaInicial menu = new TelaInicial();
-                op = menu.exibir(this.dao);
+                deslogar();
             }
         } while (o != 0 && this.op != null);
 
     }
 
     private void lidarEscolha(int o) {
-        if(o == 15){
-             MenuRelatorio menu = new MenuRelatorio();
-             menu.exibir(this.dao, this.userLogado,MenuInicial.logou);
-        }else if(o == 16){
-             MenuCalendario menu = new MenuCalendario();
-             menu.exibir(this.dao, this.userLogado,MenuInicial.logou);
+        if (this.dao.getUserLogado() != null && this.dao.getUserLogado().getTipo() == 1) {
+            if(o == 15){
+                MenuRelatorio menu = new MenuRelatorio();
+                menu.exibir(this.dao, this.userLogado,MenuInicial.logou);
+           }else if(o == 16){
+                MenuCalendario menu = new MenuCalendario();
+                menu.exibir(this.dao, this.userLogado,MenuInicial.logou);
+           }
         }
+        
         if (o >= this.nOps) {
-            TelaInicial menu = new TelaInicial();
-            op = menu.exibir(this.dao);
+           deslogar();
         } else {
             if (this.userLogado != null) {
                 if (this.userLogado.getTipo() == 1) {
@@ -159,5 +157,10 @@ public class MenuInicial {
     public void criarMenuCRUD(DAO dao, int idClasse) {
         Menu_CRUD menu = new Menu_CRUD();
         menu.exibir(this.dao, idClasse, MenuInicial.logou, this.userLogado);
+    }
+    public void deslogar(){
+        this.dao.setUserLogado(null);
+        TelaInicial menu = new TelaInicial();
+        op = menu.exibir(this.dao);
     }
 }

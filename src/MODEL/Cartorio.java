@@ -20,34 +20,7 @@ public class Cartorio implements ClasseInterface {
     private LocalDate dataModificacao;
     private DAO dao;
     public static int total;
-    @Override
-    public boolean criar(DAO dao,Usuario user, Object vetor[]) {
-        boolean alterado = false;
 
-        if (vetor[0] != null) {
-            this.nome = (String) vetor[0];
-            alterado = true;
-        }
-
-        if (vetor[1] != null) {
-            this.telefone = (String) vetor[1];
-            alterado = true;
-        }
-
-        if (vetor[2] != null) {
-            this.endereco = (String) vetor[2];
-            alterado = true;
-        }
-
-        if (alterado) {
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null;
-            this.id = ++total; // Supondo que 'total' é um contador de IDs
-        }
-
-        return alterado;
-    }
-    @Override
     public boolean criar(DAO dao,Object vetor[]) {
         boolean alterado = false;
 
@@ -74,6 +47,7 @@ public class Cartorio implements ClasseInterface {
 
         return alterado;
     }
+    
     @Override
     public void update(Object vetor[]) {
         boolean alterou = false;

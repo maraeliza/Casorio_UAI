@@ -91,8 +91,7 @@ public class Menu_CRUD {
                 }
             }
         }
-        System.out.println("Número de opções exibidas: "+this.nOps);
-        this.nOps = contador;
+ this.nOps = contador;
         // Adiciona o número e texto de cada opção ao menu
         for (int i = 0; i < contador; i++) {
             this.texto += "\n" + (i + 1) + ". " + opcoes[i];
@@ -103,7 +102,6 @@ public class Menu_CRUD {
 
     public void exibir(DAO dao, int idClasse, boolean logou, Usuario user) {
         this.dao = dao;
-        System.out.println("Atualizando id da classe para " + idClasse);
         this.idClasse = idClasse;
         this.logou = logou;
         this.user = user;
@@ -126,15 +124,12 @@ public class Menu_CRUD {
     }
 
     private void lidarEscolha() {
-        System.out.println("Lidando com a escolha "+this.op+" do usuario para a classe de id "+this.idClasse);
         if (this.op == null || Util.stringToInt(this.op) >= this.nOps) {
-            System.out.println("Menu inicial sendo exibido, pois op e nulo ou maior que o número de opções "+this.nOps);
             MenuInicial menu = new MenuInicial();
             menu.exibir(this.dao, this.logou, this.user);
         } else {
             this.o = Util.stringToInt(this.op);
             if (this.o < 0) {
-                System.out.println("Menu inicial sendo exibido, pois op e menor que 0");
                 MenuInicial menu = new MenuInicial();
                 menu.exibir(this.dao, this.logou, this.user);
             } else {
@@ -167,7 +162,6 @@ public class Menu_CRUD {
                             Menu_UPDATE menuUp = new Menu_UPDATE();
                             menuUp.exibir(this.dao, this.idClasse);
                         } else {
-                            System.out.println("Menu inicial sendo exibido, pois user nao e adm");
                             MenuInicial menu = new MenuInicial();
                             menu.exibir(this.dao, this.logou, this.user);
                         }
@@ -184,8 +178,7 @@ public class Menu_CRUD {
                             Menu_DEL menuDel = new Menu_DEL();
                             menuDel.exibir(this.dao, this.idClasse);
                         } else {
-                            System.out.println("Menu inicial sendo exibido, pois a opcao deletar nao esta disponivel ao usuario");
-                            MenuInicial menu = new MenuInicial();
+                             MenuInicial menu = new MenuInicial();
                             menu.exibir(this.dao, this.logou, this.user);
                         }
 
@@ -199,8 +192,7 @@ public class Menu_CRUD {
                             break;
 
                         } else if (this.idClasse == 11 && this.user != null) {
-                            System.out.println("Criando o menu de realizar pagamento");
-                            MenuFazerPagamento menu = new MenuFazerPagamento();
+                             MenuFazerPagamento menu = new MenuFazerPagamento();
                             menu.exibir(this.dao, this.idClasse, this.user);
                             break;
 
@@ -219,7 +211,6 @@ public class Menu_CRUD {
                             break;
 
                         } else if (this.idClasse == 11 && this.user != null) {
-                            System.out.println("Opcao escolhida: AGENDAR PAGAMENTO");
                             MenuAgendarPagamento menu = new MenuAgendarPagamento();
                             menu.exibir(this.dao, this.idClasse, this.user);
                             break;
@@ -232,9 +223,7 @@ public class Menu_CRUD {
                     }
 
                     default -> {
-                        System.out.println("Menu inicial sendo exibido, pois a opcao nao disponivel");
-                           
-                        MenuInicial menu = new MenuInicial();
+                         MenuInicial menu = new MenuInicial();
                         menu.exibir(this.dao, this.logou, this.user);
                         break;
                     }

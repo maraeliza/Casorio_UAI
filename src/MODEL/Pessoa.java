@@ -158,7 +158,6 @@ public class Pessoa implements ClasseInterface {
                 this.nascimento = Util.stringToDate(nascimentoStr);
                 alterou = true;
             } catch (DateTimeParseException e) {
-                System.out.println("Formato de data inválido: " + nascimentoStr);
             }
         }
 
@@ -178,14 +177,12 @@ public class Pessoa implements ClasseInterface {
     }
 
     public boolean criar(DAO dao, Usuario user, Object[] vetor) {
-        System.out.println("criando pessoa");
-        return criar(dao, vetor);
+         return criar(dao, vetor);
 
     }
 
     public boolean criar(DAO dao, Object[] vetor) {
-        System.out.println("criando pessoa");
-        boolean criado = false;
+       boolean criado = false;
         this.dao = dao;
         if (this.dao != null) {
             if (vetor[0] != null && vetor[0] instanceof String) {

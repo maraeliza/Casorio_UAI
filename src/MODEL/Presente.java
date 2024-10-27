@@ -4,11 +4,9 @@
  */
 package MODEL;
 
-import java.time.LocalDate;
-
-import java.time.format.DateTimeFormatter;
-
 import CONTROLLER.DAO;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -126,9 +124,7 @@ public class Presente implements ClasseInterface {
     }
 
     public boolean criar(DAO dao, Object vetor[]) {
-        System.out.println("CRIANDO UM NOVO PRESENTE!");
-        System.out.println(vetor[0] + " " + vetor[1] + " " + vetor[2]);
-        boolean alterado = false;
+         boolean alterado = false;
         if (vetor[0] != null && vetor[0] instanceof String) {
             this.nome = (String) vetor[0]; // Nome
             if (vetor[1] != null && vetor[1] instanceof String) {

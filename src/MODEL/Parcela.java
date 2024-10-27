@@ -7,7 +7,6 @@ package MODEL;
 import CONTROLLER.DAO;
 import VIEW.Menu_READ;
 import VIEW.Util;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -60,22 +59,22 @@ public class Parcela implements ClasseInterface {
     public boolean criar(DAO dao, Object vetor[]) {
         this.dao = dao;
         boolean alterado = false;
-        System.out.println("CHAMOU A FUNÇÃO CREATE PARA PARCELA DESPESA DE ID " + vetor[0]);
+       
         if (vetor[0] != null) {
-            System.out.println("VETOR: " + vetor[0] + " " + vetor[1] + " " + vetor[2] + " " + vetor[3]);
+
             this.idDespesa = (int) vetor[0];
             if (this.idDespesa != 0) {
-                System.out.println("Pesquisando pelo id de despesa " + this.idDespesa);
+            
                 Despesa despesa = (Despesa) this.dao.getItemByID(12, this.idDespesa);
 
                 if (despesa != null) {
-                    System.out.println("Despesa encontrada: " + despesa.getNome());
+               
                     this.setDespesa(despesa);
                     if (vetor[1] != null) {
                         this.dataVencimento = (LocalDate) vetor[1];
                         if (vetor[2] != null) {
-                            DecimalFormat df = new DecimalFormat("#.##"); // Define 2 casas decimais
-                            double valorFormatado = Double.parseDouble(df.format((double) vetor[2]));
+                          
+                            double valorFormatado = (double) vetor[2];
                             this.valor = valorFormatado;
                             if (vetor[3] != null) {
                                 this.n = (int) vetor[3];
@@ -121,10 +120,10 @@ public class Parcela implements ClasseInterface {
         resultado.append("\nID: ").append(this.id).append("         ");
 
         if (this.nome != null && !this.nome.isEmpty()) {
-            resultado.append("Despesa: ").append(this.nome).append("\n");
+            resultado.append("         DESPESA: ").append(this.nome).append("\n");
         }
 
-        resultado.append("Valor: ").append(this.valor).append("\n");
+        resultado.append("Valor: ").append(String.format("%.2f",this.valor)).append("\n");
 
         if (this.dataVencimento != null) {
             resultado.append("Data de Vencimento: ").append(this.dataVencimento.format(formatter)).append("\n");
@@ -143,6 +142,7 @@ public class Parcela implements ClasseInterface {
             if (this.status != null && !this.status.isEmpty()) {
                 resultado.append("Status: ").append(this.status).append("\n");
             }
+
         }
         resultado.append("Parcela: ").append(this.n).append(" de ").append(this.getNTotal()).append("\n");
 
@@ -183,19 +183,17 @@ public class Parcela implements ClasseInterface {
     }
 
     public void pagar(boolean quitandoDespesa) {
-        System.out.println("quitando despesa " + quitandoDespesa);
-        if (!this.isPago()) {
-            System.out.println(" Alterando status de pagamento  ");
+       if (!this.isPago()) {
+          
             LocalDate hoje = LocalDate.now();
             this.setPago(true);
             this.setDataPagamento(hoje);
             this.setStatus("PAGA");
             this.setAgendado(false);
-            System.out.println("STATUS: " + this.getStatus());
-            System.out.println("Despesa: " + this.getDespesa().getId());
+          
             if (this.despesa != null) {
                 Object infos[] = {this.despesa.getIdFornecedor(), hoje, this.despesa.getDescricao(), this.getValor(), this.getN(), this.getIdDespesa(), this.getId()};
-                this.dao.cadastrar(11, infos, this.user);
+                this.dao.cadastrar(11, infos);
                 if (!quitandoDespesa) {
                     Menu_READ menuVer = new Menu_READ();
                     menuVer.exibir(this.dao, 11);
@@ -206,7 +204,7 @@ public class Parcela implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
-        System.out.println("CHAMOU A FUNÇÃO UPDATE PARA PAGAMENTO");
+     
         boolean alterou = false;
 
         // Atualiza a data de modificação caso tenha havido alguma alteração
@@ -217,7 +215,7 @@ public class Parcela implements ClasseInterface {
 
     public boolean trocarDespesa(int id) {
         Despesa despesa = (Despesa) this.dao.getItemByID(12, id);
-        System.out.println("DESPESA: " + despesa);
+      
         //checa se o id é diferente
         if ((this.getIdDespesa() == 0 || this.getIdDespesa() != id)
                 && despesa != null) {

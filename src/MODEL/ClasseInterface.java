@@ -21,7 +21,6 @@ public interface ClasseInterface {
 
     boolean criar(DAO dao, Object vetor[]);
 
-    boolean criar(DAO dao, Usuario user, Object vetor[]);
 
     void update(Object vetor[]);
 

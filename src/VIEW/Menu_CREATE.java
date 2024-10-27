@@ -38,9 +38,9 @@ public class Menu_CREATE {
     }
 
     public String getTexto() {
-        this.texto = "";
+        this.texto = ""; 
         this.cleanVetor();
-        System.out.println("MENU DA CLASSE " + this.nomeClasse);
+  
 
         Class<?> classe = this.dao.getClasseByID(this.idClasse);
         try {
@@ -84,7 +84,7 @@ public class Menu_CREATE {
             }
         }
         if (result != null) {
-            if(this.dao.cadastrar(this.idClasse, this.valores, this.userLogado)){
+            if(this.dao.cadastrar(this.idClasse, this.valores)){
                 Util.mostrarMSG("Cadastrado com sucesso!");
             }else{
                 Util.mostrarErro("Não foi possível realizar o cadastro!");

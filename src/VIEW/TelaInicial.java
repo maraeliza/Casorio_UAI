@@ -24,8 +24,7 @@ public class TelaInicial {
             texto += "\n3. FECHAR";
             texto += "\n\nINSIRA SUA ESCOLHA: ";
             String result = JOptionPane.showInputDialog(null, texto, "1");
-            System.out.println("OPCAO INVALIDA ESCOLHIDA: " + result);
-
+      
             if (result == null) {
                 Util.mostrarMSG("Obrigado por usar nosso programa ❤! \nAté mais!");
                 System.exit(0);

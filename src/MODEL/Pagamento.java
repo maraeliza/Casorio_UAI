@@ -38,7 +38,6 @@ public class Pagamento implements ClasseInterface {
     private DAO dao;
     private static int total;
 
-
     private int idUser;
     private Usuario user;
 
@@ -110,16 +109,13 @@ public class Pagamento implements ClasseInterface {
         this.dao = dao;
         boolean alterado = false;
         if (this.dao != null) {
-            System.out.println("CRIANDO UM NOVO PAGAMENTO!");
-            System.out.println("Dados: " + vetor[0] + " " + vetor[1] + " " + vetor[2] + " " + vetor[3] + " " + vetor[4]);
-
-            System.out.println("Dados: " + vetor[4] + " " + vetor[5] + " " + vetor[6]);
-
-            Pessoa pessoa = this.user.getPessoa();
+            if (this.dao.getUserLogado() != null) {
+                Pessoa pessoa = this.dao.getUserLogado().getPessoa();
+            } else {
+                Pessoa pessoa = (Pessoa) this.dao.getItemByID(2, 0);
+            }
 
             if (pessoa != null) {
-                System.out.println("Pessoa encontrada " + pessoa.getNome());
-                System.out.println("Definindo a pessoa");
                 this.trocarPessoa(pessoa.getId(), pessoa);
 
                 int idFornecedor = 0;
@@ -133,19 +129,16 @@ public class Pagamento implements ClasseInterface {
                 } else {
                     throw new IllegalArgumentException("Tipo não suportado no vetor[0]");
                 }
-
-                System.out.println("pagamento detectado, encontrando fornecedor de id " + idFornecedor);
                 if (idFornecedor != 0) {
                     Fornecedor fornecedor = (Fornecedor) dao.getItemByID(4, idFornecedor);
 
                     if (fornecedor != null) {
-                        System.out.println("fornecedor encontrado " + fornecedor.getNome());
-                        this.trocarFornecedor(idFornecedor, fornecedor);
 
+                        this.trocarFornecedor(idFornecedor, fornecedor);
+                        this.getFornecedor().atualizarValores();
                     }
                 }
                 if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null) {
-                    System.out.println("Definindo os dados do pagamento: DATA " + vetor[1]);
 
                     if (vetor[1] instanceof String) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -176,7 +169,6 @@ public class Pagamento implements ClasseInterface {
                     }
 
                     if (vetor[5] != null) {
-                        System.out.println("Pesquisando pela despesa de id " + vetor[5]);
                         int idDespesa;
                         if (vetor[5] instanceof String) {
                             idDespesa = Util.stringToInt((String) vetor[5]);
@@ -189,12 +181,10 @@ public class Pagamento implements ClasseInterface {
 
                         if (despesa != null) {
 
-                            System.out.println("Despesa encontrada " + despesa.getNome());
                             this.trocarDespesa(despesa.getId(), despesa);
                         }
                     }
                     if (vetor[6] != null) {
-                        System.out.println("Pesquisando pela parcela de id " + vetor[6]);
 
                         int idParcela;
 
@@ -207,11 +197,10 @@ public class Pagamento implements ClasseInterface {
                         }
 
                         Parcela parcela = (Parcela) dao.getItemByID(13, idParcela);
-                        System.out.println("Pesquisando pela parcela de id " + vetor[6]);
                         if (parcela != null) {
-                            System.out.println("Parcela encontrada " + parcela.getNome());
+
                             this.trocarParcela(parcela.getId(), parcela);
-                            System.out.println("Numero da parcela " + vetor[4]);
+                    
                             int nParcela = 0;
                             if (vetor[4] instanceof String) {
                                 nParcela = Util.stringToInt((String) vetor[4]);
@@ -231,7 +220,6 @@ public class Pagamento implements ClasseInterface {
 
                 }
                 if (alterado) {
-                    System.out.println("Pagamento criado com sucesso !");
                     this.id = ++total;
                     this.dataCriacao = LocalDate.now();
                     this.dataModificacao = null;
@@ -256,10 +244,15 @@ public class Pagamento implements ClasseInterface {
         resultado.append("\nID: ").append(this.id).append("\n");
         resultado.append("Valor Pago: ").append(this.valor).append("\n");
         if (this.descricao != null && !this.descricao.isEmpty()) {
-           
+
             if (this.despesa != null) {
-                resultado.append("DESPESA: ").append(this.despesa.getNome()).append("            ");    
-                resultado.append("Valor Total: ").append(this.despesa.getValorTotal()).append("\n"); 
+                resultado.append("DESPESA: ").append(this.despesa.getNome()).append("            ");
+                resultado.append("Valor Total: ").append(this.despesa.getValorTotal()).append("\n");
+                if (this.despesa.isAgendado()) {
+                    if (this.despesa.getDataAgendamento() != null) {
+                        resultado.append("Data Agendada: ").append(this.despesa.getDataAgendamento().format(formatter)).append("\n");
+                    }
+                }
             }
             resultado.append("Descrição: ").append(this.descricao).append("\n");
         }
@@ -274,19 +267,19 @@ public class Pagamento implements ClasseInterface {
                     resultado.append("Data de Vencimento: ")
                             .append(this.parcela.getDataVencimento().format(formatter)).append("\n");
                 }
+
+                if (this.parcela.isAgendado()) {
+                    if (this.parcela.getDataAgendamento() != null) {
+                        resultado.append("Data Agendada: ").append(this.parcela.getDataAgendamento().format(formatter)).append("\n");
+                    }
+                }
             }
+
         }
 
         if (this.pessoa != null && this.pessoa.getNome() != null && !this.pessoa.getNome().isEmpty()) {
             resultado.append("Pagador: ").append(this.pessoa.getNome()).append("\n");
         }
-        
-        if (this.despesa.isAgendado() || this.parcela.isAgendado()) {
-            if (this.dataCriacao != null) {
-                resultado.append("Data de Criação: ").append(this.dataCriacao.format(formatter)).append("\n");
-            }
-        }
-
 
         if (this.dataModificacao != null) {
             resultado.append("Data da Última Modificação: ").append(this.dataModificacao.format(formatter)).append("\n");
@@ -309,40 +302,39 @@ public class Pagamento implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
-        System.out.println("CHAMOU A FUNÇÃO UPDATE PARA PAGAMENTO");
+
         boolean alterou = false;
         if (vetor[1] != null || !vetor[1].equals('0')) {
-            System.out.println("ATUALIZANDO FORNECEDOR");
             int idFornecedor = Util.stringToInt((String) vetor[1]);
 
             // Obtém o fornecedor pelo ID
             Fornecedor fornecedor = (Fornecedor) this.dao.getItemByID(4, idFornecedor);
             if (fornecedor != null) {
                 this.trocarFornecedor(idFornecedor, fornecedor);
-                System.out.println("Fornecedor associado com sucesso.");
+
             } else {
-                System.out.println("Fornecedor não encontrado para o ID: " + idFornecedor);
+
             }
         }
 
         // Verifica e atualiza data do pagamento (vetor[3])
         if (vetor[2] != null && !((String) vetor[2]).isEmpty()) {
             this.data = Util.stringToDate((String) vetor[2]);
-            System.out.println("Data de pagamento atualizada para: " + this.data);
+
             alterou = true;
         }
 
         // Verifica e atualiza descrição (vetor[4])
         if (vetor[3] != null && !((String) vetor[3]).isEmpty()) {
             this.descricao = (String) vetor[3];
-            System.out.println("Descrição atualizada para: " + this.descricao);
+
             alterou = true;
         }
 
         // Verifica e atualiza valor (vetor[5])
         if (vetor[4] != null && !((String) vetor[4]).isEmpty()) {
             this.valor = Util.stringToDouble((String) vetor[4]);
-            System.out.println("Valor atualizado para: " + this.valor);
+
             alterou = true;
         }
         // Atualiza a data de modificação caso tenha havido alguma alteração

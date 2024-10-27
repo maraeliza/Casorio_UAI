@@ -5,7 +5,6 @@
 package VIEW;
 
 import CONTROLLER.DAO;
-
 import javax.swing.JOptionPane;
 
 /**
@@ -32,8 +31,33 @@ public class Menu_READ {
                 this.nomeClasse = this.dao.getNameClasseById(idClasse);
 
                 try {
-                    System.out.println("NOME DA CLASSE: " + this.nomeClasse);
                     String texto = dao.getTexto(idClasse);
+                    int res = JOptionPane.showConfirmDialog(null, texto, "RELATÓRIO DE " + this.nomeClasse.toUpperCase(), JOptionPane.OK_CANCEL_OPTION);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Util.mostrarMSG("Nenhum item encontrado ainda!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void exibir(DAO dao, int idClasse, boolean relatorioPagamento) {
+        this.idClasse = idClasse;
+        this.dao = dao;
+        try {
+            
+            int n = dao.getTotalClasse(idClasse);
+            if (n > 0) {
+                this.nomeClasse = this.dao.getNameClasseById(idClasse);
+
+                try {
+                     String texto = this.dao.getPagamentosNoivos(idClasse);
                     int res = JOptionPane.showConfirmDialog(null, texto, "RELATÓRIO DE " + this.nomeClasse.toUpperCase(), JOptionPane.OK_CANCEL_OPTION);
 
                     System.out.println("TEXTO: " + texto);

@@ -103,22 +103,17 @@ public class ConvidadoIndividual implements ClasseInterface {
         boolean alterado = false;
 
         if (this.dao != null) {
-            System.out.println("Criando convidado individual");
 
             int idPessoaC = Util.stringToInt((String) vetor[0]);
-            System.out.println("ID DA PESSOA: " + idPessoaC);
-
+       
             Pessoa p = (Pessoa) this.dao.getItemByID(2, idPessoaC);
 
             if (p != null) {
-                System.out.println("NOME: " + p.getNome());
-
+         
                 if (!p.isConvidadoVinculado() && p.getTipo().toUpperCase().equals("CONVIDADO")) {
-                    System.out.println("Pessoa não tem convidado vinculado e é do tipo convidado");
-
+          
                     if (!p.isUserVinculado()) {
-                        System.out.println("Trocando pessoa para convidado individual");
-                        this.trocarPessoa(idPessoaC, p);
+                       this.trocarPessoa(idPessoaC, p);
                         int idFamilia = Util.stringToInt((String) vetor[1]);
 
                         ConvidadoFamilia familia = (ConvidadoFamilia) this.dao.getItemByID(10, idFamilia);
@@ -127,7 +122,7 @@ public class ConvidadoIndividual implements ClasseInterface {
 
                             /* Código para criar acesso (usuario ) do convidado */
                             Object[] userDados = {(String) vetor[0], p.getNome().toUpperCase(), familia.getAcesso()};
-                            this.dao.cadastrar(3, userDados, this.userLogado);
+                            this.dao.cadastrar(3, userDados);
                             Usuario user = this.dao.getUserByIdPessoa(p.getId());
                             if (user != null) {
                                 this.setUser(user);
@@ -152,7 +147,14 @@ public class ConvidadoIndividual implements ClasseInterface {
                     }
 
                 } else {
-                    Util.mostrarErro("A conta de convidado para " + p.getNome() + " já existe ou o tipo não é 'convidado individual'!");
+                    if (p.isConvidadoVinculado()) {
+                        Util.mostrarErro("A conta de convidado para " + p.getNome() + " já existe!");
+                
+                    }else{
+                        Util.mostrarErro("A pessoa " + p.getNome() + " não é do tipo 'convidado'!");
+                
+                    }
+                    
                 }
 
             } else {
@@ -164,7 +166,6 @@ public class ConvidadoIndividual implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
-        System.out.println("CHAMOU A FUNÇÃO UPDATE PARA PAGAMENTO");
         boolean alterou = false;
 
         // Atualiza a data de modificação caso tenha havido alguma alteração

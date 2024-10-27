@@ -64,7 +64,7 @@ public class Usuario implements ClasseInterface {
         if (pessoa != null) {
             this.pessoa = pessoa;
             this.pessoa.setUserVinculado(true);
-        
+
             this.setIdPessoa(this.pessoa.getId());
         }
     }
@@ -86,19 +86,15 @@ public class Usuario implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
-        System.out.println("CHAMOU A FUNCAO UPDATE");
         boolean alterou = false;
         if (vetor[1] != null && !((String) vetor[1]).equals("") && ((String) vetor[1]).length() > 0) {
             int idPessoa = Util.stringToInt((String) vetor[1]);
-            System.out.println("ATUALIZANDO ITEM DE ID " + idPessoa);
             if (idPessoa != 0 && this.getId() != idPessoa) {
                 this.idPessoa = idPessoa;
                 alterou = true;
 
             }
         }
-
-        System.out.println(vetor[2] + " " + vetor[3] + " " + vetor[4]);
 
         if (vetor[2] != null && !((String) vetor[2]).equals("") && ((String) vetor[2]).length() > 0) {
             String login = (String) vetor[2];
@@ -176,72 +172,56 @@ public class Usuario implements ClasseInterface {
     public boolean criar(DAO dao, Object vetor[]) {
         this.dao = dao;
         boolean criou = false;
-        if(this.dao != null){
-            System.out.println("usuario detectado");
-          
+        if (this.dao != null) {
+
             int idP = Util.stringToInt((String) vetor[0]);
-            System.out.println("ID DA PESSOA " + idP);
             Pessoa pessoa = (Pessoa) dao.getItemByID(2, idP);
-            System.out.println("NOME: " + pessoa.getNome());
             if (pessoa != null) {
-    
-                if (!pessoa.isUserVinculado() ) {
-                    System.out.println("Pessoa não tem usuario vinculado");
-    
-                    System.out.println("Trocando pessoa do usuario");
+
+                if (!pessoa.isUserVinculado()) {
                     this.trocarPessoa(idP, pessoa);
-                    System.out.println("criando usuario");
-    
-                    System.out.println("Metodo para criar usuario");
-                    System.out.println("VETOR " + vetor[0] + " " + vetor[1] + " " + vetor[2]);
                     //Pessoa pessoa, String login, String senha, int tipo
                     if (vetor[0] != null && vetor[1] != null && vetor[2] != null) {
-                        System.out.println("VETOR NAO NULO");
                         String login = (String) vetor[1];
                         String senha = (String) vetor[2];
-    
+
                         if (login.length() > 0 && senha.length() > 0) {
-    
+
                             this.id = ++total;
                             this.login = login;
                             this.senha = senha;
                             this.pessoa.setUserVinculado(true);
                             this.dataCriacao = LocalDate.now();
                             this.dataModificacao = null;
-                            System.out.println("USUARIO: " + this);
-                            System.out.println("TIPO: " + this.pessoa.getTipo());
                             if (this.pessoa.getTipo().toUpperCase().equals("ADMIN")
                                     || this.pessoa.getTipo().toUpperCase().equals("NOIVO")
                                     || this.pessoa.getTipo().toUpperCase().equals("NOIVA")
                                     || this.pessoa.getTipo().toUpperCase().equals("CERIMONIAL")) {
-    
+
                                 this.tipo = 1;
                             } else {
                                 this.tipo = 2;
                             }
-    
+
                             criou = true;
-    
+
                         }
-    
+
                     }
                 } else if (pessoa.isUserVinculado()) {
                     Util.mostrarErro("A conta de usuário de " + pessoa.getNome() + " já existe!");
                 }
-    
+
             } else {
                 Util.mostrarErro("Pessoa de id " + vetor[0] + " não encontrada");
-    
+
             }
         }
-        
 
         return criou;
     }
 
     public boolean criar(DAO dao, Usuario user, Object vetor[]) {
-
-        System.out.println("Chamando o metodo criar com o user");
         return criar(dao, vetor);
     }
 

@@ -204,29 +204,21 @@ public class Evento implements ClasseInterface {
         boolean alterado = false;
         if (dao != null) {
             this.dao = dao;
-            System.out.println("novo evento detectado");
-            System.out.println(" " + vetor[0] + " " + vetor[1] + " " + vetor[2] + " " + vetor[3] + " " + vetor[4]);
-
+      
             Pessoa noiva = dao.getNoivos(1);
             Pessoa noivo = dao.getNoivos(0);
-            System.out.println("noivo encontrado " + noivo.getNome());
-            System.out.println("noiva encontrada " + noiva.getNome());
-
+      
             int idIgreja = Util.stringToInt((String) vetor[1]);
             if (idIgreja != 0) {
 
                 Igreja igreja = (Igreja) dao.getItemByID(7, idIgreja);
-                System.out.println("Igreja encontrada " + igreja.getNome());
-
-                int idCartorio = Util.stringToInt((String) vetor[2]);
+                 int idCartorio = Util.stringToInt((String) vetor[2]);
                 if (idCartorio != 0) {
                     Cartorio cartorio = (Cartorio) dao.getItemByID(8, idCartorio);
-                    System.out.println("cartorio encontradao" + cartorio.getNome());
-
+        
                     int idCerimonial = Util.stringToInt((String) vetor[3]);
                     if (idCerimonial != 0) {
                         Cerimonial cerimonial = (Cerimonial) dao.getItemByID(6, idCerimonial);
-                        System.out.println("cerimonial encontrado " + cerimonial.getNome());
                         if (noiva != null && noivo != null && igreja != null && cartorio != null && cerimonial != null) {
 
                             this.setNoiva(noiva);
@@ -243,7 +235,6 @@ public class Evento implements ClasseInterface {
                                     this.data = LocalDate.parse(data, formato);
                                     alterado = true; // Indica que o campo de data foi alterado
                                 } catch (DateTimeParseException e) {
-                                    System.out.println("Formato de data inválido: " + e.getMessage());
                                 }
                             }
                             if (vetor[4] != null && vetor[4] instanceof String) {
@@ -344,8 +335,7 @@ public class Evento implements ClasseInterface {
                     this.data = Util.stringToDate(dataStr);
                     alterou = true;
                 } catch (DateTimeParseException e) {
-                    System.out.println("Formato de data inválido: " + dataStr);
-                }
+                 }
             }
         }
         if (vetor[5] != null && vetor[5] instanceof String) {

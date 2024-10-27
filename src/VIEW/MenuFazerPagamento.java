@@ -82,9 +82,7 @@ public class MenuFazerPagamento {
                 if (result != null) {
                     idInserido = Util.stringToInt(result);
                     if (idInserido != 0) {
-                        System.out.println("parcela selecionada: " + idInserido);
-                        System.out.println("realizar o pagamento!");
-                        Parcela parcela = (Parcela) this.dao.getItemByID(13, idInserido);
+                         Parcela parcela = (Parcela) this.dao.getItemByID(13, idInserido);
                         if (parcela != null) {
                             parcela.pagar(false);
                             Util.mostrarMSG("Pagamento da parcela feito com sucesso!");
@@ -111,9 +109,7 @@ public class MenuFazerPagamento {
             int idInserido = Util.stringToInt(result);
             if (idInserido != 0) {
                 LocalDate hoje = LocalDate.now();
-                System.out.println("despesa selecionada: " + idInserido);
-                System.out.println("realizar o pagamento!");
-                Despesa despesa = (Despesa) this.dao.getItemByID(12, idInserido);
+                 Despesa despesa = (Despesa) this.dao.getItemByID(12, idInserido);
                 if (despesa != null && !despesa.isPago()) {
                     despesa.pagar();
                     Util.mostrarMSG("Pagamento da despesa feito com sucesso!");
