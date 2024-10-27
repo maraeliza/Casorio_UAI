@@ -3,11 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package VIEW;
-import javax.swing.*;
-
+import CONTROLLER.DAO;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import javax.swing.*;
 /**
  *
  * @author Mara
@@ -82,5 +82,9 @@ public class Util {
             Util.mostrarErro("Data inserida no formato incorreto");
             return null;
         }
+    }
+     public static void criarMenuCRUD(DAO dao, int idClasse) {
+        Menu_CRUD menu = new Menu_CRUD();
+        menu.exibir(dao, idClasse);
     }
 }

@@ -24,8 +24,8 @@ public class MenuComprarPresente {
     private int idClasse;
     private Usuario user;
 
-    public void exibir(DAO dao, int idClasse, Usuario user) {
-        this.user = user;
+    public void exibir(DAO dao, int idClasse) {
+        this.user = dao.getUserLogado();
         this.dao = dao;
         this.idClasse = idClasse;
         this.vetor = new String[10];
@@ -47,18 +47,14 @@ public class MenuComprarPresente {
     }
 
     public void montarPainel(String objetos) {
-
-        String conteudo = "\nATUALIZAR CAMPO DE " + this.nomeClasse.toUpperCase();
-
-        this.valores = new String[10];
-        conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
+        String conteudo = "";
+        conteudo = "\nCONFIRMAR COMPRA DE " + this.nomeClasse.toUpperCase();
         conteudo += "\n" + objetos + "\n\n";
         conteudo += "\n\nINSIRA: \nID DO PRESENTE ➡ PARA CONFIRMAR/CANCELAR COMPRA:"+"\n"+"DIGITE 0                 ➡ PARA VOLTAR";
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
             if (idInserido != 0) {
-                this.valores[0] = result;
                 try {
                     boolean existe = this.dao.find(this.idClasse, idInserido);
                     if (existe) {
@@ -67,7 +63,7 @@ public class MenuComprarPresente {
                             if (presente.isComprado()) {
                                 if (this.user.getIdPessoa() == presente.getIdPessoa()) {
                                     presente.comprar(this.user.getPessoa());
-                                    if (presente.getEscolhido()) {
+                                    if (presente.isComprado()) {
                                         Util.mostrarMSG("Compra do presente " + presente.getNome() + " confirmada com sucesso!");
                                     } else {
                                         Util.mostrarMSG("Confirmação de compra do presente cancelada!");
@@ -85,20 +81,29 @@ public class MenuComprarPresente {
                             }
 
                         } else {
-                            Util.mostrarMSG("Presente não encontrado, primeiro, escolha o presente para depois confirmar sua compra!!");
+                            if (presente == null) {
+                                Util.mostrarMSG("Presente com id "+result+"não encontrado!");
+                            }else{
+                                Util.mostrarMSG("Não foi possível confirmar a compra, pois o presente de id "+idInserido+" ainda não foi escolhido!");
+                            }
+                           
                         }
 
-                        this.exibir(this.dao, this.idClasse, this.user);
+                        this.exibir(this.dao, this.idClasse);
                     } else {
                         Util.mostrarErro("Elemento de id " + result + " não encontrado!");
+                        this.exibir(this.dao, this.idClasse);
+                      
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }else{
+                Util.criarMenuCRUD(this.dao, 1);
             }
 
         } else {
-            Util.mostrarErro("Atualização cancelada!");
+            Util.criarMenuCRUD(this.dao, 1);
         }
 
     }

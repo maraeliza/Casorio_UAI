@@ -5,9 +5,8 @@
 package VIEW;
 
 import CONTROLLER.DAO;
-
-import javax.swing.JOptionPane;
 import MODEL.Usuario;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -156,7 +155,7 @@ public class MenuInicial {
 
     public void criarMenuCRUD(DAO dao, int idClasse) {
         Menu_CRUD menu = new Menu_CRUD();
-        menu.exibir(this.dao, idClasse, MenuInicial.logou, this.userLogado);
+        menu.exibir(this.dao, idClasse);
     }
     public void deslogar(){
         this.dao.setUserLogado(null);

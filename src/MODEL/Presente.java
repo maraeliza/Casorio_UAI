@@ -19,39 +19,19 @@ public class Presente implements ClasseInterface {
     private String tipo;
 
     private String link;
+
+    private int idPessoa;
     private Pessoa pessoa;
 
     private LocalDate dataComrpa;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
     private boolean escolhido;
+
     public static int total;
-    private int idPessoa;
+
     private boolean comprado;
     private DAO dao;
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    public int getIdPessoa() {
-        return idPessoa;
-    }
-
-    public boolean isComprado() {
-        return comprado;
-    }
-
-    public void setComprado(boolean comprado) {
-        this.comprado = comprado;
-    }
-
-    public void setIdPessoa(int idPessoa) {
-        this.idPessoa = idPessoa;
-    }
 
     public static String[] getCampos() {
         String[] campos = new String[10];
@@ -62,69 +42,9 @@ public class Presente implements ClasseInterface {
         return campos;
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getTotalPresentes() {
-        return total;
-    }
-
-    public static void setTotal(int t) {
-        total = t;
-    }
-
-    public String getNome() {
-        return this.nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-        this.dataModificacao = LocalDate.now();
-    }
-
-    public String getTipo() {
-        return this.tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-        this.dataModificacao = LocalDate.now();
-    }
-
-    public Pessoa getPessoa() {
-        return this.pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-        this.dataModificacao = LocalDate.now();
-    }
-
-    public boolean getEscolhido() {
-        return this.escolhido;
-
-    }
-
-    public void setEscolhido(boolean escolhido) {
-        this.escolhido = escolhido;
-        this.dataModificacao = LocalDate.now();
-    }
-
-    public LocalDate getDataCriacao() {
-        return this.dataCriacao;
-    }
-
-    public LocalDate getDataModificacao() {
-        return this.dataModificacao;
-    }
-
     public boolean criar(DAO dao, Object vetor[]) {
-         boolean alterado = false;
+        boolean alterado = false;
+        this.dao = dao;
         if (vetor[0] != null && vetor[0] instanceof String) {
             this.nome = (String) vetor[0]; // Nome
             if (vetor[1] != null && vetor[1] instanceof String) {
@@ -144,12 +64,6 @@ public class Presente implements ClasseInterface {
             this.escolhido = false;
         }
         return alterado;
-    }
-
-    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
-
-        return criar(dao, vetor);
-
     }
 
     public String ler() {
@@ -232,13 +146,11 @@ public class Presente implements ClasseInterface {
     public boolean comprar(Pessoa p) {
 
         if (p != null && this.comprado == false) {
-            this.pessoa = p;
+            this.setPessoa(p);
             this.comprado = true;
             this.setIdPessoa(this.pessoa.getId());
             return true;
-        } else if (p != null && this.comprado) {
-            this.pessoa = null;
-            this.setIdPessoa(0);
+        } else if (this.comprado) {
             this.comprado = false;
             return true;
         }
@@ -249,15 +161,12 @@ public class Presente implements ClasseInterface {
     public boolean escolher(Pessoa p) {
 
         if (p != null && this.escolhido == false) {
-            this.pessoa = p;
+            this.setPessoa(p);
             this.escolhido = true;
-            this.setIdPessoa(this.pessoa.getId());
             return true;
-        } else if (p != null && this.escolhido) {
-            this.pessoa = null;
-            this.setIdPessoa(0);
+        } else if (this.escolhido) {
+            this.setPessoa(null);
             this.escolhido = false;
-
             return true;
         }
         this.atualizarDataModificacao();
@@ -272,5 +181,98 @@ public class Presente implements ClasseInterface {
     public boolean deletar() {
         --Presente.total;
         return true;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public int getIdPessoa() {
+        return idPessoa;
+    }
+
+    public boolean isComprado() {
+        return comprado;
+    }
+
+    public void setComprado(boolean comprado) {
+        this.comprado = comprado;
+    }
+
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getTotalPresentes() {
+        return total;
+    }
+
+    public static void setTotal(int t) {
+        total = t;
+    }
+
+    public String getNome() {
+        return this.nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+        this.dataModificacao = LocalDate.now();
+    }
+
+    public String getTipo() {
+        return this.tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+        this.dataModificacao = LocalDate.now();
+    }
+
+    public Pessoa getPessoa() {
+        return this.pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        if (pessoa != null) {
+                
+            this.pessoa = pessoa;
+            this.setIdPessoa(this.pessoa.getId());
+            this.dataModificacao = LocalDate.now();
+        }else{
+            this.pessoa = null;
+            this.setIdPessoa(0);
+            this.dataModificacao = LocalDate.now();
+        }
+    }
+
+    public boolean getEscolhido() {
+        return this.escolhido;
+
+    }
+
+    public void setEscolhido(boolean escolhido) {
+        this.escolhido = escolhido;
+        this.dataModificacao = LocalDate.now();
+    }
+
+    public LocalDate getDataCriacao() {
+        return this.dataCriacao;
+    }
+
+    public LocalDate getDataModificacao() {
+        return this.dataModificacao;
     }
 }

@@ -58,6 +58,11 @@ public class Cerimonial implements ClasseInterface {
     }
 
     public void setPessoa(Pessoa pessoa) {
+        if (this.pessoa != null) {
+            this.pessoa.setUserVinculado(false);
+            this.pessoa.setCerimonialVinculado(false);
+        }
+        
         this.pessoa = pessoa;
     }
 
@@ -66,6 +71,7 @@ public class Cerimonial implements ClasseInterface {
     }
 
     public void setUser(Usuario user) {
+        
         this.user = user;
     }
 
@@ -77,45 +83,43 @@ public class Cerimonial implements ClasseInterface {
         return campos;
     }
 
-    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
-        return criar(dao, vetor);
-    }
-
     public boolean criar(DAO dao, Object vetor[]) {
         this.dao = dao;
         boolean alterado = false;
         if (this.dao != null) {
-            System.out.println("Criando cerimonial");
 
             int idPessoaC = Util.stringToInt((String) vetor[0]);
-            System.out.println("ID DA PESSOA " + idPessoaC);
             Pessoa p = (Pessoa) this.dao.getItemByID(2, idPessoaC);
-            System.out.println("NOME: " + p.getNome());
             if (p != null) {
 
-                if (!p.isCerimonialVinculado() && p.getTipo().toUpperCase().equals("CERIMONIAL")) {
-                    System.out.println("Pessoa não tem cerimonial vinculado");
-                    System.out.println("Checando se a pessoa tem usuario vinculado");
-                    if (p.isUserVinculado()) {
+                if (!p.isCerimonialVinculado()
+                        && p.getTipo().toUpperCase().equals("CERIMONIAL")
+                        && !p.isUserVinculado()) {
 
-                        System.out.println("Trocando pessoa de cerimonial");
-                        this.trocarPessoa(idPessoaC, p);
-                        Usuario user = this.dao.getUserByIdPessoa(idPessoaC);
-                        this.trocarUser(user);
-                        System.out.println("criando cerimonial");
-                        if (this.getPessoa() != null && this.getUser() != null) {
-                            alterado = true;
-                        }
+                    this.trocarPessoa(idPessoaC, p);
 
-                        if (alterado) {
-                            this.dataCriacao = LocalDate.now();
-                            this.dataModificacao = null;
-                            this.id = ++total; // Supondo que 'total' é um contador de IDs
-                        }
+                    Object[] userDados = {(String) vetor[0], p.getNome().toUpperCase(), "senhaCasorioUai"};
+                    this.dao.cadastrar(3, userDados);
+                    Usuario user = this.dao.getUserByIdPessoa(p.getId());
+                    this.setUser(user);
+
+                    if (this.getPessoa() != null && this.getUser() != null) {
+                        alterado = true;
+                    }
+
+                    if (alterado) {
+                        this.dataCriacao = LocalDate.now();
+                        this.dataModificacao = null;
+                        this.id = ++total; // Supondo que 'total' é um contador de IDs
                     }
 
                 } else {
-                    Util.mostrarErro("A conta de cerimonial de " + p.getNome() + " já existe!");
+                    if (p.isCerimonialVinculado() && p.isUserVinculado()) {
+                        Util.mostrarErro("A conta de cerimonial de " + p.getNome() + " já existe!");
+                    } else {
+                        Util.mostrarErro("A pessoa " + p.getNome() + " não é do tipo 'cerimonial'!");
+                    }
+
                 }
 
             } else {
@@ -127,53 +131,32 @@ public class Cerimonial implements ClasseInterface {
         return alterado;
     }
 
-    /*
-    public boolean criar(DAO dao,Object vetor[]) {
-        boolean alterado = false;
-        if (this.getPessoa() != null && this.getUser() != null) {
-            alterado = true;
-        }
-
-        if (alterado) {
-            this.dataCriacao = LocalDate.now();
-            this.dataModificacao = null;
-            this.id = ++total; // Supondo que 'total' é um contador de IDs
-        }
-
-        return alterado;
-    }
-     */
     public void update(Object vetor[]) {
         boolean alterou = false;
-        System.out.println("Cerimonial detectado");
-
-        int idPessoaC = Util.stringToInt((String) vetor[0]);
-        System.out.println("ID DA PESSOA " + idPessoaC);
+        int idPessoaC = Util.stringToInt((String) vetor[1]);
         Pessoa p = (Pessoa) this.dao.getItemByID(2, idPessoaC);
-        System.out.println("NOME: " + p.getNome());
         if (p != null) {
-
-            if (!p.isCerimonialVinculado()) {
-                System.out.println("Pessoa não tem cerimonial vinculado");
-                System.out.println("Checando se a pessoa tem usuario vinculado");
-                if (p.isUserVinculado()) {
-
-                    System.out.println("Trocando pessoa de cerimonial");
-                    this.trocarPessoa(idPessoaC, p);
-                    Usuario user = this.dao.getUserByIdPessoa(idPessoaC);
-                    this.trocarUser(user);
-                    System.out.println("atualizando cerimonial");
-                    if (this.getPessoa() != null && this.getUser() != null) {
-                        alterou = true;
-                    }
-
-                    if (alterou) {
-                        this.atualizarDataModificacao();
-                    }
+            if (!p.isCerimonialVinculado() && !p.isUserVinculado()
+                    && p.getTipo().toUpperCase().equals("CERIMONIAL")) {
+                this.trocarPessoa(idPessoaC, p);
+                Object[] userDados = {(String) vetor[1], p.getNome().toUpperCase(), "senhaCasorioUai"};
+                this.dao.cadastrar(3, userDados);
+                Usuario user = this.dao.getUserByIdPessoa(p.getId());
+                this.trocarUser(user);
+                if (this.getPessoa() != null && this.getUser() != null) {
+                    alterou = true;
                 }
 
+                if (alterou) {
+                    this.atualizarDataModificacao();
+                }
             } else {
-                Util.mostrarErro("A conta de cerimonial de " + p.getNome() + " já existe!");
+                if (p.isCerimonialVinculado() && p.isUserVinculado()) {
+                    Util.mostrarErro("A conta de cerimonial de " + p.getNome() + " já existe!");
+                } else {
+                    Util.mostrarErro("A pessoa " + p.getNome() + " não é do tipo 'cerimonial'!");
+                }
+
             }
 
         } else {
@@ -218,28 +201,6 @@ public class Cerimonial implements ClasseInterface {
     }
 
     // Método para criar um novo cerimonial
-    public void criar(String nome, String telefone) {
-        this.id = ++total;
-        this.nome = nome;
-
-        this.dataCriacao = LocalDate.now();
-        this.dataModificacao = null;
-    }
-
-    // Método para atualizar cerimonial
-    public void update(String nome, String telefone) {
-        boolean alterou = false;
-
-        if (nome != null && !nome.isEmpty()) {
-            this.nome = nome;
-            alterou = true;
-        }
-
-        if (alterou) {
-            this.atualizarDataModificacao();
-        }
-    }
-
     // Método para atualizar a data de modificação
     public void atualizarDataModificacao() {
         this.dataModificacao = LocalDate.now();
@@ -251,6 +212,7 @@ public class Cerimonial implements ClasseInterface {
             Util.mostrarErro("Não é possível excluir o cerimonial " + this.getNome() + ", pois ele está vinculado a um evento");
             return false;
         } else {
+            this.getUser().apagar();
             --Cerimonial.total;
             return true;
         }
@@ -263,9 +225,10 @@ public class Cerimonial implements ClasseInterface {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         // Adiciona informações do cerimonial
-        resultado.append("Cerimonial ").append(this.id);
+        resultado.append("\n\nCERIMONIAL ").append(this.id);
         resultado.append("\nNome: ").append(this.nome);
-
+        resultado.append("\nLogin: ").append(this.user.getLogin());
+        resultado.append("\nSenha de acesso: ").append(this.user.getSenha());
         // Verifica e formata a data de criação
         if (this.dataCriacao != null) {
             resultado.append("\nData de Criação: ").append(this.dataCriacao.format(formatter));
@@ -275,8 +238,6 @@ public class Cerimonial implements ClasseInterface {
         if (this.dataModificacao != null) {
             resultado.append("\nData da Última Modificação: ").append(this.dataModificacao.format(formatter));
         }
-
-        resultado.append("\n\n");
         return resultado.toString();
     }
 
@@ -286,8 +247,13 @@ public class Cerimonial implements ClasseInterface {
             if (this.getIdUsuario() == 0 && user.getId() != 0
                     || this.getIdUsuario() != user.getId() && user.getId() != 0) {
 
+                if (this.getIdUsuario() != 0 && this.getUser() != null) {
+
+                    this.getUser().apagar();
+                }
                 this.setIdUsuario(user.getId());
                 this.setUser(user);
+
                 return true;
             }
         }
@@ -299,7 +265,10 @@ public class Cerimonial implements ClasseInterface {
         //checa se o id é diferente e se pessoa já não tem cerimonial vinculado
         if ((this.getIdPessoa() == 0 || this.getIdPessoa() != idPessoa)
                 && p != null && !p.isCerimonialVinculado()) {
-
+                if(this.pessoa != null){
+                    
+                }
+            
             if (this.getIdPessoa() > 0 && this.getPessoa() != null) {
                 this.getPessoa().setCerimonialVinculado(false);
             }

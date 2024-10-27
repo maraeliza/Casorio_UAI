@@ -90,7 +90,8 @@ public class Usuario implements ClasseInterface {
         if (vetor[1] != null && !((String) vetor[1]).equals("") && ((String) vetor[1]).length() > 0) {
             int idPessoa = Util.stringToInt((String) vetor[1]);
             if (idPessoa != 0 && this.getId() != idPessoa) {
-                this.idPessoa = idPessoa;
+                Pessoa pessoa = (Pessoa) this.dao.getItemByID(2, idPessoa);
+                this.trocarPessoa(idPessoa, pessoa);
                 alterou = true;
 
             }
@@ -126,49 +127,6 @@ public class Usuario implements ClasseInterface {
 
     }
 
-    public void update(Usuario user, Object vetor[]) {
-
-    }
-
-    public void update(DAO dao, Object vetor[]) {
-        boolean alterou = false;
-        int idPessoa = Util.stringToInt((String) vetor[0]);
-        if (idPessoa != 0) {
-            Pessoa pessoa = (Pessoa) dao.getItemByID(2, idPessoa);
-            if (!pessoa.isUserVinculado() || this.getIdPessoa() != pessoa.getId()) {
-                this.trocarPessoa(idPessoa, pessoa);
-            }
-        }
-        if (vetor[1] != null) {
-            int tipo = (int) vetor[1];
-            if (tipo != 0) {
-                this.tipo = tipo;
-                alterou = true;
-
-            }
-        }
-        if (vetor[2] != null) {
-            String login = (String) vetor[2];
-            if (login.length() > 0) {
-                this.login = login;
-                alterou = true;
-
-            }
-        }
-        if (vetor[3] != null) {
-            String senha = (String) vetor[3];
-            if (senha.length() > 0) {
-                this.senha = senha;
-                alterou = true;
-
-            }
-        }
-        if (alterou) {
-            this.atualizarDataModificacao();
-        }
-
-    }
-
     public boolean criar(DAO dao, Object vetor[]) {
         this.dao = dao;
         boolean criou = false;
@@ -179,6 +137,7 @@ public class Usuario implements ClasseInterface {
             if (pessoa != null) {
 
                 if (!pessoa.isUserVinculado()) {
+                    this.id = ++total;
                     this.trocarPessoa(idP, pessoa);
                     //Pessoa pessoa, String login, String senha, int tipo
                     if (vetor[0] != null && vetor[1] != null && vetor[2] != null) {
@@ -187,7 +146,7 @@ public class Usuario implements ClasseInterface {
 
                         if (login.length() > 0 && senha.length() > 0) {
 
-                            this.id = ++total;
+                            
                             this.login = login;
                             this.senha = senha;
                             this.pessoa.setUserVinculado(true);
@@ -315,10 +274,11 @@ public class Usuario implements ClasseInterface {
     }
 
     public boolean trocarPessoa(int idPessoa, Pessoa p) {
-
         //checa se o id é diferente e se pessoa já não tem user vinculado
-        if ((this.getIdPessoa() == 0 || this.getIdPessoa() != idPessoa)
-                && p != null && !p.isUserVinculado()) {
+        if (
+            (this.getIdPessoa() == 0 || this.getIdPessoa() != idPessoa)
+                && p != null && !p.isUserVinculado()
+            ) {
 
             if (this.getIdPessoa() > 0 && this.getPessoa() != null) {
                 this.getPessoa().setUserVinculado(false);
@@ -329,5 +289,10 @@ public class Usuario implements ClasseInterface {
             return true;
         }
         return false;
+    }
+    public void apagar(){
+        this.pessoa.setUserVinculado(false);
+        this.pessoa.setCerimonialVinculado(false);
+        this.dao.delItemByID(3, this.getId());
     }
 }

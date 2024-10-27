@@ -65,7 +65,7 @@ public class MenuFazerPagamento {
     }
     public void criarMenuCRUD(DAO dao, int idClasse) {
         Menu_CRUD menu = new Menu_CRUD();
-        menu.exibir(this.dao, idClasse, true, this.user);
+        menu.exibir(this.dao, idClasse);
     }
 
     public void pagarParcela() {

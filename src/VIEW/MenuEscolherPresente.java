@@ -24,8 +24,8 @@ public class MenuEscolherPresente {
     private int idClasse;
     private Usuario user;
 
-    public void exibir(DAO dao, int idClasse, Usuario user) {
-        this.user = user;
+    public void exibir(DAO dao, int idClasse) {
+        this.user = dao.getUserLogado();
         this.dao = dao;
         this.idClasse = idClasse;
         this.vetor = new String[10];
@@ -39,7 +39,6 @@ public class MenuEscolherPresente {
 
     public String getTexto() {
         this.texto = "";
-        this.cleanVetor();
         this.texto = this.dao.getTexto(this.idClasse);
         Class<?> classe = this.dao.getClasseByID(this.idClasse);
         try {
@@ -48,31 +47,32 @@ public class MenuEscolherPresente {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        montarPainel(texto);
+        montarPainel();
 
         return "";
     }
 
-    public void montarPainel(String objetos) {
+    public void montarPainel() {
 
         String conteudo = "\nATUALIZAR CAMPO DE " + this.nomeClasse.toUpperCase();
 
-        this.valores = new String[10];
         conteudo = "\nATUALIZAR " + this.nomeClasse.toUpperCase();
-        conteudo += "\n" + objetos + "\n\n";
-        conteudo += "\n\nINSIRA: \nID DO PRESENTE ➡ CONFIRMAR/CANCELAR ESCOLHA:"+"\n"+"DIGITE 0                 ➡ PARA VOLTAR";
+        conteudo += "\n" + this.texto + "\n\n";
+        conteudo += "\n\nINSIRA: \nID DO PRESENTE ➡ CONFIRMAR/CANCELAR ESCOLHA:" + "\n" + "DIGITE 0                 ➡ PARA VOLTAR";
         String result = JOptionPane.showInputDialog(null, conteudo, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
         if (result != null) {
             int idInserido = Util.stringToInt(result);
             if (idInserido != 0) {
-                this.valores[0] = result;
                 try {
                     boolean existe = this.dao.find(this.idClasse, idInserido);
                     if (existe) {
                         Presente presente = (Presente) this.dao.getItemByID(idClasse, idInserido);
                         if (presente != null) {
+                            //checa se o presente foi escolhido já
                             if (presente.getEscolhido()) {
+                                //checa se a pessoa que está logada agora é a pessoa que escolheu o presente
                                 if (this.user.getIdPessoa() == presente.getIdPessoa()) {
+                                    //altera a escolha
                                     presente.escolher(this.user.getPessoa());
                                     if (presente.getEscolhido()) {
                                         Util.mostrarMSG("Presente escolhido com sucesso!");
@@ -95,39 +95,23 @@ public class MenuEscolherPresente {
                             Util.mostrarMSG("Presente não encontrado!");
                         }
 
-                        this.exibir(this.dao, this.idClasse, this.user);
+                        this.exibir(this.dao, this.idClasse);
+                        
                     } else {
                         Util.mostrarErro("Elemento de id " + result + " não encontrado!");
+                        this.exibir(this.dao, this.idClasse);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }else{
+                Util.criarMenuCRUD(this.dao, 1);
             }
 
         } else {
-            Util.mostrarErro("Atualização cancelada!");
+            Util.criarMenuCRUD(this.dao, 1);
         }
 
-    }
-
-    public boolean add(String atributo) {
-        for (int i = 0; i < this.vetor.length; i++) {
-            if (this.vetor[i] == null) {
-                this.vetor[i] = atributo;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean cleanVetor() {
-        for (int i = 0; i < this.vetor.length; i++) {
-            if (this.vetor[i] != null) {
-                this.vetor[i] = null;
-                return true;
-            }
-        }
-        return false;
     }
 
 }

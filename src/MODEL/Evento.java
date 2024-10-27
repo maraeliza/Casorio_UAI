@@ -199,63 +199,63 @@ public class Evento implements ClasseInterface {
         return criar(dao, vetor);
 
     }
-
     public boolean criar(DAO dao, Object[] vetor) {
         boolean alterado = false;
         if (dao != null) {
             this.dao = dao;
-      
+    
+            // Busca noiva e noivo no DAO
             Pessoa noiva = dao.getNoivos(1);
             Pessoa noivo = dao.getNoivos(0);
-      
+    
+            // Verifica se idIgreja é válido e preenche o campo se possível
             int idIgreja = Util.stringToInt((String) vetor[1]);
-            if (idIgreja != 0) {
-
-                Igreja igreja = (Igreja) dao.getItemByID(7, idIgreja);
-                 int idCartorio = Util.stringToInt((String) vetor[2]);
-                if (idCartorio != 0) {
-                    Cartorio cartorio = (Cartorio) dao.getItemByID(8, idCartorio);
-        
-                    int idCerimonial = Util.stringToInt((String) vetor[3]);
-                    if (idCerimonial != 0) {
-                        Cerimonial cerimonial = (Cerimonial) dao.getItemByID(6, idCerimonial);
-                        if (noiva != null && noivo != null && igreja != null && cartorio != null && cerimonial != null) {
-
-                            this.setNoiva(noiva);
-                            this.setNoivo(noivo);
-                            this.setIgreja(igreja);
-                            this.setCartorio(cartorio);
-                            this.setCerimonial(cerimonial);
-                            if (vetor[0] != null && vetor[0] instanceof String) {
-                                String data = (String) vetor[0]; // Data de nascimento como string
-                                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-                                try {
-                                    // Converte a string de data para LocalDate
-                                    this.data = LocalDate.parse(data, formato);
-                                    alterado = true; // Indica que o campo de data foi alterado
-                                } catch (DateTimeParseException e) {
-                                }
-                            }
-                            if (vetor[4] != null && vetor[4] instanceof String) {
-                                this.nome = (String) vetor[4]; // Nome
-
-                            }
-                            if (alterado) {
-                                this.id = ++total;
-                                this.dataCriacao = LocalDate.now();
-                                this.dataModificacao = null;
-                            }
-
-                        }
-                    }
+            Igreja igreja = idIgreja != 0 ? (Igreja) dao.getItemByID(7, idIgreja) : null;
+    
+            // Verifica se idCartorio é válido e preenche o campo se possível
+            int idCartorio = Util.stringToInt((String) vetor[2]);
+            Cartorio cartorio = idCartorio != 0 ? (Cartorio) dao.getItemByID(8, idCartorio) : null;
+    
+            // Verifica se idCerimonial é válido e preenche o campo se possível
+            int idCerimonial = Util.stringToInt((String) vetor[3]);
+            Cerimonial cerimonial = idCerimonial != 0 ? (Cerimonial) dao.getItemByID(6, idCerimonial) : null;
+    
+            // Checa a existência dos itens, preenchendo apenas se existirem
+            if (noiva != null) this.setNoiva(noiva);
+            if (noivo != null) this.setNoivo(noivo);
+            if (igreja != null) this.setIgreja(igreja);
+            if (cartorio != null) this.setCartorio(cartorio);
+            if (cerimonial != null) this.setCerimonial(cerimonial);
+    
+            // Converte a data caso fornecida no vetor
+            if (vetor[0] != null && vetor[0] instanceof String) {
+                String data = (String) vetor[0];
+                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    
+                try {
+                    this.data = LocalDate.parse(data, formato);
+                    alterado = true;
+                } catch (DateTimeParseException e) {
+                    // Log ou tratamento de erro
                 }
-
+            }
+    
+            // Preenche o nome caso esteja presente no vetor
+            if (vetor[4] != null && vetor[4] instanceof String) {
+                this.nome = (String) vetor[4];
+            }
+    
+            // Atualiza os dados de criação e modificação se houver alteração
+            if (alterado) {
+                this.id = ++total;
+                this.dataCriacao = LocalDate.now();
+                this.dataModificacao = null;
             }
         }
-
+    
         return alterado;
     }
+    
 
     // Método para atualizar a data de modificação
     public void atualizarDataModificacao() {
@@ -279,8 +279,13 @@ public class Evento implements ClasseInterface {
         StringBuilder resultado = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         if (this.nome != null && this.nome.length() > 0) {
+            resultado.append("\n");
             resultado.append("\n\nID: ").append(this.id);
-            resultado.append("  Evento: ").append(this.nome != null ? this.nome : "N/A");
+            resultado.append("  EVENTO: ").append(this.nome != null ? this.nome.toUpperCase() : "N/A");
+            // Formatação da data do evento
+            if (this.data != null) {
+                resultado.append("\nData do Evento: ").append(this.data.format(formatter));
+            }
             if (this.igreja != null) {
                 resultado.append("\n\nIgreja: ").append(this.igreja != null ? this.igreja.getNome() : "N/A");
                 resultado.append("\nEndereço da Igreja: ").append(this.igreja != null ? this.igreja.getEndereco() : "N/A");
@@ -292,21 +297,14 @@ public class Evento implements ClasseInterface {
             if (this.cerimonial != null) {
                 resultado.append("\n\nCerimonial: ").append(this.cerimonial != null ? this.cerimonial.getNome() : "N/A");
             }
-            if (this.noiva != null) {
-                resultado.append("\nNoiva: ").append(this.noiva != null ? this.noiva.getNome() : "N/A");
+            if (this.noiva != null && (this.igreja != null && this.cartorio != null )) {
+                if (this.noivo != null) {
+                    resultado.append("\nNoiva: ").append(this.noiva != null ? this.noiva.getNome() : "N/A");
+                    resultado.append("\nNoivo: ").append(this.noivo != null ? this.noivo.getNome() : "N/A");
+                }
+
             }
-            if (this.noivo != null) {
-                resultado.append("\nNoivo: ").append(this.noivo != null ? this.noivo.getNome() : "N/A");
-            }
-            resultado.append("\n");
-            // Formatação da data do evento
-            if (this.data != null) {
-                resultado.append("\nData do Evento: ").append(this.data.format(formatter));
-            }
-            // Formatação da data de criação
-            if (this.dataCriacao != null) {
-                resultado.append("\nData de Criação: ").append(this.dataCriacao.format(formatter));
-            }
+        
             // Formatação da data de modificação
             if (this.dataModificacao != null) {
                 resultado.append("\nData da Última Modificação: ").append(this.dataModificacao.format(formatter));
@@ -317,14 +315,7 @@ public class Evento implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
-        /*
-         *  campos[0] = "ID: ";
-         *  campos[1] = "Data: ";
-         *  campos[2] = "ID da Igreja: ";
-         *  campos[3] = "ID do Cartório: ";
-         *  campos[4] = "ID do Cerimonial: ";
-         *  campos[5] = "Nome: ";
-         */
+        
         boolean alterou = false;
         // Atualiza a data de nascimento (recebe como String e converte para LocalDate)
         if (vetor[1] != null && vetor[1] instanceof String) {

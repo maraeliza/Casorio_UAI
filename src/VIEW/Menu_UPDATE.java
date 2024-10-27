@@ -23,6 +23,8 @@ public class Menu_UPDATE {
     private int idClasse;
 
     public void exibir(DAO dao, int idClasse) {
+        Class<?> classe = this.dao.getClasseByID(this.idClasse);
+        this.classe = classe;
         this.dao = dao;
         this.idClasse = idClasse;
         this.vetor = new String[10];
@@ -38,9 +40,9 @@ public class Menu_UPDATE {
         this.texto = "";
         this.cleanVetor();
         this.texto = this.dao.getTexto(this.idClasse);
-        Class<?> classe = this.dao.getClasseByID(this.idClasse);
+       
         try {
-            java.lang.reflect.Method metodo = classe.getMethod("getCampos");
+            java.lang.reflect.Method metodo = this.classe.getMethod("getCampos");
             this.vetor = (String[]) metodo.invoke(null);
         } catch (Exception e) {
             e.printStackTrace();

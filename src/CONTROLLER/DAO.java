@@ -157,9 +157,6 @@ public class DAO {
         Object[] userDados1 = {"2", "admin", "1234"};
         this.cadastrar(3, userDados1);
 
-        Object[] userDados2 = {"6", "login", "senha"};
-        this.cadastrar(3, userDados2);
-
         Object[] userDados3 = {"3", "loginNoivo", "senha"};
         this.cadastrar(3, userDados3);
 
@@ -168,11 +165,9 @@ public class DAO {
 
         Object[] userDados5 = {"8", "maris", "1234"};
         this.cadastrar(3, userDados5);
-        /*
-         *   Object[] cerD = {"6"};
-         *   this.cadastrar(6, cerD);
-         * 
-         */
+
+        Object[] cerDados = {"6"};
+        this.cadastrar(6, cerDados);
 
         Object[] fornecedorBuffet = {"Buffet Delicioso", "12.345.678/0001-99", "(34) 1234-5678", 15000.0, 5, "em aberto"};
         this.cadastrar(4, fornecedorBuffet);
@@ -208,12 +203,21 @@ public class DAO {
 
         Object[] cartorioDados3 = {"Cartório e Registro São José", "(34) 5678-1234", "Praça da República, 300"};
         this.cadastrar(8, cartorioDados3);
-        /*
-        Object[] eventoPrincipal = {"15/12/2024", "1", "1", "1", "❤ Casorio de Maria e José ❤"};
-        this.cadastrar(5, eventoPrincipal); 
-         */
+        
+        
+        Object[] eventoIgreja = {"15/12/2024", "1", "0", "1", "❤ Casorio na Igreja ⛪❤"};
+        this.cadastrar(5, eventoIgreja); 
 
-        /*
+        Object[] eventoCartorio = {"10/12/2024", "0", "1", "1", "❤ Casorio no Civil ❤"};
+        this.cadastrar(5, eventoCartorio); 
+
+        String date = Util.dateToString(this.dataHoje) ;
+        System.out.println(date);
+        Object[] evento = {date, "0", "0", "0", "Apresentação do Casório UAI❤"};
+        this.cadastrar(5, evento); 
+
+
+ /*
          
         Object[] despesaDados = {"1", "Comidas", "Bolo, janta, etc.", "1800.0", "3", "31/11/2024", ""};
         this.cadastrar(12, despesaDados);
@@ -238,14 +242,12 @@ public class DAO {
       
         this.getDespesas()[1].agendar(this.dataHoje);
 
+      
+         */
         this.pagarAgendados();
-        */
-
-
-
     }
 
-    public void pagarAgendados() {
+    public void getAgendados() {
         int c = 0;
         /*------------------------    DESPESAS AGENDADAS ---------------------------------- */
         Despesa vDespesa[] = (Despesa[]) this.todosOsVetores[12];
@@ -253,10 +255,11 @@ public class DAO {
 
         for (int i = 0; i < vDespesa.length; i++) {
             if (vDespesa[i] != null) {
-                if (vDespesa[i].isAgendado()) {
+                if (vDespesa[i].isAgendado() && !vDespesa[i].isPago() ) {
                     for (int n = 0; n < vDespesaAgendadas.length; n++) {
                         if (vDespesaAgendadas[n] == null) {
                             vDespesaAgendadas[n] = vDespesa[i];
+                            break;
                         }
                     }
                     c++;
@@ -265,18 +268,7 @@ public class DAO {
             }
         }
         this.setDespesasAgendadas(vDespesaAgendadas);
-        if (c > 0) {
-            //percorre o vetor de despesas agendadas e verifica se algum pagamento tem uma data anterior ao dia de hoje
-            for (int n = 0; n < this.getDespesasAgendadas().length; n++) {
-                Despesa despesa = this.getDespesasAgendadas()[n];
-                if (despesa.isAgendado()
-                        && (despesa.getDataAgendamento().isBefore(this.dataHoje)
-                        || despesa.getDataAgendamento().isEqual(this.dataHoje))) {
-                    despesa.pagar();
-                }
-            }
-        }
-        c = 0;
+
         /*------------------------    PARCELAS AGENDADAS ---------------------------------- */
         Parcela vParcela[] = (Parcela[]) this.todosOsVetores[13];
         Parcela vParcelaAgendadas[] = new Parcela[100];
@@ -284,7 +276,7 @@ public class DAO {
         for (int i = 0; i < vParcela.length; i++) {
             if (vParcela[i] != null) {
                 /* checa se está agendada */
-                if (vParcela[i].isAgendado()) {
+                if (vParcela[i].isAgendado()&& !vParcela[i].isPago()) {
                     for (int n = 0; n < vParcelaAgendadas.length; n++) {
                         if (vParcelaAgendadas[n] == null) {
                             vParcelaAgendadas[n] = vParcela[i];
@@ -298,15 +290,25 @@ public class DAO {
         }
         /* salva no vetor */
         this.setParcelaAgendadas(vParcelaAgendadas);
-        if (c > 0) {
-            // Percorre o vetor de parcelas agendadas e verifica se alguma parcela tem uma data anterior ou igual ao dia de hoje
-            for (int n = 0; n < this.getParcelaAgendadas().length; n++) {
-                Parcela parcela = this.getParcelaAgendadas()[n];
-                if (parcela != null && parcela.isAgendado()
-                        && (parcela.getDataAgendamento().isBefore(this.dataHoje)
-                        || parcela.getDataAgendamento().isEqual(this.dataHoje))) {
-                    parcela.pagar(false);
-                }
+    }
+
+    public void pagarAgendados() {
+        this.getAgendados();
+        for (int n = 0; n < this.getDespesasAgendadas().length; n++) {
+            Despesa despesa = this.getDespesasAgendadas()[n];
+            if (despesa != null && despesa.isAgendado()
+                    && (despesa.getDataAgendamento().isBefore(this.dataHoje)
+                    || despesa.getDataAgendamento().isEqual(this.dataHoje))) {
+                despesa.pagar();
+            }
+        }
+        // Percorre o vetor de parcelas agendadas e verifica se alguma parcela tem uma data anterior ou igual ao dia de hoje
+        for (int n = 0; n < this.getParcelaAgendadas().length; n++) {
+            Parcela parcela = this.getParcelaAgendadas()[n];
+            if (parcela != null && parcela.isAgendado()
+                    && (parcela.getDataAgendamento().isBefore(this.dataHoje)
+                    || parcela.getDataAgendamento().isEqual(this.dataHoje))) {
+                parcela.pagar(false);
             }
         }
 
@@ -322,6 +324,31 @@ public class DAO {
         }
 
         return n;
+    }
+
+    public String getTexto(int idClasse, ClasseInterface vetor[]) {
+
+        String texto = this.listaNomesClasses[idClasse] + " ENCONTRADOS!";
+        int c = 0;
+
+        for (int i = 0; i < vetor.length; i++) {
+            if (vetor[i] != null) {
+                if (vetor[i] instanceof ClasseInterface) {
+                    texto += ((ClasseInterface) vetor[i]).ler();
+                    c++;
+                }
+
+            }
+        }
+        if (c > 1) {
+            texto += "\n\nTotal: " + c + " itens";
+        } else if (c == 1) {
+            texto += "\n\nTotal: " + c + " item";
+        } else {
+            texto = "\nNenhum item encontrado!";
+        }
+
+        return texto;
     }
 
     public String getTexto(int idClasse) {
@@ -423,7 +450,7 @@ public class DAO {
                 return adicionado;
 
             } else {
-                Util.mostrarErro("Não foi possível realizar o cadastro do objeto da classe " + this.getNameClasseById(idClasse) + "!");
+
                 return criado;
             }
 
@@ -548,7 +575,7 @@ public class DAO {
             if (vPessoas[i] != null) {
                 if (vPessoas[i].getTipo().equals("CERIMONIAL")
                         && !vPessoas[i].isCerimonialVinculado()
-                        && vPessoas[i].isUserVinculado()) {
+                        && !vPessoas[i].isUserVinculado()) {
                     texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome();
                     texto += "     tipo: " + vPessoas[i].getTipo();
                     texto += "\n";
@@ -665,7 +692,9 @@ public class DAO {
         int c = 0;
         for (int i = 0; i < vPessoas.length; i++) {
             if (vPessoas[i] != null) {
-                if (!vPessoas[i].isUserVinculado() && !vPessoas[i].getTipo().toUpperCase().equals("CONVIDADO")) {
+                if (!vPessoas[i].isUserVinculado()
+                        && !vPessoas[i].getTipo().toUpperCase().equals("CONVIDADO")
+                        && !vPessoas[i].getTipo().toUpperCase().equals("CERIMONIAL")) {
                     texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome() + "\nTipo: " + vPessoas[i].getTipo();
                     c++;
                     texto += "\n";
@@ -749,12 +778,12 @@ public class DAO {
                 MenuInicial menu = new MenuInicial();
                 menu.exibir(this, true, this.getUserLogado());
             } else {
-                
+
                 Util.mostrarErro("Credenciais incorretas!");
                 this.deslogar();
             }
         } else {
-            
+
             Util.mostrarErro("Credenciais incorretas!");
             this.deslogar();
         }
@@ -774,6 +803,91 @@ public class DAO {
             }
         }
         return null;
+    }
+
+    public Evento[] getEventosByData(LocalDate data) {
+        Evento vEventoConsulta[] = new Evento[100];
+        Evento vEvento[] = this.getEventos();
+        for (int i = 0; i < vEvento.length; i++) {
+            if (vEvento[i] != null && vEvento[i].getData().equals(data)) {
+                for (int n = 0; n < vEventoConsulta.length; n++) {
+                    if (vEventoConsulta[n] == null) {
+                        vEventoConsulta[n] = vEvento[i];
+                        break;
+                    }
+                }
+            }
+        }
+        return vEventoConsulta;
+    }
+
+    public Pagamento[] getPagamentosByData(LocalDate dataPagamento) {
+        Pagamento[] vPagamentoConsulta = new Pagamento[100];
+        Pagamento[] vPagamento = this.getPagamentos();
+
+        for (int i = 0; i < vPagamento.length; i++) {
+            if (vPagamento[i] != null && vPagamento[i].getData().equals(dataPagamento)) {
+                for (int n = 0; n < vPagamentoConsulta.length; n++) {
+                    if (vPagamentoConsulta[n] == null) {
+                        vPagamentoConsulta[n] = vPagamento[i];
+                        break;
+                    }
+                }
+            }
+        }
+        return vPagamentoConsulta;
+    }
+
+    public Despesa[] getDespesasByDataVencimento(LocalDate dataVencimento) {
+        Despesa[] vDespesaConsulta = new Despesa[100];
+        Despesa[] vDespesa = this.getDespesas();
+
+        for (int i = 0; i < vDespesa.length; i++) {
+            if (vDespesa[i] != null && vDespesa[i].getDataVencimento().equals(dataVencimento)) {
+                for (int n = 0; n < vDespesaConsulta.length; n++) {
+                    if (vDespesaConsulta[n] == null) {
+                        vDespesaConsulta[n] = vDespesa[i];
+                        break;
+                    }
+                }
+            }
+        }
+        return vDespesaConsulta;
+    }
+
+    public Parcela[] getParcelasByDataVencimento(LocalDate dataVencimento) {
+        Parcela[] vParcelaConsulta = new Parcela[100];
+        Parcela[] vParcela = this.getParcelas();
+
+        for (int i = 0; i < vParcela.length; i++) {
+            if (vParcela[i] != null && vParcela[i].getDataVencimento().equals(dataVencimento)
+                    && !vParcela[i].isPago()) {
+                for (int n = 0; n < vParcelaConsulta.length; n++) {
+                    if (vParcelaConsulta[n] == null) {
+                        vParcelaConsulta[n] = vParcela[i];
+                        break;
+                    }
+                }
+            }
+        }
+        return vParcelaConsulta;
+    }
+
+    public Despesa[] getDespesasByDataAgendamento(int idClasse, LocalDate dataAgendamento) {
+        Despesa[] vDespesaConsulta = new Despesa[100];
+        Despesa[] vDespesa = this.getDespesas(); // Supõe que exista um método getDespesas() que retorna todas as despesas
+
+        for (int i = 0; i < vDespesa.length; i++) {
+            if (vDespesa[i] != null && vDespesa[i].getDataAgendamento().equals(dataAgendamento)) {
+                for (int n = 0; n < vDespesaConsulta.length; n++) {
+                    if (vDespesaConsulta[n] == null) {
+                        vDespesaConsulta[n] = vDespesa[i];
+                        break;
+                    }
+                }
+            }
+        }
+        return vDespesaConsulta;
     }
 
     public Recado[] getRecados() {

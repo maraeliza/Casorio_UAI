@@ -3,8 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package VIEW;
+
 import CONTROLLER.DAO;
 import MODEL.Usuario;
+import java.time.LocalDate;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,11 +17,11 @@ public class MenuCalendario {
 
     private String texto;
     private String op;
-    private  boolean logou;
+    private boolean logou;
     private String opcoes[];
     private Usuario userLogado;
     private String listaNomeClasses[] = new String[20];
-
+    private LocalDate dataHoje;
     private int nOps;
     private DAO dao;
 
@@ -35,7 +37,7 @@ public class MenuCalendario {
         listaClasses[1] = "PESQUISAR EVENTO POR DATA";
         listaClasses[2] = "DESPESAS QUE VENCEM HOJE";
         listaClasses[3] = "PESQUISAR DESPESA POR DATA DE VENCIMENTO";
-        listaClasses[4] = "PAGAMENTOS AGENDADOS (EM ABERTO)";
+        listaClasses[4] = "DESPESAS COM PAGAMENTOS AGENDADOS (EM ABERTO)";
         this.listaNomeClasses = listaClasses;
     }
 
@@ -55,9 +57,10 @@ public class MenuCalendario {
     }
 
     private String definirOpcoes() {
+
         String Opcoes = "";
         this.nOps = 1;
-  
+
         for (int n = 0; n < this.listaNomeClasses.length; n++) {
             if (this.listaNomeClasses[n] != null) {
                 Opcoes += "\n" + Util.intToString(this.nOps) + ". " + this.listaNomeClasses[n];
@@ -71,6 +74,7 @@ public class MenuCalendario {
     }
 
     public void exibir(DAO dao, Usuario user, boolean logou) {
+        this.dataHoje = LocalDate.now();
         this.userLogado = user;
         this.logou = logou;
         this.dao = dao;
@@ -79,7 +83,7 @@ public class MenuCalendario {
             this.definirTexto();
 
             this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-             if (this.op != null) {
+            if (this.op != null) {
                 o = Util.stringToInt(this.op);
                 this.lidarEscolha(o);
             } else {
@@ -92,10 +96,87 @@ public class MenuCalendario {
 
     private void lidarEscolha(int o) {
 
+        switch (o) {
+            case 1 -> {
+                this.exibirDados(5);
+                break;
+            }
+            case 2 -> {
+
+                this.exibirDados(5, this.perguntarData());
+                break;
+            }
+            case 3 -> {
+                this.exibirDados(12);
+                break;
+            }
+            case 4 -> {
+                this.exibirDados(5, this.perguntarData());
+                break;
+            }
+            case 5 -> {
+                this.texto = "PAGAMENTOS AGENDADOS ";
+                this.texto += this.dao.getTexto(12, this.dao.getDespesasAgendadas());
+                this.texto += this.dao.getTexto(13, this.dao.getParcelaAgendadas());
+                JOptionPane.showConfirmDialog(null, this.texto, "RELATÓRIO", JOptionPane.OK_CANCEL_OPTION);
+                break;
+            }
+        }
+        
         if (o >= this.nOps) {
             MenuInicial menu = new MenuInicial();
             menu.exibir(this.dao, this.logou, this.userLogado);
         }
 
     }
+
+    public LocalDate perguntarData() {
+        this.texto = "\nINSIRA A DATA QUE DESEJA CONSULTAR: ";
+        this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
+        if (this.op != null) {
+            LocalDate dataInserida = Util.stringToDate(this.op);
+            return dataInserida;
+        } else {
+            return null;
+        }
+    }
+
+    public void exibirDados(int idClasse) {
+        this.texto = "";
+        switch (idClasse) {
+            case 5 -> {
+
+                this.texto += this.dao.getTexto(5, this.dao.getEventosByData(this.dataHoje));
+                break;
+            }
+            case 12 -> {
+                this.texto += this.dao.getTexto(12, this.dao.getParcelasByDataVencimento(this.dataHoje));
+                break;
+            }
+        }
+
+        JOptionPane.showConfirmDialog(null, this.texto, "RELATÓRIO", JOptionPane.OK_CANCEL_OPTION);
+
+    }
+
+    public void exibirDados(int idClasse, LocalDate dataConsulta) {
+        if (dataConsulta != null) {
+            this.texto = "";
+            switch (idClasse) {
+                case 5 -> {
+
+                    this.texto += this.dao.getTexto(5, this.dao.getEventosByData(dataConsulta));
+                    break;
+                }
+                case 12 -> {
+                    this.texto += this.dao.getTexto(12, this.dao.getParcelasByDataVencimento(dataConsulta));
+                    break;
+                }
+            }
+
+            JOptionPane.showConfirmDialog(null, this.texto, "RELATÓRIO", JOptionPane.OK_CANCEL_OPTION);
+        }
+
+    }
+
 }

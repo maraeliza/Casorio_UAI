@@ -22,13 +22,17 @@ public class Menu_CREATE {
     private Usuario userLogado;
     private DAO dao;
     private int idClasse;
+    private Class classe;
 
     public void exibir(DAO dao, int idClasse, Usuario user) {
+       
         this.dao = dao;
         this.vetor = new String[10];
         this.nomeClasse = this.dao.getNameClasseById(idClasse);
+  
         this.userLogado = user;
         this.idClasse = idClasse;
+
         try {
             this.getTexto();
         } catch (Exception e) {
@@ -38,10 +42,8 @@ public class Menu_CREATE {
     }
 
     public String getTexto() {
-        this.texto = ""; 
+        this.texto = "";
         this.cleanVetor();
-  
-
         Class<?> classe = this.dao.getClasseByID(this.idClasse);
         try {
             java.lang.reflect.Method metodo = classe.getMethod("getCampos");
@@ -84,16 +86,12 @@ public class Menu_CREATE {
             }
         }
         if (result != null) {
-            if(this.dao.cadastrar(this.idClasse, this.valores)){
+            if (this.dao.cadastrar(this.idClasse, this.valores)) {
                 Util.mostrarMSG("Cadastrado com sucesso!");
-            }else{
-                Util.mostrarErro("Não foi possível realizar o cadastro!");
+                Menu_READ menuVer = new Menu_READ();
+                menuVer.exibir(this.dao, this.idClasse);
             }
-            
-            Menu_READ menuVer = new Menu_READ();
-            menuVer.exibir(this.dao, this.idClasse);
         }
-
     }
 
     public String montarPainelUsuarios() {
@@ -134,7 +132,7 @@ public class Menu_CREATE {
                         conteudo += this.dao.getNomes(4);
                         return conteudo;
                     }
-                    
+
                     default -> {
                         break;
                     }
@@ -183,7 +181,7 @@ public class Menu_CREATE {
             }
             case "PAGAMENTOS" -> {
                 switch (i) {
-                    
+
                     case 1 -> {
                         if (this.dao.getTotalClasse(4) > 1) {
                             conteudo += "\nID E NOME DOS FORNECEDORES:";

@@ -100,11 +100,11 @@ public class Menu_CRUD {
         this.texto += "\n\nDigite aqui o número da sua opção: ";
     }
 
-    public void exibir(DAO dao, int idClasse, boolean logou, Usuario user) {
+    public void exibir(DAO dao, int idClasse) {
         this.dao = dao;
         this.idClasse = idClasse;
         this.logou = logou;
-        this.user = user;
+        this.user = this.dao.getUserLogado();
 
         if (this.user != null) {
             this.tipoUsuario = user.getTipo();
@@ -188,11 +188,11 @@ public class Menu_CRUD {
                         if (this.idClasse == 1 && this.user != null) {
 
                             MenuEscolherPresente menu = new MenuEscolherPresente();
-                            menu.exibir(this.dao, this.idClasse, this.user);
+                            menu.exibir(this.dao, this.idClasse);
                             break;
 
                         } else if (this.idClasse == 11 && this.user != null) {
-                             MenuFazerPagamento menu = new MenuFazerPagamento();
+                            MenuFazerPagamento menu = new MenuFazerPagamento();
                             menu.exibir(this.dao, this.idClasse, this.user);
                             break;
 
@@ -207,7 +207,7 @@ public class Menu_CRUD {
                         if (this.idClasse == 1 && this.user != null) {
 
                             MenuComprarPresente menu = new MenuComprarPresente();
-                            menu.exibir(this.dao, this.idClasse, this.user);
+                            menu.exibir(this.dao, this.idClasse);
                             break;
 
                         } else if (this.idClasse == 11 && this.user != null) {
