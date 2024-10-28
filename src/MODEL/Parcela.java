@@ -181,6 +181,24 @@ public class Parcela implements ClasseInterface {
             this.setDataAgendamento(dataAgendamento);
         }
     }
+    public void pagar(boolean quitandoDespesa, boolean entrandoNoSistema) {
+        if (!this.isPago()) {
+           
+             LocalDate hoje = LocalDate.now();
+             this.setPago(true);
+             this.setDataPagamento(hoje);
+             this.setStatus("PAGA");
+             this.setAgendado(false);
+           
+             if (this.despesa != null) {
+                 Object infos[] = {this.despesa.getIdFornecedor(), hoje, this.despesa.getDescricao(), this.getValor(), this.getN(), this.getIdDespesa(), this.getId()};
+                 this.dao.cadastrar(11, infos);
+                
+             }
+         }
+ 
+     }
+ 
 
     public void pagar(boolean quitandoDespesa) {
        if (!this.isPago()) {

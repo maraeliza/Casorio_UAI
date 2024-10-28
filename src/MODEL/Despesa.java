@@ -149,7 +149,6 @@ public class Despesa implements ClasseInterface {
                 //checa se o id é diferente
                 if (this.getIdFornecedor() == 0 || this.getIdFornecedor() != idFornecedor
                         ) {
-                    System.out.println("Vinculando o fornecedor "+fornecedor.getNome()+" a despesa ");
                     this.setIdFornecedor(idFornecedor);
                     this.setFornecedor(fornecedor);
                     this.getFornecedor().atualizarValores();
@@ -249,7 +248,27 @@ public class Despesa implements ClasseInterface {
             }
         }
     }
+    public boolean agendar(LocalDate dataAgendamento, boolean entrandoNoSistema) {
 
+        if (this.isAgendado()) {
+            this.cancelarAgendamento();
+        } else {
+
+            this.setAgendado(true);
+            this.setDataAgendamento(dataAgendamento);
+            if (this.isParcelado()) {
+                for (int p = 0; p < this.getnParcelas(); p++) {
+                    Parcela parcela = this.getvParcelas()[p];
+                    if (parcela != null && !parcela.isPago()) {
+                        parcela.agendarForce(dataAgendamento);
+                    }
+
+                }
+            }
+        }
+        return true;
+
+    }
     public boolean agendar(LocalDate dataAgendamento) {
 
         if (this.isAgendado()) {
@@ -287,6 +306,7 @@ public class Despesa implements ClasseInterface {
                     }
 
                 }
+               
                 Menu_READ menuVer = new Menu_READ();
                 menuVer.exibir(this.dao, 11);
             } else {
@@ -300,6 +320,31 @@ public class Despesa implements ClasseInterface {
 
     }
 
+    public void pagar( boolean entrandoNoSistema) {
+        if (!this.isPago()) {
+            LocalDate hoje = LocalDate.now();
+            this.setPago(true);
+            this.setDataQuitacao(hoje);
+            this.setAgendado(false);
+            if (this.isParcelado()) {
+                for (int p = 0; p < this.getnParcelas(); p++) {
+                    Parcela parcela = this.getvParcelas()[p];
+                    if (parcela != null && !parcela.isPago()) {
+                        parcela.pagar(true, entrandoNoSistema);
+                    }
+
+                }
+               
+              
+            } else {
+                Object infos[] = {this.getIdFornecedor(), hoje, this.getDescricao(), this.getValorTotal(), 1, this.getId(), 1};
+                this.dao.cadastrar(11, infos);
+               
+            }
+
+        }
+
+    }
     public void atualizarDataModificacao() {
 
         this.dataModificacao = LocalDate.now();

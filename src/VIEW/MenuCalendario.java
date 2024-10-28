@@ -35,9 +35,6 @@ public class MenuCalendario {
         String listaClasses[] = new String[20];
         listaClasses[0] = "EVENTOS PARA HOJE";
         listaClasses[1] = "PESQUISAR EVENTO POR DATA";
-        listaClasses[2] = "DESPESAS QUE VENCEM HOJE";
-        listaClasses[3] = "PESQUISAR DESPESA POR DATA DE VENCIMENTO";
-        listaClasses[4] = "DESPESAS COM PAGAMENTOS AGENDADOS (EM ABERTO)";
         this.listaNomeClasses = listaClasses;
     }
 
@@ -106,19 +103,9 @@ public class MenuCalendario {
                 this.exibirDados(5, this.perguntarData());
                 break;
             }
-            case 3 -> {
-                this.exibirDados(12);
-                break;
-            }
-            case 4 -> {
-                this.exibirDados(5, this.perguntarData());
-                break;
-            }
-            case 5 -> {
-                this.texto = "PAGAMENTOS AGENDADOS ";
-                this.texto += this.dao.getTexto(12, this.dao.getDespesasAgendadas());
-                this.texto += this.dao.getTexto(13, this.dao.getParcelaAgendadas());
-                JOptionPane.showConfirmDialog(null, this.texto, "RELATÓRIO", JOptionPane.OK_CANCEL_OPTION);
+           
+           default -> {
+               
                 break;
             }
         }

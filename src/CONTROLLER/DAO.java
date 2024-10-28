@@ -132,6 +132,15 @@ public class DAO {
     }
 
     public void addInfosIniciais() {
+        Object[] comentario = {"Felicidades para o casal!"};
+        this.cadastrar(0, comentario);
+
+        Object[] comentario1 = {"Mal posso esperar pela festa!"};
+        this.cadastrar(0, comentario1);
+        
+        Object[] comentario2 = {"Shippo demais! Meu casal favorito!!"};
+        this.cadastrar(0, comentario2);
+
         Object[] dados0 = {"Pagamento agendado", "00000000", "sys", "01/01/2000"};
         this.cadastrar(2, dados0);
 
@@ -216,43 +225,25 @@ public class DAO {
         Object[] evento = {date, "0", "0", "0", "Apresentação do Casório UAI❤"};
         this.cadastrar(5, evento);
 
-        Object[] familia = {"LOPES"};
-        this.cadastrar(10, familia);
-
-        Object[] familia1 = {"SILVA"};
-        this.cadastrar(10, familia1);
-
-        Object[] familia2 = {"SANTOS"};
-        this.cadastrar(10, familia2);
-
-        Object[] familia3 = {"SAMPAIO"};
-        this.cadastrar(10, familia3);
-
-        System.out.println("inserindo familias");
-
       
         Object[] despesaDados = {"1", "Comidas", "Bolo, janta, etc.", "1800.0", "3", "31/11/2024", ""};
         this.cadastrar(12, despesaDados);
-        
-        LocalDate data = Util.stringToDate("15/10/2024");
-        this.getDespesas()[0].agendar(data);
+        LocalDate data = Util.stringToDate("15/12/2024");
+        this.getDespesas()[0].agendar(data, true);
 
      
         Object[] despesaDados1 = {"1", "Bebidas", "Sucos, refris, etc.", "100.0", "2", "31/11/2024", ""};
         this.cadastrar(12, despesaDados1);
-      
-        this.getDespesas()[1].agendar(this.dataHoje);
+        this.getDespesas()[1].agendar(this.dataHoje, true);
 
     
         Object[] despesaDados2 = {"3", "Album", "Fotos, fotográfo, etc.", "2500.0", "4", "15/12/2024", ""};
         this.cadastrar(12, despesaDados2);
-    
-        this.getDespesas()[2].agendar(this.dataHoje);
+        this.getDespesas()[2].agendar(this.dataHoje, true);
 
         Object[] despesaDados3 = {"2", "Decoração", "Flores, adornos, etc.", "300.0", "3", "10/11/2024", ""};
         this.cadastrar(12, despesaDados3);
-      
-        this.getDespesas()[3].agendar(this.dataHoje);
+       
 
       
         this.pagarAgendados();
@@ -310,7 +301,7 @@ public class DAO {
             if (despesa != null && despesa.isAgendado()
                     && (despesa.getDataAgendamento().isBefore(this.dataHoje)
                     || despesa.getDataAgendamento().isEqual(this.dataHoje))) {
-                despesa.pagar();
+                despesa.pagar(true);
             }
         }
         // Percorre o vetor de parcelas agendadas e verifica se alguma parcela tem uma data anterior ou igual ao dia de hoje
@@ -647,6 +638,24 @@ public class DAO {
         int c = 0;
         for (int i = 0; i < vObj.length; i++) {
             if (vObj[i] != null && !vObj[i].isPago()) {
+                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
+                texto += "\n";
+                c++;
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNenhuma despesa encontrada!\n\n";
+        }
+        return texto;
+    }
+    public String getDespesasPendentesAgendada() {
+        String texto = "\n                    ";
+
+        Despesa[] vObj = (Despesa[]) this.todosOsVetores[12];
+        int c = 0;
+        for (int i = 0; i < vObj.length; i++) {
+            if (vObj[i] != null && !vObj[i].isPago() && vObj[i].isAgendado()) {
                 texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
                 texto += "\n";
                 c++;

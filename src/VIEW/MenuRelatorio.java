@@ -35,7 +35,7 @@ public class MenuRelatorio {
         listaClasses[0] = "RECADOS";
         listaClasses[1] = "IMPRIMIR CONVITE INDIVIDUAL";
         listaClasses[2] = "IMPRIMIR CONVITE FAMÍLIA";
-        listaClasses[3] = "PAGAMENTOS AGENDADOS";
+        listaClasses[3] = "PAGAMENTOS DOS NOIVOS";
         listaClasses[4] = "CONVIDADOS";
         listaClasses[5] = "CONVIDADOS CONFIRMADOS";
         this.listaNomeClasses = listaClasses;
