@@ -36,7 +36,7 @@ public class Menu_CRUD {
         int contador = 0; // Contador para armazenar a posição no vetor
 
         // Adiciona opções de acordo com o tipo de usuário e idClasse
-        if (this.user.getTipo() == 1) { // Usuário administrador
+        if (this.user != null && this.user.getTipo() == 1) { // Usuário administrador
             switch (this.idClasse) {
                 case 1 -> {
                     opcoes[contador++] = "Adicionar novo";
@@ -48,11 +48,10 @@ public class Menu_CRUD {
                     opcoes[contador++] = "Voltar";
                 }
                 case 11 -> {
-                    opcoes[contador++] = "Adicionar novo";
+                    opcoes[contador++] = "Lançar Pagamento";
                     opcoes[contador++] = "Ver todos";
                     opcoes[contador++] = "Editar " + classNome.toLowerCase();
                     opcoes[contador++] = "Deletar";
-                    opcoes[contador++] = "Realizar Pagamento";
                     opcoes[contador++] = "Agendar Pagamento";
                     opcoes[contador++] = "Voltar";
                 }
@@ -75,12 +74,12 @@ public class Menu_CRUD {
             }
         } else { // Usuário não administrador
             switch (this.idClasse) {
-                case 1 -> {
+                case 0 -> {
                     opcoes[contador++] = "Adicionar novo";
                     opcoes[contador++] = "Ver todos";
                     opcoes[contador++] = "Voltar";
                 }
-                case 2 -> {
+                case 1 -> {
                     opcoes[contador++] = "Adicionar novo";
                     opcoes[contador++] = "Ver todos";
                     opcoes[contador++] = "Voltar";
@@ -91,7 +90,7 @@ public class Menu_CRUD {
                 }
             }
         }
- this.nOps = contador;
+        this.nOps = contador;
         // Adiciona o número e texto de cada opção ao menu
         for (int i = 0; i < contador; i++) {
             this.texto += "\n" + (i + 1) + ". " + opcoes[i];
@@ -103,7 +102,6 @@ public class Menu_CRUD {
     public void exibir(DAO dao, int idClasse) {
         this.dao = dao;
         this.idClasse = idClasse;
-        this.logou = logou;
         this.user = this.dao.getUserLogado();
 
         if (this.user != null) {
@@ -136,7 +134,12 @@ public class Menu_CRUD {
                 switch (this.o) {
 
                     case 1 -> {
-                        if (this.idClasse != 13) {
+                        if (this.idClasse == 11 && this.user != null && this.user.getTipo() == 1) {
+                            MenuFazerPagamento menu = new MenuFazerPagamento();
+                            menu.exibir(this.dao, this.idClasse);
+                            break;
+
+                        } else if (this.idClasse != 13) {
                             Menu_CREATE menuAdd = new Menu_CREATE();
                             menuAdd.exibir(this.dao, this.idClasse, this.user);
 
@@ -153,12 +156,10 @@ public class Menu_CRUD {
                         break;
                     }
                     case 3 -> {
-                        if (
-                            this.idClasse != 12 && 
-                            this.idClasse != 13 && 
-                            this.user != null   && 
-                            this.user.getTipo() == 1
-                            ) {
+                        if (this.idClasse != 12
+                                && this.idClasse != 13
+                                && this.user != null
+                                && this.user.getTipo() == 1) {
                             Menu_UPDATE menuUp = new Menu_UPDATE();
                             menuUp.exibir(this.dao, this.idClasse);
                         } else {
@@ -169,22 +170,21 @@ public class Menu_CRUD {
                         break;
                     }
                     case 4 -> {
-                        if (
-                            this.idClasse != 12 && 
-                            this.idClasse != 13 && 
-                            this.user != null   && 
-                            this.user.getTipo() == 1
-                            ) {
+                        if (this.idClasse != 12
+                                && this.idClasse != 13
+                                && this.user != null
+                                && this.user.getTipo() == 1) {
                             Menu_DEL menuDel = new Menu_DEL();
                             menuDel.exibir(this.dao, this.idClasse);
                         } else {
-                             MenuInicial menu = new MenuInicial();
+                            MenuInicial menu = new MenuInicial();
                             menu.exibir(this.dao, this.logou, this.user);
                         }
 
                         break;
                     }
                     case 5 -> {
+
                         if (this.idClasse == 1 && this.user != null) {
 
                             MenuEscolherPresente menu = new MenuEscolherPresente();
@@ -192,7 +192,7 @@ public class Menu_CRUD {
                             break;
 
                         } else if (this.idClasse == 11 && this.user != null) {
-                            MenuFazerPagamento menu = new MenuFazerPagamento();
+                            MenuAgendarPagamento menu = new MenuAgendarPagamento();
                             menu.exibir(this.dao, this.idClasse, this.user);
                             break;
 
@@ -210,11 +210,6 @@ public class Menu_CRUD {
                             menu.exibir(this.dao, this.idClasse);
                             break;
 
-                        } else if (this.idClasse == 11 && this.user != null) {
-                            MenuAgendarPagamento menu = new MenuAgendarPagamento();
-                            menu.exibir(this.dao, this.idClasse, this.user);
-                            break;
-
                         } else {
                             MenuInicial menu = new MenuInicial();
                             menu.exibir(this.dao, this.logou, this.user);
@@ -223,7 +218,7 @@ public class Menu_CRUD {
                     }
 
                     default -> {
-                         MenuInicial menu = new MenuInicial();
+                        MenuInicial menu = new MenuInicial();
                         menu.exibir(this.dao, this.logou, this.user);
                         break;
                     }

@@ -23,11 +23,13 @@ public class Menu_UPDATE {
     private int idClasse;
 
     public void exibir(DAO dao, int idClasse) {
-        Class<?> classe = this.dao.getClasseByID(this.idClasse);
-        this.classe = classe;
+        
+      
         this.dao = dao;
         this.idClasse = idClasse;
         this.vetor = new String[10];
+        Class<?> classe = this.dao.getClasseByID(this.idClasse);
+        this.classe = classe;
         this.nomeClasse = this.dao.getNameClasseById(idClasse);
         try {
             this.getTexto();

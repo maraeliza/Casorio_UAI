@@ -123,7 +123,7 @@ public class Parcela implements ClasseInterface {
             resultado.append("         DESPESA: ").append(this.nome).append("\n");
         }
 
-        resultado.append("Valor: ").append(String.format("%.2f",this.valor)).append("\n");
+        resultado.append("Valor: R$").append(String.format("%.2f",this.valor)).append("\n");
 
         if (this.dataVencimento != null) {
             resultado.append("Data de Vencimento: ").append(this.dataVencimento.format(formatter)).append("\n");

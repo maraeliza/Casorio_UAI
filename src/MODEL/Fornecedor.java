@@ -83,12 +83,22 @@ public class Fornecedor implements ClasseInterface {
     }
 
     public void atualizarValores() {
-        //pega todas as despesas vinculadas ao fornecedor
-         Despesa[] despesas = this.dao.getDespesas();
+        this.valorAPagar = 0.0;
+        this.valorPago = 0.0;
+        this.valorTotal = 0.0;
+        
+        //pega todas as despesas
+        Despesa[] despesas = this.dao.getDespesas();
         for (int n = 0; n < despesas.length; n++) {
+            
             if (despesas[n] != null) {
+                System.out.println("Despesa não nula ");
+                
+                System.out.println("ID DO FORNECEDOR DA DESPESA "+despesas[n].getIdFornecedor() + " NOME "+despesas[n].getFornecedor().getNome() );
+
                 if (despesas[n].getIdFornecedor() == this.getId()) {
-                  this.valorTotal += despesas[n].getValorTotal();
+                    System.out.println("VALOR DA DESPESA "+despesas[n].getValorTotal());
+                    this.valorTotal += despesas[n].getValorTotal();
 
                     //verifica se a despesa está paga  e adiciona ao valor pago
                     if (despesas[n].isPago()) {
@@ -107,12 +117,17 @@ public class Fornecedor implements ClasseInterface {
                         }
 
                     }
-                    //calcula a diferença e define o valor a pagar
-                    this.valorAPagar = this.valorTotal - this.valorPago;
+                  
                 }
 
             }
         }
+          //calcula a diferença e define o valor a pagar
+          this.valorAPagar = this.valorTotal - this.valorPago;
+                    
+          System.out.println("VALOR A PAGAR "+this.valorAPagar);
+          System.out.println("VALOR PAGO "+this.valorPago);
+          System.out.println("VALOR TOTAL "+this.valorTotal);
 
         this.setQuitado(this.valorAPagar == 0 && this.valorTotal > 0);
 
@@ -120,7 +135,7 @@ public class Fornecedor implements ClasseInterface {
 
     public String ler() {
         this.atualizarValores();
-         StringBuilder resultado = new StringBuilder();
+        StringBuilder resultado = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         resultado.append("\nID: ").append(this.id).append("\n");

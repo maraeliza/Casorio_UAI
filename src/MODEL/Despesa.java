@@ -61,55 +61,50 @@ public class Despesa implements ClasseInterface {
     }
 
     public boolean criar(DAO dao, Object vetor[]) {
-    
+
         this.dao = dao;
         boolean alterado = false;
         if (this.dao != null) {
+            
             int idFornecedor = Util.stringToInt((String) vetor[0]);
-            if (idFornecedor != 0) {
-                Fornecedor fornecedor = (Fornecedor) this.dao.getItemByID(4, idFornecedor);
+            this.trocarFornecedor(idFornecedor);
 
-                if (fornecedor != null) {
-                   this.trocarFornecedor(idFornecedor, fornecedor);
+            if (vetor[0] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null && vetor[5] != null) {
+                if (vetor[1] != null && vetor[1] instanceof String) {
+                    this.setNome(((String) vetor[1]).toUpperCase()); // Nome
+                    if (vetor[2] != null && vetor[2] instanceof String) {
 
-                    if (vetor[0] != null && vetor[2] != null && vetor[3] != null && vetor[4] != null && vetor[5] != null) {
-                        if (vetor[1] != null && vetor[1] instanceof String) {
-                            this.setNome(((String) vetor[1]).toUpperCase()); // Nome
-                            if (vetor[2] != null && vetor[2] instanceof String) {
+                        String descricao = (String) vetor[2];
+                        this.setDescricao(descricao);  // descricao
 
-                                String descricao = (String) vetor[2];
-                                this.setDescricao(descricao);  // descricao
+                        double valorTotal = Util.stringToDouble((String) vetor[3]);
+                        this.setValorTotal(valorTotal);
 
-                                double valorTotal = Util.stringToDouble((String) vetor[3]);
-                                this.setValorTotal(valorTotal);
-
-                                int nParcelas = Util.stringToInt((String) vetor[4]);
-                                this.setnParcelas(nParcelas);
-
-                                if (this.getnParcelas() > 1) {
-                                    this.setParcelado(true);
-                                    this.setDataPrimeiroVencimento((String) vetor[5]);
-                                    this.id = total + 1;
-
-                                }
-
-                            }
+                        int nParcelas = Util.stringToInt((String) vetor[4]);
+                        this.setnParcelas(nParcelas);
+                        //checa se o pagamento não é a vista
+                        if (this.getnParcelas() > 1 && !((String) vetor[5]).equals("0")) {
+                            this.setParcelado(true);
+                            this.setDataPrimeiroVencimento((String) vetor[5]);
+                            
+                        }else{
+                            this.setParcelado(false);
                         }
-
-                        alterado = true;
-
+                        this.id = total + 1;
                     }
-                    if (alterado) {
-
-                        // Atribui o ID único e define as datas de criação e modificação
-                        total++;
-                        this.dataCriacao = LocalDate.now();
-                        this.dataModificacao = null; // Nenhuma modificação inicial
-                    }
-
                 }
 
+                alterado = true;
+
             }
+            if (alterado) {
+
+                // Atribui o ID único e define as datas de criação e modificação
+                total++;
+                this.dataCriacao = LocalDate.now();
+                this.dataModificacao = null; // Nenhuma modificação inicial
+            }
+
         }
 
         return alterado;
@@ -146,16 +141,23 @@ public class Despesa implements ClasseInterface {
         return false;
     }
 
-    public boolean trocarFornecedor(int idFornecedor, Fornecedor fornecedor) {
+    public boolean trocarFornecedor(int idFornecedor) {
+        if (idFornecedor != 0) {
+            Fornecedor fornecedor = (Fornecedor) this.dao.getItemByID(4, idFornecedor);
 
-        //checa se o id é diferente
-        if ((this.getIdFornecedor() == 0 || this.getIdFornecedor() != idFornecedor)
-                && fornecedor != null) {
-
-            this.setFornecedor(fornecedor);
-
-            return true;
+            if (fornecedor != null) {
+                //checa se o id é diferente
+                if (this.getIdFornecedor() == 0 || this.getIdFornecedor() != idFornecedor
+                        ) {
+                    System.out.println("Vinculando o fornecedor "+fornecedor.getNome()+" a despesa ");
+                    this.setIdFornecedor(idFornecedor);
+                    this.setFornecedor(fornecedor);
+                    this.getFornecedor().atualizarValores();
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 
@@ -181,7 +183,7 @@ public class Despesa implements ClasseInterface {
             resultado.append("Fornecedor: ").append(this.fornecedor.getNome()).append("\n");
         }
 
-        resultado.append("Valor Total: ").append(this.valorTotal).append("\n");
+        resultado.append("Valor Total: R$").append(String.format("%.2f", this.valorTotal)).append("\n");
 
         resultado.append("Pago: ").append(this.pago ? "Sim" : "Não").append("\n");
         if (!this.pago) {
@@ -196,7 +198,7 @@ public class Despesa implements ClasseInterface {
         } else {
             if (this.dataQuitacao != null) {
                 resultado.append("Data de Quitação: ").append(this.dataQuitacao.format(formatter)).append("\n");
-            }
+            }   
         }
 
         if (this.parcelado) {
@@ -208,11 +210,11 @@ public class Despesa implements ClasseInterface {
                 resultado.append("Data do Último Vencimento: ").append(this.dataUltimoVencimento.format(formatter)).append("\n");
             }
 
-            resultado.append("Parcelado: Sim\n");
+            resultado.append("Modo de Pagamento: Parcelado\n");
             resultado.append("Número de Parcelas: ").append(this.nParcelas).append("\n");
 
         } else {
-            resultado.append("Parcelado: Não\n");
+            resultado.append("Modo de Pagamento: À vista\n");
         }
         if (this.agendado) {
             if (this.dataCriacao != null) {
@@ -249,7 +251,7 @@ public class Despesa implements ClasseInterface {
     }
 
     public boolean agendar(LocalDate dataAgendamento) {
-   
+
         if (this.isAgendado()) {
             this.cancelarAgendamento();
         } else {
@@ -258,8 +260,8 @@ public class Despesa implements ClasseInterface {
             this.setDataAgendamento(dataAgendamento);
             if (this.isParcelado()) {
                 for (int p = 0; p < this.getnParcelas(); p++) {
-                     Parcela parcela = this.getvParcelas()[p];
-                     if (parcela != null && !parcela.isPago()) {
+                    Parcela parcela = this.getvParcelas()[p];
+                    if (parcela != null && !parcela.isPago()) {
                         parcela.agendarForce(dataAgendamento);
                     }
 
@@ -279,7 +281,7 @@ public class Despesa implements ClasseInterface {
             this.setAgendado(false);
             if (this.isParcelado()) {
                 for (int p = 0; p < this.getnParcelas(); p++) {
-                     Parcela parcela = this.getvParcelas()[p];
+                    Parcela parcela = this.getvParcelas()[p];
                     if (parcela != null && !parcela.isPago()) {
                         parcela.pagar(true);
                     }

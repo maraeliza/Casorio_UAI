@@ -25,6 +25,8 @@ import VIEW.TelaInicial;
 import VIEW.Util;
 import java.time.LocalDate;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Mara
@@ -203,22 +205,32 @@ public class DAO {
 
         Object[] cartorioDados3 = {"Cartório e Registro São José", "(34) 5678-1234", "Praça da República, 300"};
         this.cadastrar(8, cartorioDados3);
-        
-        
+
         Object[] eventoIgreja = {"15/12/2024", "1", "0", "1", "❤ Casorio na Igreja ⛪❤"};
-        this.cadastrar(5, eventoIgreja); 
+        this.cadastrar(5, eventoIgreja);
 
         Object[] eventoCartorio = {"10/12/2024", "0", "1", "1", "❤ Casorio no Civil ❤"};
-        this.cadastrar(5, eventoCartorio); 
+        this.cadastrar(5, eventoCartorio);
 
-        String date = Util.dateToString(this.dataHoje) ;
-        System.out.println(date);
+        String date = Util.dateToString(this.dataHoje);
         Object[] evento = {date, "0", "0", "0", "Apresentação do Casório UAI❤"};
-        this.cadastrar(5, evento); 
+        this.cadastrar(5, evento);
 
+        Object[] familia = {"LOPES"};
+        this.cadastrar(10, familia);
 
- /*
-         
+        Object[] familia1 = {"SILVA"};
+        this.cadastrar(10, familia1);
+
+        Object[] familia2 = {"SANTOS"};
+        this.cadastrar(10, familia2);
+
+        Object[] familia3 = {"SAMPAIO"};
+        this.cadastrar(10, familia3);
+
+        System.out.println("inserindo familias");
+
+      
         Object[] despesaDados = {"1", "Comidas", "Bolo, janta, etc.", "1800.0", "3", "31/11/2024", ""};
         this.cadastrar(12, despesaDados);
         
@@ -232,18 +244,17 @@ public class DAO {
         this.getDespesas()[1].agendar(this.dataHoje);
 
     
-        Object[] despesaDados2 = {"3", "Album", "Fotos, fotográfo, etc.", "2500.0", "12", "15/12/2024", ""};
+        Object[] despesaDados2 = {"3", "Album", "Fotos, fotográfo, etc.", "2500.0", "4", "15/12/2024", ""};
         this.cadastrar(12, despesaDados2);
     
-        this.getDespesas()[1].agendar(this.dataHoje);
+        this.getDespesas()[2].agendar(this.dataHoje);
 
         Object[] despesaDados3 = {"2", "Decoração", "Flores, adornos, etc.", "300.0", "3", "10/11/2024", ""};
         this.cadastrar(12, despesaDados3);
       
-        this.getDespesas()[1].agendar(this.dataHoje);
+        this.getDespesas()[3].agendar(this.dataHoje);
 
       
-         */
         this.pagarAgendados();
     }
 
@@ -255,7 +266,7 @@ public class DAO {
 
         for (int i = 0; i < vDespesa.length; i++) {
             if (vDespesa[i] != null) {
-                if (vDespesa[i].isAgendado() && !vDespesa[i].isPago() ) {
+                if (vDespesa[i].isAgendado() && !vDespesa[i].isPago()) {
                     for (int n = 0; n < vDespesaAgendadas.length; n++) {
                         if (vDespesaAgendadas[n] == null) {
                             vDespesaAgendadas[n] = vDespesa[i];
@@ -276,7 +287,7 @@ public class DAO {
         for (int i = 0; i < vParcela.length; i++) {
             if (vParcela[i] != null) {
                 /* checa se está agendada */
-                if (vParcela[i].isAgendado()&& !vParcela[i].isPago()) {
+                if (vParcela[i].isAgendado() && !vParcela[i].isPago()) {
                     for (int n = 0; n < vParcelaAgendadas.length; n++) {
                         if (vParcelaAgendadas[n] == null) {
                             vParcelaAgendadas[n] = vParcela[i];
@@ -444,7 +455,10 @@ public class DAO {
                 boolean adicionado = this.addVetor(idClasse, objeto);
 
                 if (idClasse == 12) {
-                    ((Despesa) objeto).criarParcelas();
+                    if (((Despesa) objeto).isParcelado()) {
+                        ((Despesa) objeto).criarParcelas();
+                    }
+
                 }
 
                 return adicionado;
@@ -775,8 +789,29 @@ public class DAO {
         if (usuario != null) {
             if (usuario.getSenha().equals(senha)) {
                 this.setUserLogado(usuario);
-                MenuInicial menu = new MenuInicial();
-                menu.exibir(this, true, this.getUserLogado());
+                if(usuario.getPessoa().getTipo().toUpperCase().equals("CONVIDADO")){
+                    String texto = "\nCONFIRMAR PRESENÇA\n\nVOCÊ GOSTARIA DE CONFIRMAR SUA PRESENÇA NO CASAMENTO?\nDIGITE SIM OU NÃO PARA CONFIRMAR";
+                    String resposta = JOptionPane.showInputDialog(null, texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
+    
+                    ConvidadoIndividual conv = this.findConvidado(this.userLogado.getId());
+                    if (conv != null) {
+                        if (resposta.toUpperCase().equals("SIM")) {
+                            conv.setConfirmacao(true);
+                            Util.mostrarMSG("PRESENÇA CONFIRMADA!");
+                        }else{
+                            conv.setConfirmacao(false);
+                            Util.mostrarMSG("Obrigado pela resposta ❤! \nAté mais!");
+                        }
+                        
+                        TelaInicial menu = new TelaInicial();
+                        menu.exibir(this);
+                    }
+                }else{
+
+                    MenuInicial menu = new MenuInicial();
+                    menu.exibir(this, true, this.getUserLogado());
+                }
+               
             } else {
 
                 Util.mostrarErro("Credenciais incorretas!");
@@ -787,6 +822,20 @@ public class DAO {
             Util.mostrarErro("Credenciais incorretas!");
             this.deslogar();
         }
+    }
+
+    public ConvidadoIndividual findConvidado(int idUser){
+        ConvidadoIndividual[] vObj = (ConvidadoIndividual[]) this.todosOsVetores[9];
+
+        for (int i = 0; i < vObj.length; i++) {
+            if (vObj[i] != null) {
+                if (vObj[i].getIdUser() == idUser) {
+                    return vObj[i];
+                }
+              
+            }
+        }
+        return null;
     }
 
     public void deslogar() {
@@ -888,6 +937,92 @@ public class DAO {
             }
         }
         return vDespesaConsulta;
+    }
+
+    public String getIprimirConviteINdividual(int idConvidado, int idClasse){
+        String texto = "\n                    ";
+        
+        texto += "\n Convite Para o Casamento de " + this.getNoivos(0).getNome() + " e " + this.getNoivos(1).getNome() + "\n";
+        texto += "Data do Casamento: "+((Evento)this.getItemByID(5, 1)).getData()+" \n";
+        
+        ConvidadoIndividual[] vObj = (ConvidadoIndividual[]) this.todosOsVetores[idClasse];
+        ConvidadoIndividual[] vetCon  = new ConvidadoIndividual[10];
+        int c = 0;
+        int j = 0;
+        for(int i = 0; i < vObj.length; i++){
+            if(vObj[i] != null && vObj[i].isConfirmacao() == true){
+                vetCon[j] = vObj[i];
+                j++;
+                
+            }
+        }
+        
+        for(int i = 0; i<vetCon.length; i++ ){
+            if (vetCon[i] != null) {
+                if(idConvidado == vetCon[i].getId()){
+                    texto += "\n Convite Nominal e intransferível de " + vetCon[i].getNome();
+                    c++;
+                }else{
+                    System.out.println("Aviso: Objeto vetCon[" + i + "] é null.");
+                }
+            }
+            
+        
+        }
+        
+        if (c == 0) {
+            texto = "\n\nNenhum Convidado com esse id foi encontrado!\n\n";
+        }
+        
+        return texto;
+        
+    }
+    
+    public String getIprimirConviteFamilia(int idConvidadoFamilia, int idClasse){
+        String texto = "\n                    ";
+        
+        texto += "\n Convite Para o Casamento de " + this.getNoivos(0).getNome() + " e " + this.getNoivos(1).getNome() + "\n";
+        texto += "Data do Casamento: "+((Evento)this.getItemByID(5, 1)).getData()+" \n";
+         
+        ConvidadoFamilia[] vObj = (ConvidadoFamilia[]) this.todosOsVetores[idClasse];
+        int c = 0;
+        
+        for(int i = 0; i<vObj.length; i++){
+            if (vObj[i] != null){
+                if(vObj[i].getId() == idConvidadoFamilia){
+                    texto +="\n Convite para a família " + vObj[i].getNome();
+                    c++;
+                }
+            }
+        }
+        
+        if (c == 0) {
+            texto = "\n\nNenhuma Familia com esse id foi encontrado!\n\n";
+        }
+        
+        return texto;
+    }
+    
+    public String getNomesConfirmados(int idClasse){
+        String texto = "\n                    ";
+        
+        ConvidadoIndividual[] vObj = (ConvidadoIndividual[]) this.todosOsVetores[idClasse];
+        int c = 0;
+  
+        for (int i = 0; i < vObj.length; i++) {
+            if (vObj[i] != null && vObj[i].isConfirmacao() == true) {
+                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
+                texto += "\n";
+                c++;
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNenhum Convidado Confirmado!\n\n";
+        }
+        
+        return texto;
+            
     }
 
     public Recado[] getRecados() {

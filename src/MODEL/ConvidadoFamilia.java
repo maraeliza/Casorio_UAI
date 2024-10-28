@@ -7,7 +7,6 @@ package MODEL;
 import CONTROLLER.DAO;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import java.util.Random;
 
 /**
@@ -100,6 +99,7 @@ public class ConvidadoFamilia implements ClasseInterface {
 
 
     public boolean criar(DAO dao, Object[] vetor) {
+        this.dao = dao;
        if (vetor.length < 3) {
             return false; // Verifica se há informações suficientes
         }
@@ -153,7 +153,7 @@ public class ConvidadoFamilia implements ClasseInterface {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         // Adiciona informações da pessoa
-        resultado.append("Familia ").append(this.id);
+        resultado.append("\n\nFamilia ").append(this.id);
         resultado.append("\nNome da Familia: ").append(this.nome);
 
 

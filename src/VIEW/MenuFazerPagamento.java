@@ -20,9 +20,10 @@ public class MenuFazerPagamento {
     private DAO dao;
     private Usuario user;
 
-    public void exibir(DAO dao, int idClasse, Usuario user) {
-        this.user = user;
+    public void exibir(DAO dao, int idClasse) {
         this.dao = dao;
+        this.user = this.dao.getUserLogado();
+
         try {
             this.definirTexto();
             this.montarPainel();
@@ -32,14 +33,14 @@ public class MenuFazerPagamento {
     }
 
     private void definirTexto() {
-        this.texto = "\n\n FAZER PAGAMENTO ";
-        this.texto += "\nEscolha a opção a seguir ";
+        this.texto = "\n\n💲 FAZER PAGAMENTO 💸💲";
+        this.texto += "\n\nEscolha a opção a seguir:  ";
 
         this.texto += "\n1. Pagar despesa";
         this.texto += "\n2. Pagar parcela de despesa";
         this.texto += "\n3. Lançar pagamento avulso";
+        this.texto += "\n0. Para voltar";
 
-        this.texto += "\n\n0. Para voltar";
         this.texto += "\n\nDigite aqui o número da sua opção: ";
 
     }
@@ -97,7 +98,9 @@ public class MenuFazerPagamento {
     }
 
     public void pagamentoAvulso() {
+        System.out.println("Lançando pagamento avulso no sistema");
         Menu_CREATE menu = new Menu_CREATE();
+        
         menu.exibir(this.dao, 11, this.user);
     }
 

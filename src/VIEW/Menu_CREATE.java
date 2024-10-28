@@ -90,6 +90,8 @@ public class Menu_CREATE {
                 Util.mostrarMSG("Cadastrado com sucesso!");
                 Menu_READ menuVer = new Menu_READ();
                 menuVer.exibir(this.dao, this.idClasse);
+            }else{
+                Util.mostrarErro("Não foi possível realizar o cadastro!");
             }
         }
     }

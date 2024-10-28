@@ -92,27 +92,36 @@ public class Pagamento implements ClasseInterface {
         return false;
     }
 
-    public boolean trocarFornecedor(int idFornecedor, Fornecedor fornecedor) {
+    public boolean trocarFornecedor(int idFornecedor) {
+        if (idFornecedor != 0) {
+            Fornecedor fornecedor = (Fornecedor) this.dao.getItemByID(4, idFornecedor);
 
-        //checa se o id é diferente
-        if ((this.getIdFornecedor() == 0 || this.getIdFornecedor() != idFornecedor)
-                && fornecedor != null) {
+            if (fornecedor != null) {
+                //checa se o id é diferente
+                if (this.getIdFornecedor() == 0 || this.getIdFornecedor() != idFornecedor) {
+                    System.out.println("Vinculando o fornecedor " + fornecedor.getNome() + " ao pagamento ");
+                    this.setIdFornecedor(idFornecedor);
+                    this.setFornecedor(fornecedor);
+                    this.getFornecedor().atualizarValores();
 
-            this.setFornecedor(fornecedor);
-
-            return true;
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 
     public boolean criar(DAO dao, Object vetor[]) {
+        System.out.println(" "+vetor[0]+" "+vetor[1]+" "+vetor[2]+" "+vetor[3]+" "+vetor[4]+" "+vetor[5]+" "+vetor[6]);
         this.dao = dao;
         boolean alterado = false;
         if (this.dao != null) {
+            Pessoa pessoa = null;
             if (this.dao.getUserLogado() != null) {
-                Pessoa pessoa = this.dao.getUserLogado().getPessoa();
+                pessoa = this.dao.getUserLogado().getPessoa();
             } else {
-                Pessoa pessoa = (Pessoa) this.dao.getItemByID(2, 0);
+                pessoa = (Pessoa) this.dao.getItemByID(2, 0);
             }
 
             if (pessoa != null) {
@@ -130,93 +139,95 @@ public class Pagamento implements ClasseInterface {
                     throw new IllegalArgumentException("Tipo não suportado no vetor[0]");
                 }
                 if (idFornecedor != 0) {
-                    Fornecedor fornecedor = (Fornecedor) dao.getItemByID(4, idFornecedor);
 
-                    if (fornecedor != null) {
+                    this.trocarFornecedor(idFornecedor);
 
-                        this.trocarFornecedor(idFornecedor, fornecedor);
-                        this.getFornecedor().atualizarValores();
-                    }
                 }
                 if (vetor[0] != null && vetor[1] != null && vetor[2] != null && vetor[3] != null) {
-
+                      
                     if (vetor[1] instanceof String) {
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                         String dateStr = (String) vetor[1];
-                        this.data = LocalDate.parse(dateStr, formatter);// Data do pagamento
+                        this.data = LocalDate.parse(dateStr, formatter);
+                       
                     } else if (vetor[1] instanceof LocalDate) {
-                        // Faz o cast direto para int se o elemento já for Integer
                         this.data = (LocalDate) vetor[1];
+                        
                     } else {
                         throw new IllegalArgumentException("Tipo não suportado no vetor[0]");
                     }
+                   
+                    if (this.dao.getDataHoje().isBefore(this.data)) {
+                        Util.mostrarErro("Não foi possível cadastrar pagamento para o futuro, se deseja agendar, lance uma despesa e agende o pagamento!");
+                        alterado = false;
+                    }else{
+                        this.descricao = (String) vetor[2]; // Descrição
 
-                    this.descricao = (String) vetor[2]; // Descrição
-
-                    double valor;
-
-                    if (vetor[3] instanceof String) {
-                        valor = Util.stringToDouble((String) vetor[3]);
-                    } else if (vetor[3] instanceof Double) {
-                        valor = (Double) vetor[3];
-                    } else if (vetor[3] instanceof Integer) {
-                        valor = ((Integer) vetor[3]).doubleValue();
-                    } else {
-                        throw new IllegalArgumentException("Tipo não suportado no vetor[3]");
-                    }
-                    if (valor > 0) {
-                        this.setValor(valor);
-                    }
-
-                    if (vetor[5] != null) {
-                        int idDespesa;
-                        if (vetor[5] instanceof String) {
-                            idDespesa = Util.stringToInt((String) vetor[5]);
-                        } else if (vetor[5] instanceof Integer) {
-                            idDespesa = (Integer) vetor[5];
+                        double valor;
+    
+                        if (vetor[3] instanceof String) {
+                            valor = Util.stringToDouble((String) vetor[3]);
+                        } else if (vetor[3] instanceof Double) {
+                            valor = (Double) vetor[3];
+                        } else if (vetor[3] instanceof Integer) {
+                            valor = ((Integer) vetor[3]).doubleValue();
                         } else {
-                            throw new IllegalArgumentException("Tipo não suportado no vetor[5]");
+                            throw new IllegalArgumentException("Tipo não suportado no vetor[3]");
                         }
-                        Despesa despesa = (Despesa) dao.getItemByID(12, idDespesa);
-
-                        if (despesa != null) {
-
-                            this.trocarDespesa(despesa.getId(), despesa);
+                        if (valor > 0) {
+                            this.setValor(valor);
                         }
-                    }
-                    if (vetor[6] != null) {
-
-                        int idParcela;
-
-                        if (vetor[6] instanceof String) {
-                            idParcela = Util.stringToInt((String) vetor[6]);
-                        } else if (vetor[6] instanceof Integer) {
-                            idParcela = (Integer) vetor[6];
-                        } else {
-                            throw new IllegalArgumentException("Tipo não suportado no vetor[6]");
-                        }
-
-                        Parcela parcela = (Parcela) dao.getItemByID(13, idParcela);
-                        if (parcela != null) {
-
-                            this.trocarParcela(parcela.getId(), parcela);
-                    
-                            int nParcela = 0;
-                            if (vetor[4] instanceof String) {
-                                nParcela = Util.stringToInt((String) vetor[4]);
-                            } else if (vetor[4] instanceof Integer) {
-                                nParcela = (Integer) vetor[4];
+                        if (vetor[5] != null) {
+                            int idDespesa;
+                            if (vetor[5] instanceof String) {
+                                idDespesa = Util.stringToInt((String) vetor[5]);
+                            } else if (vetor[5] instanceof Integer) {
+                                idDespesa = (Integer) vetor[5];
                             } else {
-                                throw new IllegalArgumentException("Tipo não suportado no vetor[0]");
+                                throw new IllegalArgumentException("Tipo não suportado no vetor[5]");
                             }
-                            if (nParcela != 0) {
-                                this.setnParcela(nParcela);
+                            Despesa despesa = (Despesa) dao.getItemByID(12, idDespesa);
+    
+                            if (despesa != null) {
+    
+                                this.trocarDespesa(despesa.getId(), despesa);
                             }
-
                         }
+                        if (vetor[6] != null) {
+    
+                            int idParcela;
+    
+                            if (vetor[6] instanceof String) {
+                                idParcela = Util.stringToInt((String) vetor[6]);
+                            } else if (vetor[6] instanceof Integer) {
+                                idParcela = (Integer) vetor[6];
+                            } else {
+                                throw new IllegalArgumentException("Tipo não suportado no vetor[6]");
+                            }
+    
+                            Parcela parcela = (Parcela) dao.getItemByID(13, idParcela);
+                            if (parcela != null) {
+    
+                                this.trocarParcela(parcela.getId(), parcela);
+    
+                                int nParcela = 0;
+                                if (vetor[4] instanceof String) {
+                                    nParcela = Util.stringToInt((String) vetor[4]);
+                                } else if (vetor[4] instanceof Integer) {
+                                    nParcela = (Integer) vetor[4];
+                                } else {
+                                    throw new IllegalArgumentException("Tipo não suportado no vetor[0]");
+                                }
+                                if (nParcela != 0) {
+                                    this.setnParcela(nParcela);
+                                }
+    
+                            }
+                        }
+    
+                        alterado = true;
                     }
-
-                    alterado = true;
+                    
 
                 }
                 if (alterado) {
@@ -231,7 +242,9 @@ public class Pagamento implements ClasseInterface {
 
         return alterado;
     }
+    public void define(Object vetor[]){
 
+    }
     public boolean deletar() {
         --total;
         return true;
@@ -242,12 +255,12 @@ public class Pagamento implements ClasseInterface {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         resultado.append("\nID: ").append(this.id).append("\n");
-        resultado.append("Valor Pago: ").append(this.valor).append("\n");
+        resultado.append("Valor Pago: R$").append(String.format("%.2f", this.valor)).append("\n");
         if (this.descricao != null && !this.descricao.isEmpty()) {
 
             if (this.despesa != null) {
                 resultado.append("DESPESA: ").append(this.despesa.getNome()).append("            ");
-                resultado.append("Valor Total: ").append(this.despesa.getValorTotal()).append("\n");
+                resultado.append("Valor Total: R$").append(String.format("%.2f", this.despesa.getValorTotal())).append("\n");
                 if (this.despesa.isAgendado()) {
                     if (this.despesa.getDataAgendamento() != null) {
                         resultado.append("Data Agendada: ").append(this.despesa.getDataAgendamento().format(formatter)).append("\n");
@@ -302,19 +315,13 @@ public class Pagamento implements ClasseInterface {
     }
 
     public void update(Object vetor[]) {
-
+        System.out.println(" "+vetor[0]+" "+vetor[1]+" "+vetor[2]+" "+vetor[3]+" "+vetor[4]+" "+vetor[5]+" "+vetor[6]);
         boolean alterou = false;
         if (vetor[1] != null || !vetor[1].equals('0')) {
             int idFornecedor = Util.stringToInt((String) vetor[1]);
-
-            // Obtém o fornecedor pelo ID
-            Fornecedor fornecedor = (Fornecedor) this.dao.getItemByID(4, idFornecedor);
-            if (fornecedor != null) {
-                this.trocarFornecedor(idFornecedor, fornecedor);
-
-            } else {
-
-            }
+            if (idFornecedor != 0) {
+                this.trocarFornecedor(idFornecedor);
+            } 
         }
 
         // Verifica e atualiza data do pagamento (vetor[3])
