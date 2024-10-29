@@ -102,13 +102,15 @@ public class Evento implements ClasseInterface {
     public Cerimonial getCerimonial() {
         return this.cerimonial;
     }
-
-    public void setCartorio(Cartorio cartorio) {
-        if (cartorio != null) {
-            this.cartorio = cartorio;
-            this.idCartorio = this.cartorio.getId();
-            this.dataModificacao = LocalDate.now();
+    public String getEndereco(){
+        if (this.getIgreja()!=null) {
+            return this.getIgreja().getEndereco();
+        }else{
+            if (this.getCartorio()!=null) {
+                return this.getCartorio().getEndereco();
+            }
         }
+        return "N/A";
     }
 
     public void setCerimonial(Cerimonial cerimonial) {
@@ -118,7 +120,7 @@ public class Evento implements ClasseInterface {
         if (cerimonial != null) {
             this.cerimonial = cerimonial;
             this.cerimonial.setEventoVinculado(true);
-            this.idCerimonial = this.cerimonial.getId();
+            this.idCerimonial = this.cerimonial.getId(); 
             this.dataModificacao = LocalDate.now();
         }
     }
@@ -127,15 +129,30 @@ public class Evento implements ClasseInterface {
         return this.igreja;
     }
 
+    public void setCartorio(Cartorio cartorio) {
+        if (this.cartorio != null) {
+            this.cartorio.setEventoVinculado(false);
+        }
+        if (cartorio != null) {
+            this.cartorio = cartorio;
+            this.cartorio.setEventoVinculado(true);
+            this.idCartorio = this.cartorio.getId();
+            this.dataModificacao = LocalDate.now();
+        }
+    }
+    
     public void setIgreja(Igreja igreja) {
+        if (this.igreja != null) {
+            this.igreja.setEventoVinculado(false);
+        }
         if (igreja != null) {
             this.igreja = igreja;
+            this.igreja.setEventoVinculado(true);
             this.idIgreja = this.igreja.getId();
             this.dataModificacao = LocalDate.now();
         }
-
     }
-
+    
     public Cartorio getCartorio() {
         return this.cartorio;
     }

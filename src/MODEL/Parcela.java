@@ -5,8 +5,7 @@
 package MODEL;
 
 import CONTROLLER.DAO;
-import VIEW.Menu_READ;
-import VIEW.Util;
+import VIEW.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -48,32 +47,25 @@ public class Parcela implements ClasseInterface {
         return campos;
     }
 
-    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
-        if (user != null) {
-            this.user = user;
-            return criar(dao, vetor);
-        }
-        return criar(dao, vetor);
-    }
-
+    @Override
     public boolean criar(DAO dao, Object vetor[]) {
         this.dao = dao;
         boolean alterado = false;
-       
+
         if (vetor[0] != null) {
 
             this.idDespesa = (int) vetor[0];
             if (this.idDespesa != 0) {
-            
+
                 Despesa despesa = (Despesa) this.dao.getItemByID(12, this.idDespesa);
 
                 if (despesa != null) {
-               
+
                     this.setDespesa(despesa);
                     if (vetor[1] != null) {
                         this.dataVencimento = (LocalDate) vetor[1];
                         if (vetor[2] != null) {
-                          
+
                             double valorFormatado = (double) vetor[2];
                             this.valor = valorFormatado;
                             if (vetor[3] != null) {
@@ -113,6 +105,16 @@ public class Parcela implements ClasseInterface {
         return true;
     }
 
+    public String lerParcelaAgendada() {
+        String texto = "";
+        texto += "\nID DA DESPESA: " + this.getIdDespesa() + "\nNOME DA DESPESA: " + this.getDespesa().getNome();
+        texto += "\nPARCELA: " + this.getN() + " de " + this.getNTotal();
+        texto += "\nVALOR: " + this.getValor();
+
+        texto += "\nDATA DO PAGAMENTO AGENDADO: " + this.getDataAgendamento() + "\n";
+        return texto;
+    }
+
     public String ler() {
         StringBuilder resultado = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -123,7 +125,7 @@ public class Parcela implements ClasseInterface {
             resultado.append("         DESPESA: ").append(this.nome).append("\n");
         }
 
-        resultado.append("Valor: R$").append(String.format("%.2f",this.valor)).append("\n");
+        resultado.append("Valor: R$").append(String.format("%.2f", this.valor)).append("\n");
 
         if (this.dataVencimento != null) {
             resultado.append("Data de Vencimento: ").append(this.dataVencimento.format(formatter)).append("\n");
@@ -181,34 +183,35 @@ public class Parcela implements ClasseInterface {
             this.setDataAgendamento(dataAgendamento);
         }
     }
+
     public void pagar(boolean quitandoDespesa, boolean entrandoNoSistema) {
         if (!this.isPago()) {
-           
-             LocalDate hoje = LocalDate.now();
-             this.setPago(true);
-             this.setDataPagamento(hoje);
-             this.setStatus("PAGA");
-             this.setAgendado(false);
-           
-             if (this.despesa != null) {
-                 Object infos[] = {this.despesa.getIdFornecedor(), hoje, this.despesa.getDescricao(), this.getValor(), this.getN(), this.getIdDespesa(), this.getId()};
-                 this.dao.cadastrar(11, infos);
-                
-             }
-         }
- 
-     }
- 
 
-    public void pagar(boolean quitandoDespesa) {
-       if (!this.isPago()) {
-          
             LocalDate hoje = LocalDate.now();
             this.setPago(true);
             this.setDataPagamento(hoje);
             this.setStatus("PAGA");
             this.setAgendado(false);
-          
+
+            if (this.despesa != null) {
+                //cadastrar pagamento da parcela
+                Object infos[] = {this.despesa.getIdFornecedor(), hoje, this.despesa.getDescricao(), this.getValor(), this.getN(), this.getIdDespesa(), this.getId()};
+                this.dao.cadastrar(11, infos);
+
+            }
+        }
+
+    }
+
+    public void pagar(boolean quitandoDespesa) {
+        if (!this.isPago()) {
+
+            LocalDate hoje = LocalDate.now();
+            this.setPago(true);
+            this.setDataPagamento(hoje);
+            this.setStatus("PAGA");
+            this.setAgendado(false);
+
             if (this.despesa != null) {
                 Object infos[] = {this.despesa.getIdFornecedor(), hoje, this.despesa.getDescricao(), this.getValor(), this.getN(), this.getIdDespesa(), this.getId()};
                 this.dao.cadastrar(11, infos);
@@ -221,8 +224,18 @@ public class Parcela implements ClasseInterface {
 
     }
 
+    public void cancelarPagamento() {
+        if (this.isPago()) {
+            this.setPago(false); // Marca a parcela como não paga
+            this.setDataPagamento(null); // Remove a data de pagamento
+            this.status = this.isVencida() ? "VENCIDA" : "PENDENTE"; // Atualiza o status
+            
+        }
+    }
+
+    @Override
     public void update(Object vetor[]) {
-     
+
         boolean alterou = false;
 
         // Atualiza a data de modificação caso tenha havido alguma alteração
@@ -233,7 +246,7 @@ public class Parcela implements ClasseInterface {
 
     public boolean trocarDespesa(int id) {
         Despesa despesa = (Despesa) this.dao.getItemByID(12, id);
-      
+
         //checa se o id é diferente
         if ((this.getIdDespesa() == 0 || this.getIdDespesa() != id)
                 && despesa != null) {
@@ -270,7 +283,7 @@ public class Parcela implements ClasseInterface {
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        this.nome = nome + " " + this.getN() + "/" + this.getNTotal();
     }
 
     public double getValor() {

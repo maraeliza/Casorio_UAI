@@ -3,19 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package MODEL;
-
+import CONTROLLER.DAO;
+import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-import CONTROLLER.DAO;
-
 public class Cartorio implements ClasseInterface {
 
     private int id;
     private String nome;
     private String telefone;
     private String endereco;
-
+    private boolean eventoVinculado;
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
     private DAO dao;
@@ -184,10 +182,15 @@ public class Cartorio implements ClasseInterface {
 
     // Método para deletar cartório
     public boolean deletar() {
-        --total;
-        return true;
-    }
+        if (this.isEventoVinculado()) {
+            Util.mostrarErro("Não é possível excluir o cartório " + this.getNome() + ", pois ele está vinculado a um evento");
+            return false;
+        } else {
 
+            --Igreja.total;
+            return true;
+        }
+    }
     public String ler() {
         StringBuilder resultado = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -219,4 +222,12 @@ public class Cartorio implements ClasseInterface {
         resultado.append("\n\n");
         return resultado.toString();
     }
+    public boolean isEventoVinculado() {
+        return eventoVinculado;
+    }
+
+    public void setEventoVinculado(boolean eventoVinculado) {
+        this.eventoVinculado = eventoVinculado;
+    }
+    
 }

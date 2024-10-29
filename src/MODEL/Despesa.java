@@ -116,10 +116,8 @@ public class Despesa implements ClasseInterface {
         for (int i = 0; i < this.getnParcelas(); i++) {
             LocalDate dataVencimento = this.getDataPrimeiroVencimento().plusMonths(i);
             Object infos[] = {this.getId(), dataVencimento, valor, i + 1, this.getnParcelas(), this.getNome()};
-            this.dao.cadastrar(13, infos);
-            //pegando última parcela criada
-            int t = this.dao.getTotalClasse(13);
-            Parcela p = (Parcela) this.dao.getItemByID(13, t);
+            Parcela p = this.dao.cadastrarParcela(13, infos);
+
             if (p != null) {
                 //add no vetor
                 this.add(p);
@@ -319,6 +317,22 @@ public class Despesa implements ClasseInterface {
         }
 
     }
+    public void cancelarPagamento() {
+        if (this.isPago()) {
+            this.setPago(false);
+            this.setDataQuitacao(null); 
+            
+            if (this.isParcelado()) {
+                for (int p = 0; p < this.getnParcelas(); p++) {
+                    Parcela parcela = this.getvParcelas()[p];
+                    if (parcela != null && parcela.isPago()) {
+                        parcela.cancelarPagamento(); // Método em Parcela para cancelar pagamento individual da parcela
+                    }
+                }
+              } 
+        }
+    }
+    
 
     public void pagar( boolean entrandoNoSistema) {
         if (!this.isPago()) {

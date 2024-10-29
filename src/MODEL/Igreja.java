@@ -8,8 +8,8 @@ package MODEL;
  *
  * @author Jussie
  */
-
 import CONTROLLER.DAO;
+import VIEW.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -22,8 +22,11 @@ public class Igreja implements ClasseInterface {
     private LocalDate dataCriacao;
     private LocalDate dataModificacao;
 
+    private boolean eventoVinculado;
+
     public static int total;
-        private DAO dao;
+    private DAO dao;
+
     public static String[] getCampos() {
         String[] campos = new String[3]; // Somente 3 campos necessários
         campos[0] = "ID: ";
@@ -32,6 +35,7 @@ public class Igreja implements ClasseInterface {
 
         return campos;
     }
+
     // Getters e Setters
     public int getId() {
         return this.id;
@@ -75,12 +79,12 @@ public class Igreja implements ClasseInterface {
         return this.dataModificacao;
     }
 
-    public boolean criar(DAO dao,Usuario user, Object vetor[]) {
-     
-        return criar(dao,vetor);
+    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
+
+        return criar(dao, vetor);
     }
 
-    public boolean criar(DAO dao,Object vetor[]) {
+    public boolean criar(DAO dao, Object vetor[]) {
         boolean alterado = false;
 
         if (vetor[0] != null) {
@@ -158,11 +162,17 @@ public class Igreja implements ClasseInterface {
     public void atualizarDataModificacao() {
         this.dataModificacao = LocalDate.now();
     }
-
+    @Override
     // Método para deletar igreja
     public boolean deletar() {
-        --total;
-        return true;
+        if (this.isEventoVinculado()) {
+            Util.mostrarErro("Não é possível excluir a Igreja " + this.getNome() + ", pois está vinculada a um evento");
+            return false;
+        } else {
+
+            --Igreja.total;
+            return true;
+        }
     }
 
     // Método para ler os dados da igreja
@@ -188,4 +198,13 @@ public class Igreja implements ClasseInterface {
         resultado.append("\n\n");
         return resultado.toString();
     }
+
+    public boolean isEventoVinculado() {
+        return eventoVinculado;
+    }
+
+    public void setEventoVinculado(boolean eventoVinculado) {
+        this.eventoVinculado = eventoVinculado;
+    }
+
 }

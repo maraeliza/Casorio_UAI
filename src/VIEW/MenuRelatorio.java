@@ -38,6 +38,7 @@ public class MenuRelatorio {
         listaClasses[3] = "PAGAMENTOS DOS NOIVOS";
         listaClasses[4] = "CONVIDADOS";
         listaClasses[5] = "CONVIDADOS CONFIRMADOS";
+        listaClasses[6] = "PAGAMENTOS AGENDADOS";
         this.listaNomeClasses = listaClasses;
     }
 
@@ -81,7 +82,7 @@ public class MenuRelatorio {
             this.definirTexto();
 
             this.op = JOptionPane.showInputDialog(null, this.texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-        
+
             if (this.op != null) {
                 o = Util.stringToInt(this.op);
                 this.lidarEscolha(o);
@@ -95,20 +96,35 @@ public class MenuRelatorio {
 
     private void lidarEscolha(int o) {
 
-        if (o == 1) {
-            Menu_READ menuVer = new Menu_READ();
-            menuVer.exibir(this.dao, 0);
-        }else if (o == 4) {
-            Menu_READ menuVer = new Menu_READ();
-            menuVer.exibir(this.dao, 11, true);
-        }else if(o == 2){
-            imprimirConviteIndividual();
-        }else if (o==3){
-            imprimirConviteFamilia();
-        } else if (o == 5) {
-            mostrarConvidados();
-        } else if (o == 6) {  
-            mostrarConvidadosConfirmados();
+        switch (o) {
+            case 1: {
+                Menu_READ menuVer = new Menu_READ();
+                menuVer.exibir(this.dao, 0);
+                break;
+            }
+            case 4: {
+                Menu_READ menuVer = new Menu_READ();
+                menuVer.exibir(this.dao, 11, true);
+                break;
+            }
+            case 2:
+                this.imprimirConviteIndividual();
+                break;
+            case 3:
+                this.imprimirConviteFamilia();
+                break;
+            case 5:
+                Menu_READ menuVer = new Menu_READ();
+                menuVer.exibir(this.dao, 9);
+                break;
+            case 6:
+                this.mostrarConvidadosConfirmados();
+                break;
+            case 7:
+                this.dao.mostrarPagamentosAgendados();
+                break;
+            default:
+                break;
         }
 
         if (o >= this.nOps) {
@@ -117,42 +133,73 @@ public class MenuRelatorio {
         }
 
     }
-    private void imprimirConviteIndividual(){
-        String idNomeConvidado = JOptionPane.showInputDialog(null, "Digite o id do nome do convidado:", "Imprimir Convite Individual", JOptionPane.QUESTION_MESSAGE);
-        
-        
-        if (idNomeConvidado != null && !idNomeConvidado.trim().isEmpty()){
-            int idConvidado  = Integer.parseInt(idNomeConvidado);
-            
-            String gerandoConvite = this.dao.getIprimirConviteINdividual(idConvidado, 9);
-            
-            String mensagem = "Emissão de Convite individual:\n" + gerandoConvite + "\n\nClique em OK para voltar.";
-            JOptionPane.showMessageDialog(null, mensagem, "Convite", JOptionPane.INFORMATION_MESSAGE);
-        }else{
-        
-             JOptionPane.showMessageDialog(null, "Id do convidado não inserido.", "Erro", JOptionPane.WARNING_MESSAGE);
-    
-        }    
+
+    private void imprimirConviteIndividual() {
+
+        String texto = "\nIMPRESSÃO DE CONVITES INDIVIDUAIS";
+        texto += "\n                    ";
+        texto += "\nLISTA DE CONVIDADOS: ";
+        texto += "\n " + this.dao.getNomes(9);
+        texto += "\n\nINSIRA 0 PARA VOLTAR:";
+        texto += "\nINSIRA O ID DO CONVIDADO:";
+
+        String idNomeConvidado = JOptionPane.showInputDialog(null, texto, "Imprimir Convite Individual", JOptionPane.QUESTION_MESSAGE);
+
+        if (idNomeConvidado != null && !idNomeConvidado.trim().isEmpty()) {
+           
+
+            texto = "\nIMPRESSÃO DE CONVITES INDIVIDUAIS";
+            texto += "\n                    ";
+            texto += "\nLISTA DE EVENTOS: ";
+            texto += "\n " + this.dao.getNomes(5);
+            texto += "\nINSIRA O ID DO EVENTO PARA GERAR O CONVITE:";
+
+            String idEventoInserido = JOptionPane.showInputDialog(null, texto, "Imprimir Convite Individual", JOptionPane.QUESTION_MESSAGE);
+            int idConvidado = Util.stringToInt(idNomeConvidado);
+            int idEvento = Util.stringToInt(idEventoInserido);
+
+            String gerandoConvite = this.dao.getIprimirConviteINdividual(idConvidado,idEvento);
+            JOptionPane.showMessageDialog(null, gerandoConvite, "Convite", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+
+            JOptionPane.showMessageDialog(null, "Id do convidado não inserido.", "Erro", JOptionPane.WARNING_MESSAGE);
+
+        }
     }
-    
-    private void imprimirConviteFamilia(){
-        String idNomeFamilia = JOptionPane.showInputDialog(null, "Digite o id da familia:", "Imprimir Convite Familia", JOptionPane.QUESTION_MESSAGE);
-        
-        if (idNomeFamilia != null && !idNomeFamilia.trim().isEmpty()){
-            int idConvidadoFamilia  = Integer.parseInt(idNomeFamilia);
-            
-            String gerandoConviteFamilia = this.dao.getIprimirConviteFamilia(idConvidadoFamilia, 10);
-            
-            String mensagem = "Emissão de Convite Familia:\n" + gerandoConviteFamilia + "\n\nClique em OK para voltar.";
-            JOptionPane.showMessageDialog(null, mensagem, "Convite", JOptionPane.INFORMATION_MESSAGE);
-        }else{
-        
-             JOptionPane.showMessageDialog(null, "Id da familia não inserido.", "Erro", JOptionPane.WARNING_MESSAGE);
-    
-        }    
-    
+
+    private void imprimirConviteFamilia() {
+
+        String texto = "\nIMPRESSÃO DE CONVITES";
+        texto += "\n                    ";
+        texto += "\nLISTA DE FAMÍLIAS: ";
+        texto += "\n " + this.dao.getNomes(10);
+        texto += "\n\nINSIRA 0 PARA VOLTAR:";
+        texto += "\nINSIRA O ID DA FAMÍLIA:";
+
+        String idNomeConvidado = JOptionPane.showInputDialog(null, texto, "Imprimir Convite Familiar", JOptionPane.QUESTION_MESSAGE);
+
+        if (idNomeConvidado != null && !idNomeConvidado.trim().isEmpty()) {
+            int idFamilia = Util.stringToInt(idNomeConvidado);
+
+            texto = "\nIMPRESSÃO DE CONVITES";
+            texto += "\n                    ";
+            texto += "\nLISTA DE EVENTOS: ";
+            texto += "\n " + this.dao.getNomes(5);
+            texto += "\nINSIRA O ID DO EVENTO PARA GERAR O CONVITE:";
+
+            String idEventoInserido = JOptionPane.showInputDialog(null, texto, "Imprimir Convite Familiar", JOptionPane.QUESTION_MESSAGE);
+
+            int idEvento = Util.stringToInt(idEventoInserido);
+            String gerandoConvite = this.dao.gerarConviteFamilia(idEvento, idFamilia);
+            JOptionPane.showMessageDialog(null, gerandoConvite, "Convite", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+
+            JOptionPane.showMessageDialog(null, "Id do convidado não inserido.", "Erro", JOptionPane.WARNING_MESSAGE);
+
+        }
     }
-    
+
+
     private void mostrarConvidados() {
         // Tenta obter os nomes dos convidados
         String nomeConvidados = this.dao.getNomes(9);
@@ -166,9 +213,9 @@ public class MenuRelatorio {
             JOptionPane.showMessageDialog(null, mensagem, "Lista de Convidados", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
+
     private void mostrarConvidadosConfirmados() {
-        
+
         String NomeConvidadosConfirmados = this.dao.getNomesConfirmados(9);
 
         // Verifica se há convidados confirmados 

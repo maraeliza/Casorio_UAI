@@ -121,7 +121,6 @@ public class Pagamento implements ClasseInterface {
             if (this.dao.getUserLogado() != null) {
                 pessoa = this.dao.getUserLogado().getPessoa();
             } else {
-                System.out.println("pessoa inciial!");
                 pessoa = (Pessoa) this.dao.getItemByID(2, 0);
             }
 
@@ -240,12 +239,14 @@ public class Pagamento implements ClasseInterface {
 
         return alterado;
     }
-
-    public void define(Object vetor[]) {
-
-    }
-
+ 
     public boolean deletar() {
+        if (this.idDespesa != 0) {
+            this.despesa.cancelarPagamento();
+        }
+        if (this.idParcela != 0) {
+            this.parcela.cancelarPagamento();
+        }
         --total;
         return true;
     }

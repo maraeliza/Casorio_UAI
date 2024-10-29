@@ -24,7 +24,6 @@ import VIEW.MenuInicial;
 import VIEW.TelaInicial;
 import VIEW.Util;
 import java.time.LocalDate;
-
 import javax.swing.JOptionPane;
 
 /**
@@ -93,20 +92,20 @@ public class DAO {
             Parcela.class // PARCELAS  13
         };
 
-        recados = new Recado[10];            // Por exemplo, vetor com 10 elementos
-        presentes = new Presente[10];
-        pessoas = new Pessoa[10];
-        usuarios = new Usuario[10];
-        fornecedores = new Fornecedor[10];
-        eventos = new Evento[10];
-        cerimoniais = new Cerimonial[10];
-        igrejas = new Igreja[10];
-        cartorios = new Cartorio[10];
-        convidadosIndividuais = new ConvidadoIndividual[10];
-        convidadosFamilia = new ConvidadoFamilia[10];
-        pagamentos = new Pagamento[10];
-        despesas = new Despesa[10];
-        parcelas = new Parcela[10];
+        recados = new Recado[100];            // Por exemplo, vetor com 10 elementos
+        presentes = new Presente[100];
+        pessoas = new Pessoa[100];
+        usuarios = new Usuario[100];
+        fornecedores = new Fornecedor[100];
+        eventos = new Evento[100];
+        cerimoniais = new Cerimonial[100];
+        igrejas = new Igreja[100];
+        cartorios = new Cartorio[100];
+        convidadosIndividuais = new ConvidadoIndividual[100];
+        convidadosFamilia = new ConvidadoFamilia[100];
+        pagamentos = new Pagamento[100];
+        despesas = new Despesa[100];
+        parcelas = new Parcela[100];
 
         this.todosOsVetores = new Object[][]{
             recados,//0
@@ -137,9 +136,16 @@ public class DAO {
 
         Object[] comentario1 = {"Mal posso esperar pela festa!"};
         this.cadastrar(0, comentario1);
-        
+
         Object[] comentario2 = {"Shippo demais! Meu casal favorito!!"};
         this.cadastrar(0, comentario2);
+
+        Object[] presente1 = {"Fogão", "Eletrodomésticos", "https://www.casasbahia.com.br/fogao/b"};
+        this.cadastrar(1, presente1);
+        Object[] presente2 = {"Cama", "Móveis", "https://www.casasbahia.com.br/cama/b"};
+        this.cadastrar(1, presente2);
+        Object[] presente3 = {"Sofá", "Móveis", "https://www.casasbahia.com.br/sofa/b"};
+        this.cadastrar(1, presente3);
 
         Object[] dados0 = {"Pagamento agendado", "00000000", "sys", "01/01/2000"};
         this.cadastrar(2, dados0);
@@ -162,7 +168,7 @@ public class DAO {
         Object[] pessoa6Dados = {"Fábio", "3431 1335", "cerimonial", "15/05/1989"};
         this.cadastrar(2, pessoa6Dados);
 
-        Object[] pessoa7Dados = {"Marisvalda", "3431 1335", "ADMIN", "15/05/1989"};
+        Object[] pessoa7Dados = {"Marisvalda", "3431 1335", "convidado", "15/05/1989"};
         this.cadastrar(2, pessoa7Dados);
 
         Object[] userDados1 = {"2", "admin", "1234"};
@@ -173,9 +179,6 @@ public class DAO {
 
         Object[] userDados4 = {"4", "loginNoiva", "senha"};
         this.cadastrar(3, userDados4);
-
-        Object[] userDados5 = {"8", "maris", "1234"};
-        this.cadastrar(3, userDados5);
 
         Object[] cerDados = {"6"};
         this.cadastrar(6, cerDados);
@@ -225,27 +228,40 @@ public class DAO {
         Object[] evento = {date, "0", "0", "0", "Apresentação do Casório UAI❤"};
         this.cadastrar(5, evento);
 
-      
-        Object[] despesaDados = {"1", "Comidas", "Bolo, janta, etc.", "1800.0", "3", "31/11/2024", ""};
+        Object[] famDados = {"Lopes"};
+        this.cadastrar(10, famDados);
+
+        Object[] famDados1 = {"Silva"};
+        this.cadastrar(10, famDados1);
+
+        Object[] famDados2 = {"Sales"};
+        this.cadastrar(10, famDados2);
+
+        Object[] famDados3 = {"Genesio"};
+        this.cadastrar(10, famDados3);
+
+        Object[] famDados4 = {"Sampaio"};
+        this.cadastrar(10, famDados4);
+
+        Object[] conDados = {"5", "1", "Filha"};
+        this.cadastrar(9, conDados);
+
+        Object[] despesaDados = {"1", "Comidas", "Bolo, janta, etc.", "1800.0", "2", "31/11/2024", ""};
         this.cadastrar(12, despesaDados);
         LocalDate data = Util.stringToDate("15/12/2024");
         this.getDespesas()[0].agendar(data, true);
 
-     
-        Object[] despesaDados1 = {"1", "Bebidas", "Sucos, refris, etc.", "100.0", "2", "31/11/2024", ""};
+        Object[] despesaDados1 = {"1", "Bebidas", "Sucos, refris, etc.", "100.0", "1", "31/11/2024", ""};
         this.cadastrar(12, despesaDados1);
         this.getDespesas()[1].agendar(this.dataHoje, true);
 
-    
-        Object[] despesaDados2 = {"3", "Album", "Fotos, fotográfo, etc.", "2500.0", "4", "15/12/2024", ""};
+        Object[] despesaDados2 = {"3", "Album", "Fotos, fotográfo, etc.", "2500.0", "2", "15/12/2024", ""};
         this.cadastrar(12, despesaDados2);
         this.getDespesas()[2].agendar(this.dataHoje, true);
 
-        Object[] despesaDados3 = {"2", "Decoração", "Flores, adornos, etc.", "300.0", "3", "10/11/2024", ""};
+        Object[] despesaDados3 = {"2", "Decoração", "Flores, adornos, etc.", "300.0", "1", "10/11/2024", ""};
         this.cadastrar(12, despesaDados3);
-       
 
-      
         this.pagarAgendados();
     }
 
@@ -343,11 +359,34 @@ public class DAO {
             }
         }
         if (c > 1) {
-            texto += "\n\nTotal: " + c + " itens";
+            texto += "\n\nTotal: " + c + " itens\n";
         } else if (c == 1) {
-            texto += "\n\nTotal: " + c + " item";
+            texto += "\n\nTotal: " + c + " item\n";
         } else {
-            texto = "\nNenhum item encontrado!";
+            texto = "\nNenhum item encontrado!\n";
+        }
+
+        return texto;
+    }
+
+    public String getTextoParcelas() {
+
+        String texto = "PARCELAS CADASTRADAS";
+        int c = 0;
+        Parcela[] vP = (Parcela[]) this.getVetorById(13);
+        for (int i = 0; i < vP.length; i++) {
+            if (vP[i] != null) {
+                texto += vP[i].lerParcelaAgendada();
+                c++;
+
+            }
+        }
+        if (c > 1) {
+            texto += "\n\nTotal: " + c + " itens\n";
+        } else if (c == 1) {
+            texto += "\n\nTotal: " + c + " item\n";
+        } else {
+            texto = "\nNenhum item encontrado!\n";
         }
 
         return texto;
@@ -357,9 +396,9 @@ public class DAO {
 
         String texto = this.listaNomesClasses[idClasse] + " JÁ CADASTRADOS";
         if (this.getTotalClasse(idClasse) > 1) {
-            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " itens";
+            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " itens\n";
         } else if (this.getTotalClasse(idClasse) == 1) {
-            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " item";
+            texto += "\nTotal: " + this.getTotalClasse(idClasse) + " item\n";
         }
 
         if (this.getTotalClasse(idClasse) > 0 && this.getTotalClasse(idClasse) <= 7) {
@@ -367,13 +406,12 @@ public class DAO {
             for (int i = 0; i < vetor.length; i++) {
                 if (vetor[i] != null) {
                     if (vetor[i] instanceof ClasseInterface) {
-                        int id = ((ClasseInterface) vetor[i]).getId();
                         texto += ((ClasseInterface) vetor[i]).ler();
                     }
 
                 }
             }
-        } else if (this.getTotalClasse(idClasse) > 5) {
+        } else if (this.getTotalClasse(idClasse) > 7) {
             texto += this.getNomes(idClasse);
         } else {
             texto += "\n\nNENHUM ITEM ENCONTRADO!\n";
@@ -392,23 +430,24 @@ public class DAO {
         for (int i = 0; i < this.getPagamentos().length; i++) {
 
             Pagamento pg = this.getPagamentos()[i];
-            if (pg != null && (pg.getPessoa().getTipo().toUpperCase().equals("NOIVO")
-                    || pg.getPessoa().getTipo().toUpperCase().equals("NOIVA"))) {
-                texto += "\nValor pago: " + pg.getValor() + " data do pagamento: " + pg.getData();
-                texto += "\n Pagante: " + pg.getPessoa().getNome();
-                valorPago += pg.getValor();
-                totalPgs++;
-            }
-            if (pg != null
-                    && pg.getPessoa().getTipo().toUpperCase().equals("NOIVA")) {
+            if (pg != null && pg.getPessoa() != null) {
+                if (pg.getPessoa().getTipo().toUpperCase().equals("NOIVO")
+                        || pg.getPessoa().getTipo().toUpperCase().equals("NOIVA")) {
+                    texto += "\nValor pago: " + pg.getValor() + " data do pagamento: " + pg.getData();
+                    texto += "\n Pagante: " + pg.getPessoa().getNome();
+                    valorPago += pg.getValor();
+                    totalPgs++;
+                }
+                if (pg.getPessoa().getTipo().toUpperCase().equals("NOIVA")) {
 
-                valorNoiva += pg.getValor();
-            }
-            if (pg != null
-                    && pg.getPessoa().getTipo().toUpperCase().equals("NOIVO")) {
+                    valorNoiva += pg.getValor();
+                }
+                if (pg.getPessoa().getTipo().toUpperCase().equals("NOIVO")) {
 
-                valorNoivo += pg.getValor();
+                    valorNoivo += pg.getValor();
+                }
             }
+
         }
         if (totalPgs > 1) {
             texto += "\n\nTotal: " + totalPgs + " pagamentos";
@@ -463,6 +502,25 @@ public class DAO {
             e.printStackTrace();
 
             return false;
+        }
+    }
+
+    public Parcela cadastrarParcela(int idClasse, Object infos[]) {
+
+        boolean criado = false;
+        try {
+            // Cria uma nova instância
+            Parcela objeto = new Parcela();
+            // Chama o método criar com as informações fornecidas
+            criado = objeto.criar(this, infos);
+            if (criado) {
+                this.addVetor(13, objeto);
+                return objeto;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -524,7 +582,7 @@ public class DAO {
             if (vetor[i] != null && vetor[i] instanceof ClasseInterface) {
                 ClasseInterface item = (ClasseInterface) vetor[i]; // Faz o cast
                 if (item.getId() == id) {
-                    return item; // Retorna como ClasseInterface
+                    return item; // Retorna como ClasseInterface    
                 }
             }
         }
@@ -631,6 +689,24 @@ public class DAO {
         return texto;
     }
 
+    public String getDespesasParceladasPendentes() {
+        String texto = "\n                    ";
+
+        Despesa[] vObj = (Despesa[]) this.todosOsVetores[12];
+        int c = 0;
+        for (int i = 0; i < vObj.length; i++) {
+            if (vObj[i] != null && !vObj[i].isPago() && vObj[i].isParcelado()) {
+                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
+                texto += "\n";
+                c++;
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNenhuma despesa encontrada!\n\n";
+        }
+        return texto;
+    }
     public String getDespesasPendentes() {
         String texto = "\n                    ";
 
@@ -649,17 +725,33 @@ public class DAO {
         }
         return texto;
     }
+
     public String getDespesasPendentesAgendada() {
-        String texto = "\n                    ";
+        String texto = "\n DESPESAS COM PAGAMENTO AGENDADO \n";
 
         Despesa[] vObj = (Despesa[]) this.todosOsVetores[12];
         int c = 0;
         for (int i = 0; i < vObj.length; i++) {
             if (vObj[i] != null && !vObj[i].isPago() && vObj[i].isAgendado()) {
-                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
-                texto += "\n";
+                texto += "\nID: " + vObj[i].getId() + "           NOME: " + vObj[i].getNome();
+                texto += "\nVALOR: " + vObj[i].getValorTotal();
+                texto += "\nDATA DO PAGAMENTO AGENDADO: " + vObj[i].getDataAgendamento() + "\n";
                 c++;
+
+            } else {
+                if (vObj[i] != null && !vObj[i].isPago() && !vObj[i].isAgendado() && vObj[i].isParcelado()) {
+                    for (int p = 0; p < vObj[i].getnParcelas(); p++) {
+                        Parcela parcela = vObj[i].getvParcelas()[p];
+                        if (parcela != null && !parcela.isPago() && parcela.isAgendado()) {
+                            texto += parcela.lerParcelaAgendada();
+                        }
+
+                    }
+
+                }
+
             }
+
         }
 
         if (c == 0) {
@@ -672,19 +764,25 @@ public class DAO {
         String texto = "\n";
 
         Despesa despesa = (Despesa) this.getItemByID(12, idDespesa);
-        Parcela vDespesa[] = despesa.getvParcelas();
+
+        Parcela[] vDespesa = despesa.getvParcelas();
         int c = 0;
+        if (vDespesa != null) {
+          
 
-        for (int i = 0; i < vDespesa.length; i++) {
-            if (vDespesa[i] != null && !vDespesa[i].isPago()) {
-                texto += vDespesa[i].ler();
-                c++;
+            for (int i = 0; i < vDespesa.length; i++) {
+                if (vDespesa[i] != null && !vDespesa[i].isPago()) {
+                    texto += vDespesa[i].ler();
+                    c++;
+                }
             }
+    
+          
         }
-
         if (c == 0) {
             texto = "\n\nNenhuma parcela pendente de pagamento encontrada!\n\n";
         }
+      
         return texto;
     }
 
@@ -695,7 +793,7 @@ public class DAO {
         int c = 0;
         for (int i = 0; i < vObj.length; i++) {
             if (vObj[i] != null) {
-                texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
+                texto += "\nID: " + vObj[i].getId() + "      NOME: " + vObj[i].getNome().toUpperCase();
                 texto += "\n";
                 c++;
             }
@@ -703,6 +801,43 @@ public class DAO {
 
         if (c == 0) {
             texto = "\n\nNenhum cadastrado encontrado!\n\n";
+        }
+        return texto;
+    }
+
+    public void mostrarPagamentosAgendados() {
+        // Tenta obter os nomes dos convidados
+        String texto = this.getDespesasPendentesAgendada();
+
+        // Verifica se a lista está vazia ou nula
+        if (texto == null || texto.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Nenhum pagamento agendado encontrado.", "Lista de Pagamentos Agendados", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+
+            JOptionPane.showMessageDialog(null, texto, "Lista de Convidados", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public String getNomesPessoasParaCriarUsers() {
+        String texto = "\n                    ";
+        Pessoa vPessoas[] = (Pessoa[]) this.todosOsVetores[2];
+        Usuario vUsers[] = (Usuario[]) this.todosOsVetores[3];
+        boolean userVinculado = false;
+        int c = 0;
+        for (int i = 0; i < vPessoas.length; i++) {
+            if (vPessoas[i] != null) {
+                if (!vPessoas[i].isUserVinculado()
+                        && !vPessoas[i].getTipo().toUpperCase().equals("CONVIDADO")
+                        && !vPessoas[i].getTipo().toUpperCase().equals("CERIMONIAL")) {
+                    texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome() + "\nTipo: " + vPessoas[i].getTipo();
+                    c++;
+                    texto += "\n";
+                }
+            }
+        }
+
+        if (c == 0) {
+            texto = "\n\nNENHUMA PESSOA CADASTRADA SEM USUÁRIO VINCULADO!\n\n";
         }
         return texto;
     }
@@ -715,9 +850,7 @@ public class DAO {
         int c = 0;
         for (int i = 0; i < vPessoas.length; i++) {
             if (vPessoas[i] != null) {
-                if (!vPessoas[i].isUserVinculado()
-                        && !vPessoas[i].getTipo().toUpperCase().equals("CONVIDADO")
-                        && !vPessoas[i].getTipo().toUpperCase().equals("CERIMONIAL")) {
+                if (!vPessoas[i].isUserVinculado() && !vPessoas[i].isCerimonialVinculado() && !vPessoas[i].isConvidadoVinculado()) {
                     texto += "\nID: " + vPessoas[i].getId() + "\nNome: " + vPessoas[i].getNome() + "\nTipo: " + vPessoas[i].getTipo();
                     c++;
                     texto += "\n";
@@ -798,29 +931,29 @@ public class DAO {
         if (usuario != null) {
             if (usuario.getSenha().equals(senha)) {
                 this.setUserLogado(usuario);
-                if(usuario.getPessoa().getTipo().toUpperCase().equals("CONVIDADO")){
+                if (usuario.getPessoa().getTipo().toUpperCase().equals("CONVIDADO")) {
                     String texto = "\nCONFIRMAR PRESENÇA\n\nVOCÊ GOSTARIA DE CONFIRMAR SUA PRESENÇA NO CASAMENTO?\nDIGITE SIM OU NÃO PARA CONFIRMAR";
                     String resposta = JOptionPane.showInputDialog(null, texto, "UaiCasórioPro", JOptionPane.QUESTION_MESSAGE);
-    
+
                     ConvidadoIndividual conv = this.findConvidado(this.userLogado.getId());
                     if (conv != null) {
                         if (resposta.toUpperCase().equals("SIM")) {
                             conv.setConfirmacao(true);
                             Util.mostrarMSG("PRESENÇA CONFIRMADA!");
-                        }else{
+                        } else {
                             conv.setConfirmacao(false);
                             Util.mostrarMSG("Obrigado pela resposta ❤! \nAté mais!");
                         }
-                        
+
                         TelaInicial menu = new TelaInicial();
                         menu.exibir(this);
                     }
-                }else{
+                } else {
 
                     MenuInicial menu = new MenuInicial();
                     menu.exibir(this, true, this.getUserLogado());
                 }
-               
+
             } else {
 
                 Util.mostrarErro("Credenciais incorretas!");
@@ -833,7 +966,7 @@ public class DAO {
         }
     }
 
-    public ConvidadoIndividual findConvidado(int idUser){
+    public ConvidadoIndividual findConvidado(int idUser) {
         ConvidadoIndividual[] vObj = (ConvidadoIndividual[]) this.todosOsVetores[9];
 
         for (int i = 0; i < vObj.length; i++) {
@@ -841,7 +974,7 @@ public class DAO {
                 if (vObj[i].getIdUser() == idUser) {
                     return vObj[i];
                 }
-              
+
             }
         }
         return null;
@@ -948,76 +1081,65 @@ public class DAO {
         return vDespesaConsulta;
     }
 
-    public String getIprimirConviteINdividual(int idConvidado, int idClasse){
+    public String getIprimirConviteINdividual(int idConvidado, int idEvento) {
+        Evento evento = (Evento) this.getItemByID(5, idEvento);
+        ConvidadoIndividual conv = (ConvidadoIndividual) this.getItemByID(9, idConvidado);
         String texto = "\n                    ";
-        
-        texto += "\n Convite Para o Casamento de " + this.getNoivos(0).getNome() + " e " + this.getNoivos(1).getNome() + "\n";
-        texto += "Data do Casamento: "+((Evento)this.getItemByID(5, 1)).getData()+" \n";
-        
-        ConvidadoIndividual[] vObj = (ConvidadoIndividual[]) this.todosOsVetores[idClasse];
-        ConvidadoIndividual[] vetCon  = new ConvidadoIndividual[10];
-        int c = 0;
-        int j = 0;
-        for(int i = 0; i < vObj.length; i++){
-            if(vObj[i] != null && vObj[i].isConfirmacao() == true){
-                vetCon[j] = vObj[i];
-                j++;
-                
+        if (conv != null) {
+            if (evento != null) {
+                texto += "\n Convite Para o Casamento de " + this.getNoivos(0).getNome() + " e " + this.getNoivos(1).getNome() + "\n";
+
+                texto += "\nCom muito prazer, gostaríamos de convidar você " + conv.getNome() + " para o nosso casamento!\n";
+                texto += "Evento: " + evento.getNome() + " \n";
+                texto += "Data: " + evento.getData() + " \n";
+                texto += "Local: " + evento.getEndereco() + " \n";
+                texto += "\nPor favor, confirme sua presença\n";
+                texto += "\nPara isso, basta logar com as credenciais a seguir: \n";
+                texto += "Login: " + conv.getUser().getLogin() + " \n";
+                texto += "Senha: " + conv.getUser().getSenha() + " \n";
+            } else {
+                texto = "\n\nNenhum evento com id " + idEvento + " foi encontrado!\n\n";
             }
+        } else {
+            texto = "\n\nNenhum convidado com id " + idConvidado + " foi encontrado!\n\n";
         }
-        
-        for(int i = 0; i<vetCon.length; i++ ){
-            if (vetCon[i] != null) {
-                if(idConvidado == vetCon[i].getId()){
-                    texto += "\n Convite Nominal e intransferível de " + vetCon[i].getNome();
-                    c++;
-                }else{
-                    System.out.println("Aviso: Objeto vetCon[" + i + "] é null.");
-                }
-            }
-            
-        
-        }
-        
-        if (c == 0) {
-            texto = "\n\nNenhum Convidado com esse id foi encontrado!\n\n";
-        }
-        
+
         return texto;
-        
+
     }
-    
-    public String getIprimirConviteFamilia(int idConvidadoFamilia, int idClasse){
+
+    public String gerarConviteFamilia(int idEvento, int idConvidadoFamilia) {
+        Evento evento = (Evento) this.getItemByID(5, idEvento);
+        ConvidadoFamilia convFamilia = (ConvidadoFamilia) this.getItemByID(10, idConvidadoFamilia); // Classe ConvidadoFamilia
         String texto = "\n                    ";
-        
-        texto += "\n Convite Para o Casamento de " + this.getNoivos(0).getNome() + " e " + this.getNoivos(1).getNome() + "\n";
-        texto += "Data do Casamento: "+((Evento)this.getItemByID(5, 1)).getData()+" \n";
-         
-        ConvidadoFamilia[] vObj = (ConvidadoFamilia[]) this.todosOsVetores[idClasse];
-        int c = 0;
-        
-        for(int i = 0; i<vObj.length; i++){
-            if (vObj[i] != null){
-                if(vObj[i].getId() == idConvidadoFamilia){
-                    texto +="\n Convite para a família " + vObj[i].getNome();
-                    c++;
-                }
+
+        if (convFamilia != null) {
+            if (evento != null) {
+                texto += "\n Convite Para o Casamento de " + this.getNoivos(0).getNome() + " e " + this.getNoivos(1).getNome() + "\n";
+                texto += "\nCom muito prazer, gostaríamos de convidar a família " + convFamilia.getNome() + " para o nosso casamento!\n";
+                texto += "Evento: " + evento.getNome() + " \n";
+                texto += "Data: " + evento.getData() + " \n";
+                texto += "Local: " + evento.getEndereco() + " \n";
+                texto += "\nPor favor, confirme a presença de sua família\n";
+                texto += "\nPara isso, peça para o titular da sua família logar com o acesso a seguir: \n";
+                texto += "Acesso: " + convFamilia.getAcesso() + " \n"; // Acesso específico da família
+
+            } else {
+                texto = "\nNenhum evento com id " + idEvento + " foi encontrado!\n\n";
             }
+        } else {
+            texto = "\nNenhuma família com id " + idConvidadoFamilia + " foi encontrada!\n\n";
         }
-        
-        if (c == 0) {
-            texto = "\n\nNenhuma Familia com esse id foi encontrado!\n\n";
-        }
-        
+
         return texto;
     }
-    
-    public String getNomesConfirmados(int idClasse){
+
+    public String getNomesConfirmados(int idClasse) {
         String texto = "\n                    ";
-        
+
         ConvidadoIndividual[] vObj = (ConvidadoIndividual[]) this.todosOsVetores[idClasse];
         int c = 0;
-  
+
         for (int i = 0; i < vObj.length; i++) {
             if (vObj[i] != null && vObj[i].isConfirmacao() == true) {
                 texto += "\nID: " + vObj[i].getId() + "\nNome: " + vObj[i].getNome();
@@ -1029,9 +1151,9 @@ public class DAO {
         if (c == 0) {
             texto = "\n\nNenhum Convidado Confirmado!\n\n";
         }
-        
+
         return texto;
-            
+
     }
 
     public Recado[] getRecados() {

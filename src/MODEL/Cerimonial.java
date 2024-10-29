@@ -31,7 +31,7 @@ public class Cerimonial implements ClasseInterface {
 
     public boolean isEventoVinculado() {
         return eventoVinculado;
-    }
+    } 
 
     public void setEventoVinculado(boolean eventoVinculado) {
         this.eventoVinculado = eventoVinculado;

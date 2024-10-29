@@ -103,7 +103,8 @@ public class MenuAgendarPagamento {
                                     if (hoje.isBefore(data)) {
                                         //se sim, realiza o agendamento
                                         this.getParcela().agendar(data);
-                                        this.verResultado(13);
+                                        this.dao.mostrarPagamentosAgendados();
+                                        this.criarMenuCRUD(this.dao, 11);
                                     }
 
                                 }
@@ -118,7 +119,11 @@ public class MenuAgendarPagamento {
                         if (hoje.isBefore(data)) {
                             //agendar a quitação da despesa
                             this.getDespesa().agendar(data);
-                            this.verResultado(12);
+                            this.dao.mostrarPagamentosAgendados();
+                            this.criarMenuCRUD(this.dao, 11);
+                        }else{
+                            Util.mostrarErro("Não é possível agendar pagamentos para o passado!");
+                            this.criarMenuCRUD(this.dao, 11);
                         }
                     }
 
@@ -145,7 +150,8 @@ public class MenuAgendarPagamento {
                             if (this.getDespesa().isAgendado()) {
                                 this.getDespesa().cancelarAgendamento();
                                 Util.mostrarMSG("Agendamento de pagamento foi cancelado com sucesso!");
-                                this.verResultado(12);
+                                this.dao.mostrarPagamentosAgendados();
+                                this.criarMenuCRUD(this.dao, 11);
                                 
                             } else {
                                 this.lidarEscolha(this.getTextoParcela(idInserido));

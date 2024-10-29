@@ -128,7 +128,7 @@ public class Menu_UPDATE {
                         } else {
                             conteudo += "\nID E NOME DA PESSOA:";
                         }
-                        conteudo += this.dao.getNomesPessoasSemUsers();
+                        conteudo += this.dao.getNomesPessoasParaCriarUsers();
                         return conteudo;
                     }
                     default -> {

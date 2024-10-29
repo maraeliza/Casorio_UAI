@@ -136,6 +136,14 @@ public class Presente implements ClasseInterface {
 
             }
         }
+        if (vetor[3] != null) {
+            String link = (String) vetor[3];
+            if (link.length() > 0) {
+                this.link = link;
+                alterou = true;
+
+            }
+        }
 
         if (alterou) {
             this.atualizarDataModificacao();

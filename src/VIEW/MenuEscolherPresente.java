@@ -71,7 +71,7 @@ public class MenuEscolherPresente {
                             //checa se o presente foi escolhido já
                             if (presente.getEscolhido()) {
                                 //checa se a pessoa que está logada agora é a pessoa que escolheu o presente
-                                if (this.user.getIdPessoa() == presente.getIdPessoa()) {
+                                if (this.dao.getUserLogado().getIdPessoa() == presente.getIdPessoa()) {
                                     //altera a escolha
                                     presente.escolher(this.user.getPessoa());
                                     if (presente.getEscolhido()) {

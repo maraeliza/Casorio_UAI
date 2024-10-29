@@ -99,7 +99,7 @@ public class Menu_CREATE {
     public String montarPainelUsuarios() {
         String conteudo = "";
         conteudo += "\nNOMES DE PESSOAS SEM USUÁRIOS VINCULADOS:";
-        conteudo += this.dao.getNomesPessoasSemUsers();
+        conteudo += this.dao.getNomesPessoasParaCriarUsers();
         return conteudo;
     }
 
@@ -115,7 +115,7 @@ public class Menu_CREATE {
                         } else {
                             conteudo += "\nID E NOME DA PESSOA:";
                         }
-                        conteudo += this.dao.getNomesPessoasSemUsers();
+                        conteudo += this.dao.getNomesPessoasParaCriarUsers();
                         return conteudo;
                     }
                     default -> {

@@ -17,6 +17,7 @@ import java.time.format.DateTimeParseException;
 public class Pessoa implements ClasseInterface {
 
     private int id;
+    private int idade;
     private String nome;
     private String telefone;
     private LocalDate dataCriacao;
@@ -127,6 +128,18 @@ public class Pessoa implements ClasseInterface {
     public static void setTotal(int total) {
         Pessoa.total = total;
     }
+    public void calcularIdade() {
+        LocalDate hoje = LocalDate.now();
+        int idade = hoje.getYear() - this.nascimento.getYear();
+
+        // Verifica se a data de nascimento já ocorreu este ano
+        if (hoje.getMonthValue() < this.nascimento.getMonthValue() || 
+            (hoje.getMonthValue() == this.nascimento.getMonthValue() && hoje.getDayOfMonth() < this.nascimento.getDayOfMonth())) {
+            idade--;
+        }
+        this.setIdade(idade);
+     
+    }
 
     public void update(Object vetor[]) {
         boolean alterou = false;
@@ -156,6 +169,7 @@ public class Pessoa implements ClasseInterface {
                 // Define o formato da data esperado (por exemplo, "dd/MM/yyyy")
 
                 this.nascimento = Util.stringToDate(nascimentoStr);
+                this.calcularIdade();
                 alterou = true;
             } catch (DateTimeParseException e) {
             }
@@ -196,6 +210,7 @@ public class Pessoa implements ClasseInterface {
                             try {
                                 this.nascimento = Util.stringToDate(nascimentoStr);
                                 if (this.nascimento != null) {
+                                    this.calcularIdade();
                                     criado = true;
                                 }
 
@@ -225,21 +240,23 @@ public class Pessoa implements ClasseInterface {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         // Adiciona informações da pessoa
-        resultado.append("\nPessoa ").append(this.id);
-        resultado.append("\nNome: ").append(this.nome);
+        resultado.append("\nID ").append(this.id);
+        resultado.append("            NOME: ").append(this.nome.toUpperCase());
 
         // Verifica e formata a data de nascimento
         if (this.nascimento != null) {
             resultado.append("\nData de Nascimento: ").append(this.nascimento.format(formatter));
         }
-
+        if (this.idade != 0) {
+            resultado.append("\nIdade: ").append(this.idade);
+        }
         // Verifica e adiciona o telefone
         if (this.telefone != null && !this.telefone.isEmpty()) {
-            resultado.append("\nTelefone: ").append(this.telefone);
+            resultado.append("      Telefone: ").append(this.telefone);
         }
         // Verifica e adiciona o tipo
         if (this.tipo != null && !this.tipo.isEmpty()) {
-            resultado.append("\nTipo: ").append(this.tipo.toUpperCase());
+            resultado.append("\nTIPO: ").append(this.tipo.toUpperCase());
         }
         resultado.append("\nUsuário Cadastrado: ");
         // Verifica e adiciona o usuario
@@ -248,16 +265,13 @@ public class Pessoa implements ClasseInterface {
         } else {
             resultado.append("NÃO");
         }
-        // Verifica e formata a data de criação
-        if (this.dataCriacao != null) {
-            resultado.append("\nData de Criação: ").append(this.dataCriacao.format(formatter));
-        }
+        
 
         // Verifica e formata a data de modificação
         if (this.dataModificacao != null) {
             resultado.append("\nData da Última Modificação: ").append(this.dataModificacao.format(formatter));
         }
-        resultado.append("\n\n");
+        resultado.append("\n");
 
         return resultado.toString();
     }
@@ -296,4 +310,15 @@ public class Pessoa implements ClasseInterface {
 
         this.dataModificacao = LocalDate.now();
     }
+
+    public int getIdade() {
+        return idade;
+    }
+
+    public void setIdade(int idade) {
+        this.idade = idade;
+    }
+    
+    
+    
 }

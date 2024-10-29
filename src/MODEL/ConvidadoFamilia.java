@@ -99,10 +99,9 @@ public class ConvidadoFamilia implements ClasseInterface {
 
 
     public boolean criar(DAO dao, Object[] vetor) {
+        System.out.println("ADICIONANDO FAMILIA "+vetor[0]);
         this.dao = dao;
-       if (vetor.length < 3) {
-            return false; // Verifica se há informações suficientes
-        }
+       
         this.nome = (String) vetor[0];
         this.acesso = this.gerarAcesso();
         
@@ -111,16 +110,6 @@ public class ConvidadoFamilia implements ClasseInterface {
         this.id = ++total; // Aumenta o contador de IDs
         return true;
  
-    }
-
-   
-    public boolean criar(DAO dao, Usuario user, Object[] vetor) {
-        if(dao!=null){
-            
-            this.dao = dao;
-            return criar(this.dao, vetor);
-        }
-        return false;
     }
 
     public void update(Object vetor[]) {

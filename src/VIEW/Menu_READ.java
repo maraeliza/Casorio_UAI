@@ -25,13 +25,16 @@ public class Menu_READ {
         this.idClasse = idClasse;
         this.dao = dao;
         try {
-            
+
             int n = dao.getTotalClasse(idClasse);
             if (n > 0) {
                 this.nomeClasse = this.dao.getNameClasseById(idClasse);
 
                 try {
-                    String texto = dao.getTexto(idClasse);
+                    String texto = "";
+
+                    texto = dao.getTexto(idClasse);
+
                     int res = JOptionPane.showConfirmDialog(null, texto, "RELATÓRIO DE " + this.nomeClasse.toUpperCase(), JOptionPane.OK_CANCEL_OPTION);
 
                 } catch (Exception e) {
@@ -51,13 +54,13 @@ public class Menu_READ {
         this.idClasse = idClasse;
         this.dao = dao;
         try {
-            
+
             int n = dao.getTotalClasse(idClasse);
             if (n > 0) {
                 this.nomeClasse = this.dao.getNameClasseById(idClasse);
 
                 try {
-                     String texto = this.dao.getPagamentosNoivos(idClasse);
+                    String texto = this.dao.getPagamentosNoivos(idClasse);
                     int res = JOptionPane.showConfirmDialog(null, texto, "RELATÓRIO DE " + this.nomeClasse.toUpperCase(), JOptionPane.OK_CANCEL_OPTION);
 
                     System.out.println("TEXTO: " + texto);
@@ -73,8 +76,6 @@ public class Menu_READ {
         }
 
     }
-
-   
 
     public void montarPainel() {
 

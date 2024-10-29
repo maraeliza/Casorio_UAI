@@ -93,10 +93,6 @@ public class ConvidadoIndividual implements ClasseInterface {
         return false;
     }
 
-    public boolean criar(DAO dao, Usuario user, Object vetor[]) {
-        this.userLogado = user;
-        return criar(dao, vetor);
-    }
 
     public boolean criar(DAO dao, Object vetor[]) {
         this.dao = dao;
