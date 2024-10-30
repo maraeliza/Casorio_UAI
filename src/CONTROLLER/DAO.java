@@ -1029,23 +1029,7 @@ public class DAO {
         return vPagamentoConsulta;
     }
 
-    public Despesa[] getDespesasByDataVencimento(LocalDate dataVencimento) {
-        Despesa[] vDespesaConsulta = new Despesa[100];
-        Despesa[] vDespesa = this.getDespesas();
-
-        for (int i = 0; i < vDespesa.length; i++) {
-            if (vDespesa[i] != null && vDespesa[i].getDataVencimento().equals(dataVencimento)) {
-                for (int n = 0; n < vDespesaConsulta.length; n++) {
-                    if (vDespesaConsulta[n] == null) {
-                        vDespesaConsulta[n] = vDespesa[i];
-                        break;
-                    }
-                }
-            }
-        }
-        return vDespesaConsulta;
-    }
-
+   
     public Parcela[] getParcelasByDataVencimento(LocalDate dataVencimento) {
         Parcela[] vParcelaConsulta = new Parcela[100];
         Parcela[] vParcela = this.getParcelas();
